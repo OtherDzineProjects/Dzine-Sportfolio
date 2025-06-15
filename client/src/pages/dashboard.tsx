@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authService, useAuth } from "@/lib/auth";
 import { 
-  Trophy, 
   Calendar, 
   MapPin, 
   Users, 
@@ -20,6 +19,7 @@ import {
   Bell,
   LogOut
 } from "lucide-react";
+import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
@@ -93,11 +93,13 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 gradient-saffron-green rounded-lg flex items-center justify-center">
-                <Trophy className="text-deep-blue" size={20} />
-              </div>
+              <img 
+                src={logoImage} 
+                alt="Sportfolio Logo" 
+                className="h-8 w-auto"
+              />
               <h1 className="font-poppins font-bold text-xl text-gray-900">
-                Sportfolio Dashboard
+                Dashboard
               </h1>
             </div>
             
@@ -197,7 +199,7 @@ export default function Dashboard() {
                         {events?.filter(e => e.status === 'upcoming').length || 0}
                       </p>
                     </div>
-                    <Trophy className="text-deep-blue" size={24} />
+                    <Calendar className="text-deep-blue" size={24} />
                   </div>
                 </CardContent>
               </Card>
@@ -340,7 +342,7 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <Trophy className="mx-auto text-gray-400 mb-4" size={48} />
+                    <Calendar className="mx-auto text-gray-400 mb-4" size={48} />
                     <p className="text-gray-500">No events available</p>
                   </div>
                 )}

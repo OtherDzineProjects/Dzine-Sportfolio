@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { authService } from "@/lib/auth";
-import { Shield, User, Building, Briefcase, Dumbbell } from "lucide-react";
+import { Shield, User, Building, Briefcase, Dumbbell, MapPin } from "lucide-react";
 import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
 
 export default function Auth() {
@@ -238,7 +238,7 @@ export default function Auth() {
                   Blockchain-verified achievements
                 </div>
                 <div className="flex items-center justify-center">
-                  <Trophy className="mr-2 text-saffron" size={12} />
+                  <MapPin className="mr-2 text-saffron" size={12} />
                   Access to 500+ sports facilities
                 </div>
                 <div className="flex items-center justify-center">
