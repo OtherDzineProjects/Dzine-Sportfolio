@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -79,11 +79,13 @@ export default function Auth() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-4">
-            <img 
-              src={logoImage} 
-              alt="Sportfolio Logo" 
-              className="h-16 w-auto"
-            />
+            <Link href="/" className="hover:opacity-80 transition-opacity">
+              <img 
+                src={logoImage} 
+                alt="Sportfolio Logo" 
+                className="h-20 w-auto cursor-pointer"
+              />
+            </Link>
           </div>
           <div className="flex items-center justify-center">
             <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full flex items-center">

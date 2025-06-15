@@ -10,11 +10,13 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <img 
-                src={logoImage} 
-                alt="Sportfolio Logo" 
-                className="h-10 w-auto"
-              />
+              <Link href="/" className="hover:opacity-80 transition-opacity">
+                <img 
+                  src={logoImage} 
+                  alt="Sportfolio Logo" 
+                  className="h-14 w-auto cursor-pointer"
+                />
+              </Link>
             </div>
             <p className="text-gray-400 mb-4">
               Empowering the Indian sports ecosystem with blockchain-secured management tools.

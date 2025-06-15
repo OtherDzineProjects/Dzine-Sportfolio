@@ -12,13 +12,13 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-lg border-b-4 border-saffron sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="flex items-center space-x-3">
+            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
               <img 
                 src={logoImage} 
                 alt="Sportfolio Logo" 
-                className="h-12 w-auto"
+                className="h-16 w-auto cursor-pointer"
               />
             </Link>
             <div className="hidden md:flex items-center space-x-1">

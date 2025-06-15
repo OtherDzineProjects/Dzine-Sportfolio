@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -93,11 +93,13 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <img 
-                src={logoImage} 
-                alt="Sportfolio Logo" 
-                className="h-10 w-auto"
-              />
+              <Link href="/" className="hover:opacity-80 transition-opacity">
+                <img 
+                  src={logoImage} 
+                  alt="Sportfolio Logo" 
+                  className="h-12 w-auto cursor-pointer"
+                />
+              </Link>
               <h1 className="font-poppins font-bold text-xl text-gray-900">
                 Dashboard
               </h1>
