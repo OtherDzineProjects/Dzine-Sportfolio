@@ -1,0 +1,378 @@
+import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, varchar } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+
+// Users table
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  phone: text("phone"),
+  userType: text("user_type").notNull(), // athlete, coach, organization, facility_manager
+  subscriptionTier: text("subscription_tier").default("basic"), // basic, pro, enterprise
+  subscriptionStatus: text("subscription_status").default("inactive"), // active, inactive, trial
+  subscriptionExpiry: timestamp("subscription_expires_at"),
+  toolAccess: jsonb("tool_access").default({}), // {"facility": true, "fixtures": false, "scoring": true}
+  blockchainWallet: text("blockchain_wallet"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Sports categories
+export const sportsCategories = pgTable("sports_categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // olympic, traditional_indian, other
+  description: text("description"),
+  icon: text("icon"),
+  isActive: boolean("is_active").default(true)
+});
+
+// Athlete profiles
+export const athleteProfiles = pgTable("athlete_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  dateOfBirth: timestamp("date_of_birth"),
+  gender: text("gender"),
+  height: decimal("height", { precision: 5, scale: 2 }),
+  weight: decimal("weight", { precision: 5, scale: 2 }),
+  primarySport: integer("primary_sport").references(() => sportsCategories.id),
+  secondarySports: jsonb("secondary_sports").default([]),
+  coachId: integer("coach_id").references(() => users.id),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  achievements: jsonb("achievements").default([]),
+  blockchainHash: text("blockchain_hash"),
+  profilePhoto: text("profile_photo"),
+  bio: text("bio"),
+  isVerified: boolean("is_verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Organizations
+export const organizations = pgTable("organizations", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // club, school, college, state_council, national_federation
+  registrationNumber: text("registration_number"),
+  address: text("address"),
+  city: text("city"),
+  state: text("state"),
+  pincode: text("pincode"),
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  adminUserId: integer("admin_user_id").references(() => users.id),
+  logo: text("logo"),
+  website: text("website"),
+  isVerified: boolean("is_verified").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Sports facilities
+export const facilities = pgTable("facilities", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // court, pool, field, gym, track, etc.
+  sports: jsonb("sports").default([]), // array of sport category IDs
+  address: text("address").notNull(),
+  city: text("city").notNull(),
+  state: text("state").notNull(),
+  pincode: text("pincode").notNull(),
+  managerId: integer("manager_id").references(() => users.id),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  capacity: integer("capacity"),
+  hourlyRate: decimal("hourly_rate", { precision: 10, scale: 2 }),
+  amenities: jsonb("amenities").default([]),
+  photos: jsonb("photos").default([]),
+  operatingHours: jsonb("operating_hours").default({}),
+  isActive: boolean("is_active").default(true),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  totalBookings: integer("total_bookings").default(0),
+  coordinates: jsonb("coordinates"), // {lat, lng}
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Facility bookings
+export const facilityBookings = pgTable("facility_bookings", {
+  id: serial("id").primaryKey(),
+  facilityId: integer("facility_id").references(() => facilities.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time").notNull(),
+  purpose: text("purpose"), // training, event, tournament, etc.
+  status: text("status").default("confirmed"), // pending, confirmed, cancelled, completed
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }),
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, refunded
+  paymentId: text("payment_id"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Events/Tournaments
+export const events = pgTable("events", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  sportId: integer("sport_id").references(() => sportsCategories.id).notNull(),
+  organizerId: integer("organizer_id").references(() => users.id).notNull(),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  facilityId: integer("facility_id").references(() => facilities.id),
+  eventType: text("event_type").notNull(), // tournament, championship, friendly, training
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  registrationDeadline: timestamp("registration_deadline"),
+  maxParticipants: integer("max_participants"),
+  entryFee: decimal("entry_fee", { precision: 10, scale: 2 }).default("0"),
+  prizePool: decimal("prize_pool", { precision: 10, scale: 2 }).default("0"),
+  rules: jsonb("rules").default({}),
+  status: text("status").default("upcoming"), // upcoming, ongoing, completed, cancelled
+  isPublic: boolean("is_public").default(true),
+  banner: text("banner"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Event participants
+export const eventParticipants = pgTable("event_participants", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  registrationDate: timestamp("registration_date").defaultNow(),
+  status: text("status").default("registered"), // registered, confirmed, withdrawn, disqualified
+  paymentStatus: text("payment_status").default("pending"),
+  teamName: text("team_name"),
+  category: text("category"), // age group, skill level, etc.
+  seedNumber: integer("seed_number"),
+  notes: text("notes")
+});
+
+// Matches/Fixtures
+export const matches = pgTable("matches", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id).notNull(),
+  facilityId: integer("facility_id").references(() => facilities.id),
+  round: text("round"), // qualification, round1, semifinal, final, etc.
+  matchNumber: integer("match_number"),
+  participant1Id: integer("participant1_id").references(() => eventParticipants.id),
+  participant2Id: integer("participant2_id").references(() => eventParticipants.id),
+  scheduledTime: timestamp("scheduled_time"),
+  actualStartTime: timestamp("actual_start_time"),
+  actualEndTime: timestamp("actual_end_time"),
+  status: text("status").default("scheduled"), // scheduled, ongoing, completed, cancelled
+  winnerId: integer("winner_id").references(() => eventParticipants.id),
+  score: jsonb("score").default({}), // flexible scoring format
+  notes: text("notes"),
+  refereeId: integer("referee_id").references(() => users.id),
+  courtNumber: text("court_number"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Digital certificates
+export const certificates = pgTable("certificates", {
+  id: serial("id").primaryKey(),
+  recipientId: integer("recipient_id").references(() => users.id).notNull(),
+  eventId: integer("event_id").references(() => events.id),
+  title: text("title").notNull(),
+  description: text("description"),
+  achievementType: text("achievement_type").notNull(), // winner, participant, completion, skill
+  position: integer("position"), // 1st, 2nd, 3rd place
+  issuedBy: integer("issued_by").references(() => organizations.id).notNull(),
+  issuedDate: timestamp("issued_date").defaultNow(),
+  blockchainHash: text("blockchain_hash").notNull(),
+  certificateData: jsonb("certificate_data").default({}),
+  isValid: boolean("is_valid").default(true),
+  templateId: text("template_id"),
+  downloadUrl: text("download_url"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Maintenance records
+export const maintenanceRecords = pgTable("maintenance_records", {
+  id: serial("id").primaryKey(),
+  facilityId: integer("facility_id").references(() => facilities.id).notNull(),
+  requestedBy: integer("requested_by").references(() => users.id).notNull(),
+  maintenanceType: text("maintenance_type").notNull(), // routine, repair, upgrade, cleaning
+  description: text("description").notNull(),
+  priority: text("priority").default("medium"), // low, medium, high, urgent
+  status: text("status").default("pending"), // pending, in_progress, completed, cancelled
+  scheduledDate: timestamp("scheduled_date"),
+  completedDate: timestamp("completed_date"),
+  cost: decimal("cost", { precision: 10, scale: 2 }),
+  assignedTo: text("assigned_to"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Revenue analytics
+export const revenueRecords = pgTable("revenue_records", {
+  id: serial("id").primaryKey(),
+  facilityId: integer("facility_id").references(() => facilities.id),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  source: text("source").notNull(), // booking, event, subscription, merchandise
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").default("INR"),
+  transactionDate: timestamp("transaction_date").defaultNow(),
+  description: text("description"),
+  bookingId: integer("booking_id").references(() => facilityBookings.id),
+  eventId: integer("event_id").references(() => events.id),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Relations
+export const usersRelations = relations(users, ({ one, many }) => ({
+  athleteProfile: one(athleteProfiles, {
+    fields: [users.id],
+    references: [athleteProfiles.userId]
+  }),
+  managedFacilities: many(facilities),
+  bookings: many(facilityBookings),
+  organizedEvents: many(events),
+  eventParticipations: many(eventParticipants),
+  certificates: many(certificates),
+  maintenanceRequests: many(maintenanceRecords)
+}));
+
+export const athleteProfilesRelations = relations(athleteProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [athleteProfiles.userId],
+    references: [users.id]
+  }),
+  primarySportCategory: one(sportsCategories, {
+    fields: [athleteProfiles.primarySport],
+    references: [sportsCategories.id]
+  }),
+  coach: one(users, {
+    fields: [athleteProfiles.coachId],
+    references: [users.id]
+  }),
+  organization: one(organizations, {
+    fields: [athleteProfiles.organizationId],
+    references: [organizations.id]
+  })
+}));
+
+export const organizationsRelations = relations(organizations, ({ one, many }) => ({
+  admin: one(users, {
+    fields: [organizations.adminUserId],
+    references: [users.id]
+  }),
+  facilities: many(facilities),
+  events: many(events),
+  athletes: many(athleteProfiles),
+  certificates: many(certificates)
+}));
+
+export const facilitiesRelations = relations(facilities, ({ one, many }) => ({
+  manager: one(users, {
+    fields: [facilities.managerId],
+    references: [users.id]
+  }),
+  organization: one(organizations, {
+    fields: [facilities.organizationId],
+    references: [organizations.id]
+  }),
+  bookings: many(facilityBookings),
+  events: many(events),
+  maintenanceRecords: many(maintenanceRecords)
+}));
+
+export const eventsRelations = relations(events, ({ one, many }) => ({
+  sport: one(sportsCategories, {
+    fields: [events.sportId],
+    references: [sportsCategories.id]
+  }),
+  organizer: one(users, {
+    fields: [events.organizerId],
+    references: [users.id]
+  }),
+  organization: one(organizations, {
+    fields: [events.organizationId],
+    references: [organizations.id]
+  }),
+  facility: one(facilities, {
+    fields: [events.facilityId],
+    references: [facilities.id]
+  }),
+  participants: many(eventParticipants),
+  matches: many(matches),
+  certificates: many(certificates)
+}));
+
+// Insert schemas
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertAthleteProfileSchema = createInsertSchema(athleteProfiles).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertOrganizationSchema = createInsertSchema(organizations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertFacilitySchema = createInsertSchema(facilities).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertEventSchema = createInsertSchema(events).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertFacilityBookingSchema = createInsertSchema(facilityBookings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertCertificateSchema = createInsertSchema(certificates).omit({
+  id: true,
+  createdAt: true
+});
+
+// Types
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type AthleteProfile = typeof athleteProfiles.$inferSelect;
+export type InsertAthleteProfile = z.infer<typeof insertAthleteProfileSchema>;
+
+export type Organization = typeof organizations.$inferSelect;
+export type InsertOrganization = z.infer<typeof insertOrganizationSchema>;
+
+export type Facility = typeof facilities.$inferSelect;
+export type InsertFacility = z.infer<typeof insertFacilitySchema>;
+
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = z.infer<typeof insertEventSchema>;
+
+export type FacilityBooking = typeof facilityBookings.$inferSelect;
+export type InsertFacilityBooking = z.infer<typeof insertFacilityBookingSchema>;
+
+export type Certificate = typeof certificates.$inferSelect;
+export type InsertCertificate = z.infer<typeof insertCertificateSchema>;
+
+export type SportsCategory = typeof sportsCategories.$inferSelect;
+export type Match = typeof matches.$inferSelect;
+export type EventParticipant = typeof eventParticipants.$inferSelect;
+export type MaintenanceRecord = typeof maintenanceRecords.$inferSelect;
+export type RevenueRecord = typeof revenueRecords.$inferSelect;
