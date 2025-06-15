@@ -18,7 +18,7 @@ export default function Navbar() {
               <img 
                 src={logoImage} 
                 alt="Sportfolio Logo" 
-                className="h-10 w-auto"
+                className="h-12 w-auto"
               />
             </Link>
             <div className="hidden md:flex items-center space-x-1">

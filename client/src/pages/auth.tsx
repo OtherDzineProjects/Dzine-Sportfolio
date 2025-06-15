@@ -82,7 +82,7 @@ export default function Auth() {
             <img 
               src={logoImage} 
               alt="Sportfolio Logo" 
-              className="h-12 w-auto"
+              className="h-16 w-auto"
             />
           </div>
           <div className="flex items-center justify-center">

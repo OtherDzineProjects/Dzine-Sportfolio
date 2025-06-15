@@ -96,7 +96,7 @@ export default function Dashboard() {
               <img 
                 src={logoImage} 
                 alt="Sportfolio Logo" 
-                className="h-8 w-auto"
+                className="h-10 w-auto"
               />
               <h1 className="font-poppins font-bold text-xl text-gray-900">
                 Dashboard

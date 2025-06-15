@@ -13,7 +13,7 @@ export default function Footer() {
               <img 
                 src={logoImage} 
                 alt="Sportfolio Logo" 
-                className="h-8 w-auto"
+                className="h-10 w-auto"
               />
             </div>
             <p className="text-gray-400 mb-4">
