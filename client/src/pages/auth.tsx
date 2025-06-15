@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { authService } from "@/lib/auth";
-import { Trophy, Shield, User, Building, Briefcase, Dumbbell } from "lucide-react";
+import { Shield, User, Building, Briefcase, Dumbbell } from "lucide-react";
+import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -77,11 +78,12 @@ export default function Auth() {
       <div className="w-full max-w-md relative">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center space-x-2 mb-4">
-            <div className="w-12 h-12 gradient-saffron-green rounded-xl flex items-center justify-center">
-              <Trophy className="text-deep-blue" size={28} />
-            </div>
-            <span className="font-poppins font-bold text-3xl text-white">Sportfolio</span>
+          <div className="inline-flex items-center justify-center mb-4">
+            <img 
+              src={logoImage} 
+              alt="Sportfolio Logo" 
+              className="h-12 w-auto"
+            />
           </div>
           <div className="flex items-center justify-center">
             <span className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-sm rounded-full flex items-center">

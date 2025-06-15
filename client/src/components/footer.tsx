@@ -1,5 +1,5 @@
-import { Trophy } from "lucide-react";
 import { Link } from "wouter";
+import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -10,10 +10,11 @@ export default function Footer() {
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <div className="w-8 h-8 gradient-saffron-green rounded-lg flex items-center justify-center">
-                <Trophy className="text-deep-blue" size={20} />
-              </div>
-              <span className="font-poppins font-bold text-xl">Sportfolio</span>
+              <img 
+                src={logoImage} 
+                alt="Sportfolio Logo" 
+                className="h-8 w-auto"
+              />
             </div>
             <p className="text-gray-400 mb-4">
               Empowering the Indian sports ecosystem with blockchain-secured management tools.

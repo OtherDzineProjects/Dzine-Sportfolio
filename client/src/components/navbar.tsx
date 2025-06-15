@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { Trophy, Shield, Menu, X } from "lucide-react";
+import { Shield, Menu, X } from "lucide-react";
+import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
 
 export default function Navbar() {
   const [location] = useLocation();
@@ -13,11 +14,12 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-4">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 gradient-saffron-green rounded-lg flex items-center justify-center">
-                <Trophy className="text-deep-blue text-xl" size={24} />
-              </div>
-              <span className="font-poppins font-bold text-2xl text-gray-900">Sportfolio</span>
+            <Link href="/" className="flex items-center space-x-3">
+              <img 
+                src={logoImage} 
+                alt="Sportfolio Logo" 
+                className="h-10 w-auto"
+              />
             </Link>
             <div className="hidden md:flex items-center space-x-1">
               <span className="px-2 py-1 bg-blockchain-blue text-white text-xs rounded-full flex items-center">
