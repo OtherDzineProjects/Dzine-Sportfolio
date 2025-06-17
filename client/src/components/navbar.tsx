@@ -39,6 +39,9 @@ export default function Navbar() {
             <Link href="#community" className="text-gray-700 hover:text-saffron transition-colors">
               Community
             </Link>
+            <Link href="/admin" className="text-gray-700 hover:text-saffron transition-colors">
+              Admin
+            </Link>
             <div className="flex items-center space-x-2 text-sm">
               <span className="text-gray-500">EN</span>
               <button
