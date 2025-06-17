@@ -13,11 +13,66 @@ export const users = pgTable("users", {
   lastName: text("last_name").notNull(),
   phone: text("phone"),
   userType: text("user_type").notNull(), // athlete, coach, organization, facility_manager
+  approvalStatus: text("approval_status").default("pending"), // pending, approved, rejected, suspended
+  approvedBy: integer("approved_by"),
+  approvedAt: timestamp("approved_at"),
+  rejectionReason: text("rejection_reason"),
+  roleId: integer("role_id"),
   subscriptionTier: text("subscription_tier").default("basic"), // basic, pro, enterprise
   subscriptionStatus: text("subscription_status").default("inactive"), // active, inactive, trial
   subscriptionExpiry: timestamp("subscription_expires_at"),
   toolAccess: jsonb("tool_access").default({}), // {"facility": true, "fixtures": false, "scoring": true}
   blockchainWallet: text("blockchain_wallet"),
+  isActive: boolean("is_active").default(true),
+  lastLoginAt: timestamp("last_login_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Roles and permissions system
+export const roles = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  level: integer("level").notNull(), // 1=user, 2=moderator, 3=admin, 4=super_admin
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const permissions = pgTable("permissions", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  module: text("module").notNull(), // facility, fixtures, scoring, user_management, etc
+  action: text("action").notNull(), // create, read, update, delete, approve
+  isActive: boolean("is_active").default(true)
+});
+
+export const rolePermissions = pgTable("role_permissions", {
+  id: serial("id").primaryKey(),
+  roleId: integer("role_id").references(() => roles.id).notNull(),
+  permissionId: integer("permission_id").references(() => permissions.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const userApprovals = pgTable("user_approvals", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  requestType: text("request_type").notNull(), // registration, role_change, subscription_upgrade
+  requestData: jsonb("request_data"),
+  status: text("status").default("pending"), // pending, approved, rejected
+  reviewedBy: integer("reviewed_by"),
+  reviewedAt: timestamp("reviewed_at"),
+  reviewComments: text("review_comments"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const moduleConfigurations = pgTable("module_configurations", {
+  id: serial("id").primaryKey(),
+  moduleName: text("module_name").notNull().unique(),
+  isEnabled: boolean("is_enabled").default(true),
+  configuration: jsonb("configuration").default({}),
+  requiredPermissions: jsonb("required_permissions").default([]),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });
@@ -229,6 +284,15 @@ export const revenueRecords = pgTable("revenue_records", {
 
 // Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
+  role: one(roles, {
+    fields: [users.roleId],
+    references: [roles.id]
+  }),
+  approver: one(users, {
+    fields: [users.approvedBy],
+    references: [users.id]
+  }),
+  approvedUsers: many(users),
   athleteProfile: one(athleteProfiles, {
     fields: [users.id],
     references: [athleteProfiles.userId]
@@ -238,7 +302,40 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   organizedEvents: many(events),
   eventParticipations: many(eventParticipants),
   certificates: many(certificates),
-  maintenanceRequests: many(maintenanceRecords)
+  maintenanceRequests: many(maintenanceRecords),
+  approvalRequests: many(userApprovals),
+  reviewedApprovals: many(userApprovals)
+}));
+
+export const rolesRelations = relations(roles, ({ many }) => ({
+  users: many(users),
+  permissions: many(rolePermissions)
+}));
+
+export const permissionsRelations = relations(permissions, ({ many }) => ({
+  roles: many(rolePermissions)
+}));
+
+export const rolePermissionsRelations = relations(rolePermissions, ({ one }) => ({
+  role: one(roles, {
+    fields: [rolePermissions.roleId],
+    references: [roles.id]
+  }),
+  permission: one(permissions, {
+    fields: [rolePermissions.permissionId],
+    references: [permissions.id]
+  })
+}));
+
+export const userApprovalsRelations = relations(userApprovals, ({ one }) => ({
+  user: one(users, {
+    fields: [userApprovals.userId],
+    references: [users.id]
+  }),
+  reviewer: one(users, {
+    fields: [userApprovals.reviewedBy],
+    references: [users.id]
+  })
 }));
 
 export const athleteProfilesRelations = relations(athleteProfiles, ({ one }) => ({
@@ -347,6 +444,24 @@ export const insertFacilityBookingSchema = createInsertSchema(facilityBookings).
 export const insertCertificateSchema = createInsertSchema(certificates).omit({
   id: true,
   createdAt: true
+});
+
+export const insertRoleSchema = createInsertSchema(roles).omit({
+  id: true,
+  createdAt: true
+});
+
+export const insertPermissionSchema = createInsertSchema(permissions);
+
+export const insertUserApprovalSchema = createInsertSchema(userApprovals).omit({
+  id: true,
+  createdAt: true
+});
+
+export const insertModuleConfigurationSchema = createInsertSchema(moduleConfigurations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
 });
 
 // Types
