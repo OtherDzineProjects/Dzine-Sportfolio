@@ -78,14 +78,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const user = await storage.createUser({
         ...validatedData,
-        password: hashedPassword
+        password: hashedPassword,
+        approvalStatus: 'pending'
       });
 
-      const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '24h' });
-      
+      // Create approval request
+      await storage.createUserApproval({
+        userId: user.id,
+        requestType: 'registration',
+        requestData: {
+          userType: user.userType,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName
+        }
+      });
+
       res.json({ 
-        user: { ...user, password: undefined }, 
-        token 
+        message: "Registration successful. Your account is pending approval.", 
+        user: { ...user, password: undefined }
       });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
@@ -390,6 +401,191 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const revenue = await storage.getFacilityRevenue(facilityId, start, end);
       res.json(revenue);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // User Approval System API Routes
+  app.get("/api/admin/approvals", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const approvals = await storage.getPendingApprovals();
+      res.json(approvals);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/approvals/:id/approve", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const approvalId = parseInt(req.params.id);
+      const { comments } = req.body;
+      
+      const approval = await storage.approveUserRequest(approvalId, req.user.id, comments);
+      
+      // Update user status
+      await storage.updateUserApprovalStatus(approval.userId, "approved", req.user.id);
+      
+      res.json({ message: "User approved successfully", approval });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/approvals/:id/reject", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const approvalId = parseInt(req.params.id);
+      const { reason } = req.body;
+      
+      if (!reason) {
+        return res.status(400).json({ message: "Rejection reason is required" });
+      }
+      
+      const approval = await storage.rejectUserRequest(approvalId, req.user.id, reason);
+      
+      // Update user status
+      await storage.updateUserApprovalStatus(approval.userId, "rejected", req.user.id, reason);
+      
+      res.json({ message: "User rejected successfully", approval });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/admin/users", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const users = await storage.getUsers();
+      res.json(users.map(user => ({ ...user, password: undefined })));
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.patch("/api/admin/users/:id/status", authenticateToken, requireAdmin, async (req: any, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const { status, reason } = req.body;
+      
+      const user = await storage.updateUserApprovalStatus(userId, status, req.user.id, reason);
+      res.json({ ...user, password: undefined });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Role Management API Routes
+  app.get("/api/admin/roles", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const roles = await storage.getRoles();
+      res.json(roles);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/roles", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const validatedData = insertRoleSchema.parse(req.body);
+      const role = await storage.createRole(validatedData);
+      res.json(role);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/admin/permissions", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const permissions = await storage.getPermissions();
+      res.json(permissions);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/permissions", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const validatedData = insertPermissionSchema.parse(req.body);
+      const permission = await storage.createPermission(validatedData);
+      res.json(permission);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/roles/:roleId/permissions/:permissionId", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const roleId = parseInt(req.params.roleId);
+      const permissionId = parseInt(req.params.permissionId);
+      
+      const rolePermission = await storage.assignRolePermission(roleId, permissionId);
+      res.json(rolePermission);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.delete("/api/admin/roles/:roleId/permissions/:permissionId", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const roleId = parseInt(req.params.roleId);
+      const permissionId = parseInt(req.params.permissionId);
+      
+      await storage.removeRolePermission(roleId, permissionId);
+      res.json({ message: "Permission removed from role" });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/users/:userId/role", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const { roleId } = req.body;
+      
+      const user = await storage.assignUserRole(userId, roleId);
+      res.json({ ...user, password: undefined });
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Module Configuration API Routes
+  app.get("/api/admin/modules", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const modules = await storage.getModuleConfigs();
+      res.json(modules);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post("/api/admin/modules/:moduleName/toggle", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const { moduleName } = req.params;
+      const { isEnabled } = req.body;
+      
+      const module = await storage.toggleModule(moduleName, isEnabled);
+      res.json(module);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/user/permissions", authenticateToken, async (req: any, res) => {
+    try {
+      const permissions = await storage.getUserPermissions(req.user.id);
+      res.json(permissions);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get("/api/user/approval-status", authenticateToken, async (req: any, res) => {
+    try {
+      const approvals = await storage.getUserApprovals(req.user.id);
+      res.json({
+        status: req.user.approvalStatus,
+        approvals
+      });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
