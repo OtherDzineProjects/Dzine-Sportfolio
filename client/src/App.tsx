@@ -11,6 +11,7 @@ import FixturesManagement from "@/pages/fixtures-management";
 import LiveScoring from "@/pages/live-scoring";
 import AthleteProfile from "@/pages/athlete-profile";
 import Facilities from "@/pages/facilities";
+import AdminDashboard from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/live-scoring" component={LiveScoring} />
       <Route path="/athlete-profile" component={AthleteProfile} />
       <Route path="/facilities" component={Facilities} />
+      <Route path="/admin" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
