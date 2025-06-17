@@ -42,14 +42,21 @@ export default function Auth() {
       const response = await apiRequest("POST", endpoint, formData);
       const data = await response.json();
 
-      authService.setAuth(data.user, data.token);
-      
-      toast({
-        title: isLogin ? "Welcome back!" : "Account created successfully!",
-        description: isLogin ? "You have been signed in." : "Your account has been created and you are now signed in.",
-      });
-
-      setLocation("/dashboard");
+      if (isLogin) {
+        authService.setAuth(data.user, data.token);
+        toast({
+          title: "Welcome back!",
+          description: "You have been signed in.",
+        });
+        setLocation("/dashboard");
+      } else {
+        // Registration - no auto-login due to approval requirement
+        toast({
+          title: "Registration Submitted!",
+          description: data.message || "Your account is pending approval. You'll be notified once approved.",
+        });
+        setIsLogin(true); // Switch to login form
+      }
     } catch (error: any) {
       toast({
         title: "Authentication failed",
