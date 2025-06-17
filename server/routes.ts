@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, insertAthleteProfileSchema, insertFacilityBookingSchema, insertEventSchema } from "@shared/schema";
+import { insertUserSchema, insertAthleteProfileSchema, insertFacilityBookingSchema, insertEventSchema, insertUserApprovalSchema, insertRoleSchema, insertPermissionSchema } from "@shared/schema";
 import { z } from "zod";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -20,10 +20,45 @@ const authenticateToken = async (req: any, res: any, next: any) => {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as any;
     req.user = await storage.getUser(decoded.userId);
+    if (!req.user || req.user.approvalStatus !== 'approved' || !req.user.isActive) {
+      return res.status(403).json({ message: "Account not approved or inactive" });
+    }
     next();
   } catch (err) {
     return res.sendStatus(403);
   }
+};
+
+// Middleware to check user permissions
+const requirePermission = (module: string, action: string) => {
+  return async (req: any, res: any, next: any) => {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    
+    const hasPermission = await storage.checkUserPermission(req.user.id, module, action);
+    if (!hasPermission) {
+      return res.status(403).json({ message: "Insufficient permissions" });
+    }
+    
+    next();
+  };
+};
+
+// Middleware for admin-only routes
+const requireAdmin = async (req: any, res: any, next: any) => {
+  if (!req.user) {
+    return res.sendStatus(401);
+  }
+  
+  const user = await storage.getUser(req.user.id);
+  const role = user?.roleId ? await storage.getRole(user.roleId) : null;
+  
+  if (!role || role.level < 3) { // Admin level 3 or higher
+    return res.status(403).json({ message: "Admin access required" });
+  }
+  
+  next();
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {

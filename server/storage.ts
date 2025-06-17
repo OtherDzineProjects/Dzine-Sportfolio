@@ -11,6 +11,11 @@ import {
   sportsCategories,
   maintenanceRecords,
   revenueRecords,
+  roles,
+  permissions,
+  rolePermissions,
+  userApprovals,
+  moduleConfigurations,
   type User, 
   type InsertUser,
   type AthleteProfile,
@@ -29,7 +34,16 @@ import {
   type Match,
   type EventParticipant,
   type MaintenanceRecord,
-  type RevenueRecord
+  type RevenueRecord,
+  type Role,
+  type InsertRole,
+  type Permission,
+  type InsertPermission,
+  type RolePermission,
+  type UserApproval,
+  type InsertUserApproval,
+  type ModuleConfiguration,
+  type InsertModuleConfiguration
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte, lte, desc, asc } from "drizzle-orm";
@@ -96,6 +110,40 @@ export interface IStorage {
   // Revenue analytics
   createRevenueRecord(record: Partial<RevenueRecord>): Promise<RevenueRecord>;
   getFacilityRevenue(facilityId: number, startDate?: Date, endDate?: Date): Promise<RevenueRecord[]>;
+  
+  // User approval system
+  createUserApproval(approval: InsertUserApproval): Promise<UserApproval>;
+  getPendingApprovals(reviewerId?: number): Promise<UserApproval[]>;
+  getUserApprovals(userId: number): Promise<UserApproval[]>;
+  approveUserRequest(approvalId: number, reviewerId: number, comments?: string): Promise<UserApproval>;
+  rejectUserRequest(approvalId: number, reviewerId: number, reason: string): Promise<UserApproval>;
+  updateUserApprovalStatus(userId: number, status: string, approvedBy?: number, reason?: string): Promise<User>;
+  
+  // Role and permission management
+  createRole(role: InsertRole): Promise<Role>;
+  getRoles(): Promise<Role[]>;
+  getRole(id: number): Promise<Role | undefined>;
+  updateRole(id: number, updates: Partial<Role>): Promise<Role>;
+  deleteRole(id: number): Promise<void>;
+  
+  createPermission(permission: InsertPermission): Promise<Permission>;
+  getPermissions(): Promise<Permission[]>;
+  getPermissionsByModule(module: string): Promise<Permission[]>;
+  
+  assignRolePermission(roleId: number, permissionId: number): Promise<RolePermission>;
+  removeRolePermission(roleId: number, permissionId: number): Promise<void>;
+  getRolePermissions(roleId: number): Promise<Permission[]>;
+  
+  assignUserRole(userId: number, roleId: number): Promise<User>;
+  getUserPermissions(userId: number): Promise<Permission[]>;
+  checkUserPermission(userId: number, module: string, action: string): Promise<boolean>;
+  
+  // Module configuration
+  createModuleConfig(config: InsertModuleConfiguration): Promise<ModuleConfiguration>;
+  getModuleConfigs(): Promise<ModuleConfiguration[]>;
+  getModuleConfig(moduleName: string): Promise<ModuleConfiguration | undefined>;
+  updateModuleConfig(moduleName: string, updates: Partial<ModuleConfiguration>): Promise<ModuleConfiguration>;
+  toggleModule(moduleName: string, isEnabled: boolean): Promise<ModuleConfiguration>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -415,6 +463,246 @@ export class DatabaseStorage implements IStorage {
     }
 
     return await query.orderBy(desc(revenueRecords.transactionDate));
+  }
+
+  // User approval system implementation
+  async createUserApproval(approval: InsertUserApproval): Promise<UserApproval> {
+    const [created] = await db
+      .insert(userApprovals)
+      .values(approval)
+      .returning();
+    return created;
+  }
+
+  async getPendingApprovals(reviewerId?: number): Promise<UserApproval[]> {
+    let query = db
+      .select()
+      .from(userApprovals)
+      .where(eq(userApprovals.status, "pending"));
+    
+    if (reviewerId) {
+      query = query.where(
+        and(
+          eq(userApprovals.status, "pending"),
+          eq(userApprovals.reviewedBy, reviewerId)
+        )
+      );
+    }
+    
+    return await query.orderBy(desc(userApprovals.createdAt));
+  }
+
+  async getUserApprovals(userId: number): Promise<UserApproval[]> {
+    return await db
+      .select()
+      .from(userApprovals)
+      .where(eq(userApprovals.userId, userId))
+      .orderBy(desc(userApprovals.createdAt));
+  }
+
+  async approveUserRequest(approvalId: number, reviewerId: number, comments?: string): Promise<UserApproval> {
+    const [updated] = await db
+      .update(userApprovals)
+      .set({
+        status: "approved",
+        reviewedBy: reviewerId,
+        reviewedAt: new Date(),
+        reviewComments: comments
+      })
+      .where(eq(userApprovals.id, approvalId))
+      .returning();
+    return updated;
+  }
+
+  async rejectUserRequest(approvalId: number, reviewerId: number, reason: string): Promise<UserApproval> {
+    const [updated] = await db
+      .update(userApprovals)
+      .set({
+        status: "rejected",
+        reviewedBy: reviewerId,
+        reviewedAt: new Date(),
+        reviewComments: reason
+      })
+      .where(eq(userApprovals.id, approvalId))
+      .returning();
+    return updated;
+  }
+
+  async updateUserApprovalStatus(userId: number, status: string, approvedBy?: number, reason?: string): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set({
+        approvalStatus: status,
+        approvedBy: approvedBy,
+        approvedAt: status === "approved" ? new Date() : undefined,
+        rejectionReason: reason,
+        updatedAt: new Date()
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
+  }
+
+  // Role and permission management implementation
+  async createRole(role: InsertRole): Promise<Role> {
+    const [created] = await db
+      .insert(roles)
+      .values(role)
+      .returning();
+    return created;
+  }
+
+  async getRoles(): Promise<Role[]> {
+    return await db
+      .select()
+      .from(roles)
+      .where(eq(roles.isActive, true))
+      .orderBy(asc(roles.level));
+  }
+
+  async getRole(id: number): Promise<Role | undefined> {
+    const [role] = await db
+      .select()
+      .from(roles)
+      .where(eq(roles.id, id));
+    return role || undefined;
+  }
+
+  async updateRole(id: number, updates: Partial<Role>): Promise<Role> {
+    const [updated] = await db
+      .update(roles)
+      .set(updates)
+      .where(eq(roles.id, id))
+      .returning();
+    return updated;
+  }
+
+  async deleteRole(id: number): Promise<void> {
+    await db
+      .update(roles)
+      .set({ isActive: false })
+      .where(eq(roles.id, id));
+  }
+
+  async createPermission(permission: InsertPermission): Promise<Permission> {
+    const [created] = await db
+      .insert(permissions)
+      .values(permission)
+      .returning();
+    return created;
+  }
+
+  async getPermissions(): Promise<Permission[]> {
+    return await db
+      .select()
+      .from(permissions)
+      .where(eq(permissions.isActive, true))
+      .orderBy(asc(permissions.module), asc(permissions.action));
+  }
+
+  async getPermissionsByModule(module: string): Promise<Permission[]> {
+    return await db
+      .select()
+      .from(permissions)
+      .where(
+        and(
+          eq(permissions.module, module),
+          eq(permissions.isActive, true)
+        )
+      )
+      .orderBy(asc(permissions.action));
+  }
+
+  async assignRolePermission(roleId: number, permissionId: number): Promise<RolePermission> {
+    const [created] = await db
+      .insert(rolePermissions)
+      .values({ roleId, permissionId })
+      .returning();
+    return created;
+  }
+
+  async removeRolePermission(roleId: number, permissionId: number): Promise<void> {
+    await db
+      .delete(rolePermissions)
+      .where(
+        and(
+          eq(rolePermissions.roleId, roleId),
+          eq(rolePermissions.permissionId, permissionId)
+        )
+      );
+  }
+
+  async getRolePermissions(roleId: number): Promise<Permission[]> {
+    const result = await db
+      .select()
+      .from(permissions)
+      .innerJoin(rolePermissions, eq(permissions.id, rolePermissions.permissionId))
+      .where(eq(rolePermissions.roleId, roleId));
+    
+    return result.map(row => row.permissions);
+  }
+
+  async assignUserRole(userId: number, roleId: number): Promise<User> {
+    const [updated] = await db
+      .update(users)
+      .set({ roleId, updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    return updated;
+  }
+
+  async getUserPermissions(userId: number): Promise<Permission[]> {
+    const user = await this.getUser(userId);
+    if (!user || !user.roleId) return [];
+    
+    return await this.getRolePermissions(user.roleId);
+  }
+
+  async checkUserPermission(userId: number, module: string, action: string): Promise<boolean> {
+    const permissions = await this.getUserPermissions(userId);
+    return permissions.some(p => p.module === module && p.action === action);
+  }
+
+  // Module configuration implementation
+  async createModuleConfig(config: InsertModuleConfiguration): Promise<ModuleConfiguration> {
+    const [created] = await db
+      .insert(moduleConfigurations)
+      .values(config)
+      .returning();
+    return created;
+  }
+
+  async getModuleConfigs(): Promise<ModuleConfiguration[]> {
+    return await db
+      .select()
+      .from(moduleConfigurations)
+      .orderBy(asc(moduleConfigurations.moduleName));
+  }
+
+  async getModuleConfig(moduleName: string): Promise<ModuleConfiguration | undefined> {
+    const [config] = await db
+      .select()
+      .from(moduleConfigurations)
+      .where(eq(moduleConfigurations.moduleName, moduleName));
+    return config || undefined;
+  }
+
+  async updateModuleConfig(moduleName: string, updates: Partial<ModuleConfiguration>): Promise<ModuleConfiguration> {
+    const [updated] = await db
+      .update(moduleConfigurations)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(moduleConfigurations.moduleName, moduleName))
+      .returning();
+    return updated;
+  }
+
+  async toggleModule(moduleName: string, isEnabled: boolean): Promise<ModuleConfiguration> {
+    const [updated] = await db
+      .update(moduleConfigurations)
+      .set({ isEnabled, updatedAt: new Date() })
+      .where(eq(moduleConfigurations.moduleName, moduleName))
+      .returning();
+    return updated;
   }
 }
 

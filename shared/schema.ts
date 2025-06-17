@@ -491,3 +491,17 @@ export type Match = typeof matches.$inferSelect;
 export type EventParticipant = typeof eventParticipants.$inferSelect;
 export type MaintenanceRecord = typeof maintenanceRecords.$inferSelect;
 export type RevenueRecord = typeof revenueRecords.$inferSelect;
+
+export type Role = typeof roles.$inferSelect;
+export type InsertRole = z.infer<typeof insertRoleSchema>;
+
+export type Permission = typeof permissions.$inferSelect;
+export type InsertPermission = z.infer<typeof insertPermissionSchema>;
+
+export type RolePermission = typeof rolePermissions.$inferSelect;
+
+export type UserApproval = typeof userApprovals.$inferSelect;
+export type InsertUserApproval = z.infer<typeof insertUserApprovalSchema>;
+
+export type ModuleConfiguration = typeof moduleConfigurations.$inferSelect;
+export type InsertModuleConfiguration = z.infer<typeof insertModuleConfigurationSchema>;
