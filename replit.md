@@ -121,8 +121,16 @@ Sportfolio is a comprehensive sports management platform designed for the Indian
 - **Assets**: Static file serving can be offloaded to CDN
 - **API**: RESTful design supports load balancing
 
+## Recent Changes
+- June 29, 2025: Integrated complete backend architecture from sportfolio-backend ZIP
+- Added comprehensive backend modules: routes, services, SQL, and common utilities
+- Updated CORS configuration with specific Replit domain allowedOrigins
+- Installed all required Node.js dependencies for full backend functionality
+- Removed duplicate globalConstants files and consolidated configuration
+
 ## Changelog
-- June 29, 2025. Initial setup
+- June 29, 2025. Initial setup with approval system and role-based access control
+- June 29, 2025. Backend integration and CORS configuration completed
 
 ## User Preferences
 
