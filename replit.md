@@ -1,0 +1,129 @@
+# Sportfolio - Sports Management Platform
+
+## Overview
+
+Sportfolio is a comprehensive sports management platform designed for the Indian sports ecosystem. It connects athletes, coaches, facilities, and organizations through a blockchain-secured platform that handles user registration with approval workflows, facility management, event scheduling, live scoring, and certificate verification.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React 18 with TypeScript
+- **Routing**: Wouter for client-side routing
+- **State Management**: TanStack Query for server state management
+- **UI Components**: Radix UI primitives with shadcn/ui component library
+- **Styling**: Tailwind CSS with CSS custom properties for theming
+- **Build Tool**: Vite with React plugin
+
+### Backend Architecture
+- **Runtime**: Node.js with Express.js server
+- **Language**: TypeScript with ES modules
+- **Authentication**: JWT-based authentication with bcryptjs for password hashing
+- **Session Management**: Session-based authentication with stored tokens
+- **API Design**: RESTful API endpoints under `/api` prefix
+
+### Database Architecture
+- **ORM**: Drizzle ORM with PostgreSQL dialect
+- **Database**: PostgreSQL (configured for Neon serverless)
+- **Migrations**: Drizzle Kit for schema management
+- **Connection**: Connection pooling with @neondatabase/serverless
+
+## Key Components
+
+### User Management & Approval System
+- **Registration Flow**: All new users require admin approval before accessing the platform
+- **Role-Based Access Control**: Hierarchical permission system with roles (Super Admin, Admin, Moderator, Facility Manager, User)
+- **User Types**: Athletes, Coaches, Organizations, Facility Managers
+- **Approval Workflow**: Pending → Approved/Rejected status with admin oversight
+
+### Authentication & Authorization
+- **JWT Token Authentication**: Secure token-based authentication
+- **Permission System**: Module-based permissions (user, facility, fixtures, scoring)
+- **Middleware Protection**: Route-level authentication and permission checks
+- **Session Persistence**: Local storage for client-side auth state
+
+### Subscription Management
+- **Tiered Access**: Basic, Pro, Enterprise subscription levels
+- **Feature Gating**: Tool access based on subscription tier
+- **Tool Access Control**: Facility management, fixtures, scoring tools require Pro+
+
+### Blockchain Integration
+- **Certificate Verification**: Mock blockchain service for achievement certificates
+- **Immutable Records**: Blockchain-secured achievement tracking
+- **Hash Generation**: Certificate verification through blockchain hashes
+
+## Data Flow
+
+### User Registration & Approval
+1. User submits registration form with user type selection
+2. System creates pending approval record
+3. Admin reviews and approves/rejects registration
+4. Approved users gain access to platform features
+5. Role-based permissions control feature access
+
+### Facility Management
+1. Facility managers create and manage sports facilities
+2. Users browse available facilities by location and sport
+3. Booking system handles facility reservations
+4. Maintenance and revenue tracking for facility operators
+
+### Event & Fixture Management
+1. Organizations create sports events and tournaments
+2. Athletes register for events and competitions
+3. Fixture scheduling and match management
+4. Live scoring system for real-time match updates
+
+### Certificate System
+1. Achievements trigger certificate generation
+2. Blockchain hash verification for authenticity
+3. Immutable record storage for credential verification
+4. Public verification of sports achievements
+
+## External Dependencies
+
+### Core Dependencies
+- **Database**: @neondatabase/serverless for PostgreSQL connectivity
+- **Authentication**: bcryptjs for password hashing, jsonwebtoken for JWT
+- **ORM**: drizzle-orm with drizzle-kit for database management
+- **UI Framework**: React with @radix-ui components and tailwindcss
+- **State Management**: @tanstack/react-query for server state
+- **Form Handling**: react-hook-form with @hookform/resolvers
+- **Date Handling**: date-fns for date manipulation
+- **Validation**: zod for schema validation
+
+### Development Dependencies
+- **Build Tools**: Vite, esbuild for production builds
+- **Type Checking**: TypeScript compiler
+- **Styling**: PostCSS with Tailwind CSS and autoprefixer
+
+## Deployment Strategy
+
+### Build Process
+- **Frontend Build**: Vite builds React application to `dist/public`
+- **Backend Build**: esbuild bundles server code to `dist/index.js`
+- **Database**: Drizzle Kit handles schema migrations
+
+### Environment Configuration
+- **Database**: Requires DATABASE_URL environment variable
+- **JWT**: Configurable JWT_SECRET for token signing
+- **Development**: NODE_ENV=development for development mode
+- **Production**: NODE_ENV=production for production deployment
+
+### Startup Sequence
+1. Database connection validation
+2. Schema migration and seed data initialization
+3. Express server setup with middleware
+4. Route registration and error handling
+5. Static file serving for production builds
+
+### Scaling Considerations
+- **Database**: PostgreSQL with connection pooling
+- **Authentication**: Stateless JWT tokens for horizontal scaling
+- **Assets**: Static file serving can be offloaded to CDN
+- **API**: RESTful design supports load balancing
+
+## Changelog
+- June 29, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
