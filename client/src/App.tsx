@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
+import DashboardModern from "@/pages/dashboard-modern";
 import Auth from "@/pages/auth";
 import AuthModern from "@/pages/auth-modern";
 import FacilityManagement from "@/pages/facility-management";
@@ -20,7 +21,9 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/auth" component={Auth} />
+      <Route path="/auth-modern" component={AuthModern} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/dashboard-modern" component={DashboardModern} />
       <Route path="/facility-management" component={FacilityManagement} />
       <Route path="/fixtures-management" component={FixturesManagement} />
       <Route path="/live-scoring" component={LiveScoring} />

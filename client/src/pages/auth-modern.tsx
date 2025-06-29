@@ -41,7 +41,7 @@ export default function AuthModern() {
       const result = await apiRequest("POST", "/api/auth/login", data);
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       localStorage.setItem("authToken", data.token);
       
       toast({
