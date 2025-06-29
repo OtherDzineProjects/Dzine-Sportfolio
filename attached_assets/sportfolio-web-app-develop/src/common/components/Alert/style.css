@@ -1,0 +1,53 @@
+.custom-alert {
+  border-radius: 10px;
+  margin-bottom: 5px;
+}
+
+.custom-alert[data-status="error"] svg path {
+  fill: rgba(255, 36, 87, 1);
+}
+
+.custom-alert[data-status="success"] svg path {
+  fill: rgba(42, 63, 248, 1);
+}
+
+.custom-alert[data-status="error"] {
+  background: rgba(255, 36, 87, 0.2);
+}
+
+.custom-alert[data-status="success"] {
+  background: rgba(42, 63, 248, 0.2);
+}
+
+.status-card-image {
+  height: 100px;
+  margin: 20px auto;
+  border-radius: 100px;
+  background: rgb(241 245 249);
+}
+.status-card {
+  height: 100px;
+}
+.status-card-container {
+  bottom: -1.25rem;
+  width: 100%;
+}
+
+button.alert-button {
+  min-height: 0rem;
+  height: 2.5rem;
+  padding-inline: 2rem;
+  border-radius: 0.625rem;
+  text-transform: capitalize;
+}
+
+p.alert-message-text {
+  color: #455a64;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 16.94px;
+  text-align: center;
+  text-wrap: balance;
+  margin-inline: 0.75rem;
+  white-space: pre-wrap;
+}

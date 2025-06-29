@@ -1,0 +1,31 @@
+nav.header-nav ul{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+nav.header-nav ul li a{
+    padding: 5px;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+nav.header-nav ul li button{
+    font-weight: 400;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0)
+}
+
+nav.header-nav ul li:hover button{
+    background: rgba(255, 255, 255, 0)
+}
+
+nav.header-nav ul li button{
+    background: rgba(255, 255, 255, 0)
+}
+
+
+nav.header-nav ul li button.have-bg-border{
+    border: 0px solid #2A3FF8;
+    /* background: rgba(255, 255, 255, 0.1) */
+}

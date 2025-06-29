@@ -1,0 +1,78 @@
+.header {
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  height: 90px;
+}
+.org-header {
+  height: 100px;
+}
+.org-header-container {
+  bottom: -20px;
+  color: #fff;
+}
+.profile-circle .verified {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+.profile-picture {
+  object-fit: cover;
+}
+
+.loading-image {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  border: 2px solid #078dee;
+  border-color: transparent #078dee transparent #078dee;
+  border-radius: 50%;
+  animation: loader 1s linear infinite;
+}
+
+@keyframes loader {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+.profile-circle:hover .profile-picture__content {
+  opacity: 1;
+}
+
+.profile-circle:hover .profile-picture,
+.loading-state {
+  opacity: 0.5;
+}
+
+.profile-picture__content {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  opacity: 0;
+  transition: all 0.35s ease-in-out;
+}
+
+.search-icon-button {
+  border: 1px solid #dadada;
+}
+
+.membership-pending-btn {
+  display: flex !important;
+  align-items: center;
+  gap: 1rem;
+  border: 2px solid #e2b900;
+}

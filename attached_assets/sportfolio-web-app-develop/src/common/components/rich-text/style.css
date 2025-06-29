@@ -1,0 +1,123 @@
+/* Basic editor styles */
+.ProseMirror {
+  padding: 4px 8px;
+}
+
+.ProseMirror > * + * {
+  margin-top: 0.75em;
+}
+
+.ProseMirror figure {
+  margin: 0;
+}
+
+.ProseMirror figure img {
+  max-width: 100%;
+  height: auto;
+}
+
+.ProseMirror .ProseMirror-selectednode img {
+  outline: 3px solid blue;
+}
+
+.handle-drag {
+  width: 100px;
+  display: block;
+  height: 7px;
+  margin: auto;
+  background: #e7eff5;
+  border-radius: 10px;
+}
+
+.input-rich-container.rich-editor .tiptap.ProseMirror ul {
+  padding-left: 30px;
+}
+
+.input-rich-container.rich-editor .tiptap.ProseMirror ul li {
+  padding: 0px !important;
+}
+
+.tool-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem;
+}
+
+.input-field-container {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  position: relative;
+}
+
+.input-field-container .tiptap {
+  padding: 1.25rem;
+  min-height: 15rem;
+}
+
+.input-field-container.focus {
+  border: 1px solid rgb(7, 141, 238);
+  outline: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.input-field-container.error {
+  border: 1px solid #ff2457;
+  outline: none;
+}
+
+.ProseMirror:focus {
+  outline: none;
+}
+
+.input-field-container legend.rich-label {
+  margin-left: 20px;
+  font-size: 14px;
+  position: absolute;
+  top: -10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.input-field-container legend.rich-label .star {
+  padding-inline: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ff2457;
+}
+
+button.rich-text-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button.rich-text-button.is-active,
+button.rich-text-option.is-active {
+  background-color: #000;
+  color: #fff;
+}
+
+.rich-text-viewer {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editor__content table td,
+.editor__content table th {
+  min-width: 1em;
+  border: 2px solid #ddd;
+  padding: 3px 5px;
+  vertical-align: top;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.input-rich-container .error-text {
+  text-align: right;
+  right: 0;
+  color: #ff2457;
+  font-size: 12px;
+}

@@ -1,0 +1,11 @@
+{
+  "extends": "next/core-web-vitals",
+  "plugins": [
+     "react"
+  ],
+  "rules": {
+    "no-unused-vars": "warn",
+    "no-undef": "warn",
+    "react/prop-types": 0
+}
+}

@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.chakra-modal__content{
+    border-radius: 20px;
+    overflow: hidden;
+}
+.chakra-modal__close-btn{
+    top: 18px !important;
+}
+.chakra-modal__header, .chakra-modal__footer{
+    background: rgb(241 245 249) !important;
+}
+.chakra-modal__body{
+    max-height: calc(100vh - 270px);
+    overflow-y: auto;
+}
+.box{
+    border: 1px solid #eee;
+    width: 100%;
+}

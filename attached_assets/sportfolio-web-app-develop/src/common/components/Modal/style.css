@@ -1,0 +1,20 @@
+.chakra-modal__header{
+    background: rgba(73 69 255, 0.08);
+    font-size: 18px;
+}
+.chakra-modal__close-btn{
+    top: 14px;
+}
+.chakra-modal__footer{
+    background: rgba(73 69 255, 0.08);
+}
+.chakra-modal__footer.center{
+   display: flex;
+   justify-content: center;
+}
+.chakra-modal__footer.end{
+    justify-content: end;
+ }
+ .chakra-modal__footer.start{
+    justify-content: start;
+ }

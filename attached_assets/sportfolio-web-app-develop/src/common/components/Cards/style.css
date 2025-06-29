@@ -1,0 +1,41 @@
+.org-card-image {
+  width: 100px;
+  height: 100px;
+  margin: 20px auto;
+  border-radius: 100px;
+  background: rgb(241 245 249);
+}
+.org-card {
+  height: 100px;
+}
+.org-card-container {
+  bottom: -20px;
+  color: #fff;
+}
+.profile-circle .verified {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+.view-profile-btn {
+  border: 0.5px solid #078dee;
+  font-weight: 400;
+}
+
+.notes-html {
+  white-space: pre-wrap;
+  font-weight: 600;
+  color: #242a2d;
+}
+.ProseMirror {
+  padding: 0.25rem 0rem;
+}
+
+.max-height-for-rich-text {
+  max-height: 3.5rem;
+}
+
+.max-height-for-rich-text-container {
+  max-height: 4rem;
+}

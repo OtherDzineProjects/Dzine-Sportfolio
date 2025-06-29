@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import Dashboard from "@/pages/dashboard";
 import Auth from "@/pages/auth";
+import AuthModern from "@/pages/auth-modern";
 import FacilityManagement from "@/pages/facility-management";
 import FixturesManagement from "@/pages/fixtures-management";
 import LiveScoring from "@/pages/live-scoring";

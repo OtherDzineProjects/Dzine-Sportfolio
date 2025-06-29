@@ -1,0 +1,2832 @@
+[
+    {
+        "id": 501001,
+        "code": "AFG",
+        "name": "Afghanistan",
+        "nameInLocal": "അഫ്ഗാനിസ്താന്‍",
+        "active": true,
+        "nationalityName": "Afghan",
+        "nationalityNameInLocal": "അഫ്ഗാൻ",
+        "countryCode": "93"
+    },
+    {
+        "id": 501002,
+        "code": "ALB",
+        "name": "Albania",
+        "nameInLocal": "അല്‍ബാനിയ",
+        "active": true,
+        "nationalityName": "Albanian",
+        "nationalityNameInLocal": "അൽബേനിയൻ",
+        "countryCode": "355"
+    },
+    {
+        "id": 501003,
+        "code": "DZA",
+        "name": "Algeria",
+        "nameInLocal": "അള്‍ജീരിയ",
+        "active": true,
+        "nationalityName": "Algerian",
+        "nationalityNameInLocal": "അൾജീരിയൻ",
+        "countryCode": "213"
+    },
+    {
+        "id": 501004,
+        "code": "AND",
+        "name": "Andorra",
+        "nameInLocal": "അന്‍ഡോറ",
+        "active": true,
+        "nationalityName": "Andorran",
+        "nationalityNameInLocal": "അൻഡോറൻ",
+        "countryCode": "376"
+    },
+    {
+        "id": 501005,
+        "code": "AGO",
+        "name": "Angola",
+        "nameInLocal": "അങ്കോള",
+        "active": true,
+        "nationalityName": "Angolan",
+        "nationalityNameInLocal": "അംഗോളൻ",
+        "countryCode": "244"
+    },
+    {
+        "id": 501006,
+        "code": "ATG",
+        "name": "Antigua and Barbuda",
+        "nameInLocal": "ആന്‍റിഗ്വ ആന്റ് ബര്‍ബുഡ",
+        "active": true,
+        "nationalityName": "Antiguan or Barbudan",
+        "nationalityNameInLocal": "ആന്റിഗ്വൻ / ബാർബുഡാൻ",
+        "countryCode": "1-268"
+    },
+    {
+        "id": 501007,
+        "code": "ARG",
+        "name": "Argentina",
+        "nameInLocal": "അര്‍ജെന്റീന",
+        "active": true,
+        "nationalityName": "Argentinean",
+        "nationalityNameInLocal": "അർജന്റീൻ",
+        "countryCode": "54"
+    },
+    {
+        "id": 501008,
+        "code": "ARM",
+        "name": "Armenia",
+        "nameInLocal": "അര്‍മേനിയ",
+        "active": true,
+        "nationalityName": "Armenian",
+        "nationalityNameInLocal": "അർമേനിയൻ",
+        "countryCode": "374"
+    },
+    {
+        "id": 501009,
+        "code": "AUS",
+        "name": "Australia",
+        "nameInLocal": "ആസ്ട്രേലിയ",
+        "active": true,
+        "nationalityName": "Australian",
+        "nationalityNameInLocal": "ഓസ്ട്രേലിയൻ",
+        "countryCode": "61"
+    },
+    {
+        "id": 501010,
+        "code": "AUT",
+        "name": "Austria",
+        "nameInLocal": "ആസ്ട്രിയ",
+        "active": true,
+        "nationalityName": "Austrian",
+        "nationalityNameInLocal": "ഓസ്ട്രിയൻ",
+        "countryCode": "43"
+    },
+    {
+        "id": 501011,
+        "code": "AZE",
+        "name": "Azerbaijan",
+        "nameInLocal": "അസര്‍ബൈജാന്‍",
+        "active": true,
+        "nationalityName": "Azerbaijani, Azeri",
+        "nationalityNameInLocal": "അസർബൈജാനി, അസെറി",
+        "countryCode": "994"
+    },
+    {
+        "id": 501012,
+        "code": "BHS",
+        "name": "Bahamas",
+        "nameInLocal": "ബഹമാസ്",
+        "active": true,
+        "nationalityName": "Bahamian",
+        "nationalityNameInLocal": "ബഹാമിയൻ",
+        "countryCode": "1-242"
+    },
+    {
+        "id": 501013,
+        "code": "BHR",
+        "name": "Bahrain",
+        "nameInLocal": "ബഹറൈന്‍",
+        "active": true,
+        "nationalityName": "Bahraini",
+        "nationalityNameInLocal": "ബഹ്‌റൈനി",
+        "countryCode": "973"
+    },
+    {
+        "id": 501014,
+        "code": "BGD",
+        "name": "Bangladesh",
+        "nameInLocal": "ബംഗ്ലാദേശ്",
+        "active": true,
+        "nationalityName": "Bangladeshi",
+        "nationalityNameInLocal": "ബംഗ്ലാദേശി",
+        "countryCode": "880"
+    },
+    {
+        "id": 501015,
+        "code": "BRB",
+        "name": "Barbados",
+        "nameInLocal": "ബര്‍ബഡോസ്",
+        "active": true,
+        "nationalityName": "Barbadian",
+        "nationalityNameInLocal": "ബാർബഡിയൻ",
+        "countryCode": "1-246"
+    },
+    {
+        "id": 501016,
+        "code": "BLR",
+        "name": "Belarus",
+        "nameInLocal": "ബെലാറസ്",
+        "active": true,
+        "nationalityName": "Belarusian",
+        "nationalityNameInLocal": "ബെലാറഷ്യൻ",
+        "countryCode": "375"
+    },
+    {
+        "id": 501017,
+        "code": "BEL",
+        "name": "Belgium",
+        "nameInLocal": "ബെല്‍ജിയം",
+        "active": true,
+        "nationalityName": "Belgian",
+        "nationalityNameInLocal": "ബെൽജിയൻ",
+        "countryCode": "32"
+    },
+    {
+        "id": 501018,
+        "code": "BLZ",
+        "name": "Belize",
+        "nameInLocal": "ബെലിസ്",
+        "active": true,
+        "nationalityName": "Belizean",
+        "nationalityNameInLocal": "ബെലീസിയൻ",
+        "countryCode": "501"
+    },
+    {
+        "id": 501019,
+        "code": "BEN",
+        "name": "Benin",
+        "nameInLocal": "ബെനിന്‍",
+        "active": true,
+        "nationalityName": "Beninese, Beninois",
+        "nationalityNameInLocal": "ബെനിനീസ്, ബെനിനോയിസ്",
+        "countryCode": "229"
+    },
+    {
+        "id": 501020,
+        "code": "BTN",
+        "name": "Bhutan",
+        "nameInLocal": "ഭൂട്ടാന്‍",
+        "active": true,
+        "nationalityName": "Bhutanese",
+        "nationalityNameInLocal": "ഭൂട്ടാനീസ്",
+        "countryCode": "975"
+    },
+    {
+        "id": 501021,
+        "code": "BOL",
+        "name": "Bolivia",
+        "nameInLocal": "ബൊളീവിയ",
+        "active": true,
+        "nationalityName": "Bolivian",
+        "nationalityNameInLocal": "ബൊളീവിയൻ",
+        "countryCode": "591"
+    },
+    {
+        "id": 501022,
+        "code": "BIH",
+        "name": "Bosnia and Herzegovina",
+        "nameInLocal": "ബോസ്നിയ ആന്റ് ഹെര്‍സെഗോവിന",
+        "active": true,
+        "nationalityName": "Bosnian or Herzegovinian",
+        "nationalityNameInLocal": "ബോസ്നിയൻ അല്ലെങ്കിൽ ഹെർസഗോവിനിയൻ",
+        "countryCode": "387"
+    },
+    {
+        "id": 501023,
+        "code": "BWA",
+        "name": "Botswana",
+        "nameInLocal": "ബോട്സ്വാന",
+        "active": true,
+        "nationalityName": "Motswana, Botswanan",
+        "nationalityNameInLocal": "മോട്സ്വാന, ബോട്സ്വാനൻ",
+        "countryCode": "267"
+    },
+    {
+        "id": 501024,
+        "code": "BRA",
+        "name": "Brazil",
+        "nameInLocal": "ബ്രസീല്‍",
+        "active": true,
+        "nationalityName": "Brazilian",
+        "nationalityNameInLocal": "ബ്രസീലിയൻ",
+        "countryCode": "55"
+    },
+    {
+        "id": 501025,
+        "code": "BRN",
+        "name": "Brunei Darussalam",
+        "nameInLocal": "ബ്രൂണൈ ദറുസ്സലാം",
+        "active": true,
+        "nationalityName": "Bruneian",
+        "nationalityNameInLocal": "ബ്രൂണിയൻ",
+        "countryCode": "673"
+    },
+    {
+        "id": 501026,
+        "code": "BGR",
+        "name": "Bulgaria",
+        "nameInLocal": "ബള്‍ഗേറിയ",
+        "active": true,
+        "nationalityName": "Bulgarian",
+        "nationalityNameInLocal": "ബൾഗേറിയൻ",
+        "countryCode": "359"
+    },
+    {
+        "id": 501027,
+        "code": "BFA",
+        "name": "Burkina Faso",
+        "nameInLocal": "ബര്‍ക്കിന ഫാസോ",
+        "active": true,
+        "nationalityName": "Burkinabe",
+        "nationalityNameInLocal": "ബുർക്കിനബെ",
+        "countryCode": "226"
+    },
+    {
+        "id": 501028,
+        "code": "BDI",
+        "name": "Burundi",
+        "nameInLocal": "ബുറുണ്ടി",
+        "active": true,
+        "nationalityName": "Burundian",
+        "nationalityNameInLocal": "ബുറുണ്ടിയൻ",
+        "countryCode": "257"
+    },
+    {
+        "id": 501029,
+        "code": "KHM",
+        "name": "Cambodia",
+        "nameInLocal": "കംബോഡിയ",
+        "active": true,
+        "nationalityName": "Cambodian",
+        "nationalityNameInLocal": "കംബോഡിയൻ",
+        "countryCode": "855"
+    },
+    {
+        "id": 501030,
+        "code": "CMR",
+        "name": "Cameroon",
+        "nameInLocal": "കാമറൂണ്‍",
+        "active": true,
+        "nationalityName": "Cameroonian",
+        "nationalityNameInLocal": "കാമറൂണിയൻ",
+        "countryCode": "237"
+    },
+    {
+        "id": 501031,
+        "code": "CAN",
+        "name": "Canada",
+        "nameInLocal": "കാനഡ",
+        "active": true,
+        "nationalityName": "Canadian",
+        "nationalityNameInLocal": "കനേഡിയൻ",
+        "countryCode": "1"
+    },
+    {
+        "id": 501032,
+        "code": "CPV",
+        "name": "Cape Verde",
+        "nameInLocal": "കേപ്പ് വെര്‍ഡ്",
+        "active": true,
+        "nationalityName": "Cape Verdean",
+        "nationalityNameInLocal": "കേപ് വെർഡീൻ",
+        "countryCode": "238"
+    },
+    {
+        "id": 501033,
+        "code": "CAF",
+        "name": "Central African Republic",
+        "nameInLocal": "സെന്‍ട്രല്‍ ആഫ്രിക്കന്‍ റിപ്പബ്ലിക്",
+        "active": true,
+        "nationalityName": "Central African",
+        "nationalityNameInLocal": "മധ്യ ആഫ്രിക്കൻ",
+        "countryCode": "236"
+    },
+    {
+        "id": 501034,
+        "code": "TCD",
+        "name": "Chad",
+        "nameInLocal": "ചാട്",
+        "active": true,
+        "nationalityName": "Chadian",
+        "nationalityNameInLocal": "ചാഡിയൻ",
+        "countryCode": "235"
+    },
+    {
+        "id": 501035,
+        "code": "CHL",
+        "name": "Chile",
+        "nameInLocal": "ചിലി",
+        "active": true,
+        "nationalityName": "Chilean",
+        "nationalityNameInLocal": "ചിലിയൻ",
+        "countryCode": "56"
+    },
+    {
+        "id": 501036,
+        "code": "CHN",
+        "name": "China",
+        "nameInLocal": "ചൈന",
+        "active": true,
+        "nationalityName": "Chinese",
+        "nationalityNameInLocal": "ചൈനീസ്",
+        "countryCode": "86"
+    },
+    {
+        "id": 501037,
+        "code": "COL",
+        "name": "Colombia",
+        "nameInLocal": "കൊളംബിയ",
+        "active": true,
+        "nationalityName": "Colombian",
+        "nationalityNameInLocal": "കൊളംബിയൻ",
+        "countryCode": "57"
+    },
+    {
+        "id": 501038,
+        "code": "COM",
+        "name": "Comoros",
+        "nameInLocal": "കോമോറോസ്",
+        "active": true,
+        "nationalityName": "Comoran, Comorian",
+        "nationalityNameInLocal": "കൊമോറൻ, കൊമോറിയൻ",
+        "countryCode": "269"
+    },
+    {
+        "id": 501039,
+        "code": "COG",
+        "name": "Congo",
+        "nameInLocal": "കോംഗോ",
+        "active": true,
+        "nationalityName": "Congolese",
+        "nationalityNameInLocal": "കോംഗൊളീസ്",
+        "countryCode": "242"
+    },
+    {
+        "id": 501040,
+        "code": "CRI",
+        "name": "Costa Rica",
+        "nameInLocal": "കോസ്റ്റ റിക്ക",
+        "active": true,
+        "nationalityName": "Costa Rican",
+        "nationalityNameInLocal": "കോസ്റ്റാറിക്കൻ",
+        "countryCode": "506"
+    },
+    {
+        "id": 501041,
+        "code": "CIV",
+        "name": "Cote d\"Ivoire",
+        "nameInLocal": "കോട്ട് ഡില്‍വോയര്‍",
+        "active": true,
+        "nationalityName": "Ivorian",
+        "nationalityNameInLocal": "ഇവോറിയൻ",
+        "countryCode": "225"
+    },
+    {
+        "id": 501042,
+        "code": "HRV",
+        "name": "Croatia",
+        "nameInLocal": "ക്രൊയേഷ്യ",
+        "active": true,
+        "nationalityName": "Croatian",
+        "nationalityNameInLocal": "ക്രൊയേഷ്യൻ",
+        "countryCode": "385"
+    },
+    {
+        "id": 501043,
+        "code": "CUB",
+        "name": "Cuba",
+        "nameInLocal": "ക്യൂബ",
+        "active": true,
+        "nationalityName": "Cuban",
+        "nationalityNameInLocal": "ക്യൂബൻ",
+        "countryCode": "53"
+    },
+    {
+        "id": 501044,
+        "code": "CYP",
+        "name": "Cyprus",
+        "nameInLocal": "സൈപ്രസ്",
+        "active": true,
+        "nationalityName": "Cypriot",
+        "nationalityNameInLocal": "സൈപ്രിയറ്റ്",
+        "countryCode": "357"
+    },
+    {
+        "id": 501045,
+        "code": "CZE",
+        "name": "Czech Republic",
+        "nameInLocal": "ചെക്ക് റിപ്പബ്ലിക്",
+        "active": true,
+        "nationalityName": "Czech",
+        "nationalityNameInLocal": "ചെക്ക്",
+        "countryCode": "420"
+    },
+    {
+        "id": 501046,
+        "code": "PRK",
+        "name": "Democratic People\"s Republic of Korea",
+        "nameInLocal": "ഡെമോക്രറ്റിക് പീപ്പിള്‍സ് റിപ്പബ്ലിക് ഓഫ് കൊറിയ",
+        "active": false,
+        "nationalityName": "North Korean",
+        "nationalityNameInLocal": "ഉത്തര കൊറിയൻ",
+        "countryCode": "850"
+    },
+    {
+        "id": 501047,
+        "code": "COD",
+        "name": "Democratic Republic of the Congo",
+        "nameInLocal": "ഡെമോക്രറ്റിക് റിപ്പബ്ലിക് ഓഫ് ദി കോംഗോ",
+        "active": false,
+        "nationalityName": "Congolese",
+        "nationalityNameInLocal": "കോംഗൊളീസ്",
+        "countryCode": "243"
+    },
+    {
+        "id": 501048,
+        "code": "DNK",
+        "name": "Denmark",
+        "nameInLocal": "ഡെന്‍മാര്‍ക്ക്",
+        "active": true,
+        "nationalityName": "Danish",
+        "nationalityNameInLocal": "ഡാനിഷ്",
+        "countryCode": "45"
+    },
+    {
+        "id": 501049,
+        "code": "DJI",
+        "name": "Djibouti",
+        "nameInLocal": "ഡിബോട്ടി",
+        "active": true,
+        "nationalityName": "Djibouti",
+        "nationalityNameInLocal": "ജിബൂട്ടി",
+        "countryCode": "253"
+    },
+    {
+        "id": 501050,
+        "code": "DMA",
+        "name": "Dominica",
+        "nameInLocal": "ഡൊമിനിക്ക",
+        "active": true,
+        "nationalityName": "Dominican",
+        "nationalityNameInLocal": "ഡൊമിനിക്കൻ",
+        "countryCode": "1-767"
+    },
+    {
+        "id": 501051,
+        "code": "DOM",
+        "name": "Dominican Republic",
+        "nameInLocal": "ഡൊമിനിക്കന്‍ റിപ്പബ്ലിക്",
+        "active": true,
+        "nationalityName": "Dominican",
+        "nationalityNameInLocal": "ഡൊമിനിക്കൻ",
+        "countryCode": "1-809, 1-829, 1-849"
+    },
+    {
+        "id": 501052,
+        "code": "ECU",
+        "name": "Ecuador",
+        "nameInLocal": "ഇക്വഡോര്‍",
+        "active": true,
+        "nationalityName": "Ecuadorean",
+        "nationalityNameInLocal": "ഇക്വഡോറിയൻ",
+        "countryCode": "593"
+    },
+    {
+        "id": 501053,
+        "code": "EGY",
+        "name": "Egypt",
+        "nameInLocal": "ഈജിപ്റ്റ്",
+        "active": true,
+        "nationalityName": "Egyptian",
+        "nationalityNameInLocal": "ഈജിപ്ഷ്യൻ",
+        "countryCode": "20"
+    },
+    {
+        "id": 501054,
+        "code": "SLV",
+        "name": "El Salvador",
+        "nameInLocal": "എല്‍ സാല്‍വഡോര്‍",
+        "active": true,
+        "nationalityName": "Salvadoran",
+        "nationalityNameInLocal": "സാൽവഡോറൻ",
+        "countryCode": "503"
+    },
+    {
+        "id": 501055,
+        "code": "GNQ",
+        "name": "Equatorial Guinea",
+        "nameInLocal": "ഇശ്വറ്റോറിയല്‍ ഗിനിയ",
+        "active": true,
+        "nationalityName": "Equatorial Guinean, Equatoguinean",
+        "nationalityNameInLocal": "ഇക്വറ്റോറിയൽ ഗിനിയൻ, ഇക്വറ്റോഗിനിയൻ",
+        "countryCode": "240"
+    },
+    {
+        "id": 501056,
+        "code": "ERI",
+        "name": "Eritrea",
+        "nameInLocal": "എറിട്രിയ",
+        "active": true,
+        "nationalityName": "Eritrean",
+        "nationalityNameInLocal": "എറിട്രിയൻ",
+        "countryCode": "291"
+    },
+    {
+        "id": 501057,
+        "code": "EST",
+        "name": "Estonia",
+        "nameInLocal": "എസ്റ്റോണിയ",
+        "active": true,
+        "nationalityName": "Estonian",
+        "nationalityNameInLocal": "എസ്റ്റോണിയൻ",
+        "countryCode": "372"
+    },
+    {
+        "id": 501058,
+        "code": "ETH",
+        "name": "Ethiopia",
+        "nameInLocal": "എത്യോപ്യ",
+        "active": true,
+        "nationalityName": "Ethiopian",
+        "nationalityNameInLocal": "എത്യോപ്യൻ",
+        "countryCode": "251"
+    },
+    {
+        "id": 501059,
+        "code": "FJI",
+        "name": "Fiji",
+        "nameInLocal": "ഫിജി",
+        "active": true,
+        "nationalityName": "Fijian",
+        "nationalityNameInLocal": "ഫിജിയൻ",
+        "countryCode": "679"
+    },
+    {
+        "id": 501060,
+        "code": "FIN",
+        "name": "Finland",
+        "nameInLocal": "ഫിന്‍ലാന്റ്",
+        "active": true,
+        "nationalityName": "Finnish",
+        "nationalityNameInLocal": "ഫിന്നിഷ്",
+        "countryCode": "358"
+    },
+    {
+        "id": 501061,
+        "code": "FRA",
+        "name": "France",
+        "nameInLocal": "ഫ്രാന്‍സ്",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "33"
+    },
+    {
+        "id": 501062,
+        "code": "GAB",
+        "name": "Gabon",
+        "nameInLocal": "ഗാബോണ്‍",
+        "active": true,
+        "nationalityName": "Gabonese",
+        "nationalityNameInLocal": "ഗാബോണീസ്",
+        "countryCode": "241"
+    },
+    {
+        "id": 501063,
+        "code": "GMB",
+        "name": "Gambia",
+        "nameInLocal": "ഗാമ്പിയ",
+        "active": true,
+        "nationalityName": "Gambian",
+        "nationalityNameInLocal": "ഗാംബിയൻ",
+        "countryCode": "220"
+    },
+    {
+        "id": 501064,
+        "code": "GEO",
+        "name": "Georgia",
+        "nameInLocal": "ജോര്‍ജിയ",
+        "active": true,
+        "nationalityName": "Georgian",
+        "nationalityNameInLocal": "ജോർജിയൻ",
+        "countryCode": "995"
+    },
+    {
+        "id": 501065,
+        "code": "DEU",
+        "name": "Germany",
+        "nameInLocal": "ജെര്‍മനി",
+        "active": true,
+        "nationalityName": "German",
+        "nationalityNameInLocal": "ജർമ്മൻ",
+        "countryCode": "49"
+    },
+    {
+        "id": 501066,
+        "code": "GHA",
+        "name": "Ghana",
+        "nameInLocal": "ഘാന",
+        "active": true,
+        "nationalityName": "Ghanaian",
+        "nationalityNameInLocal": "ഘനൈൻ",
+        "countryCode": "233"
+    },
+    {
+        "id": 501067,
+        "code": "GRC",
+        "name": "Greece",
+        "nameInLocal": "ഗ്രീസ്",
+        "active": true,
+        "nationalityName": "Greek, Hellenic",
+        "nationalityNameInLocal": "ഗ്രീക്ക്, ഹെല്ലനിക്",
+        "countryCode": "30"
+    },
+    {
+        "id": 501068,
+        "code": "GRD",
+        "name": "Grenada",
+        "nameInLocal": "ഗ്രനാഡ",
+        "active": true,
+        "nationalityName": "Grenadian",
+        "nationalityNameInLocal": "ഗ്രനേഡിയൻ",
+        "countryCode": "1-473"
+    },
+    {
+        "id": 501069,
+        "code": "GUM",
+        "name": "Guatemala",
+        "nameInLocal": "ഗ്വാട്ടിമാല",
+        "active": true,
+        "nationalityName": "Guatemalan",
+        "nationalityNameInLocal": "ഗ്വാടിമലൻ",
+        "countryCode": "1-671"
+    },
+    {
+        "id": 501070,
+        "code": "GIN",
+        "name": "Guinea",
+        "nameInLocal": "ഗ്വിനിയ",
+        "active": true,
+        "nationalityName": "Guinean",
+        "nationalityNameInLocal": "ഗിനിയൻ",
+        "countryCode": "224"
+    },
+    {
+        "id": 501071,
+        "code": "GNB",
+        "name": "Guinea-Bissau",
+        "nameInLocal": "ഗ്വിനിയ-ബിസ്സാ",
+        "active": true,
+        "nationalityName": "Bissauan-Guinea",
+        "nationalityNameInLocal": "ബിസ്സുവാൻ-ഗിനിയ",
+        "countryCode": "245"
+    },
+    {
+        "id": 501072,
+        "code": "GUY",
+        "name": "Guyana",
+        "nameInLocal": "ഗയാന",
+        "active": true,
+        "nationalityName": "Guyanese",
+        "nationalityNameInLocal": "ഗയാനീസ്",
+        "countryCode": "592"
+    },
+    {
+        "id": 501073,
+        "code": "HTI",
+        "name": "Haiti",
+        "nameInLocal": "ഹയിട്ടി",
+        "active": true,
+        "nationalityName": "Haitian",
+        "nationalityNameInLocal": "ഹെയ്തിയൻ",
+        "countryCode": "509"
+    },
+    {
+        "id": 501074,
+        "code": "HND",
+        "name": "Honduras",
+        "nameInLocal": "ഹോണ്ടുറാസ്",
+        "active": true,
+        "nationalityName": "Honduran",
+        "nationalityNameInLocal": "ഹോണ്ടുറാൻ",
+        "countryCode": "504"
+    },
+    {
+        "id": 501075,
+        "code": "HUN",
+        "name": "Hungary",
+        "nameInLocal": "ഹംഗറി",
+        "active": true,
+        "nationalityName": "Hungarian, Magyar",
+        "nationalityNameInLocal": "ഹംഗേറിയൻ, മഗ്യാർ",
+        "countryCode": "36"
+    },
+    {
+        "id": 501076,
+        "code": "ISL",
+        "name": "Iceland",
+        "nameInLocal": "ഐസ്‍ലാന്റ്",
+        "active": true,
+        "nationalityName": "Icelandic",
+        "nationalityNameInLocal": "ഐസ്‌ലാൻഡിക്",
+        "countryCode": "354"
+    },
+    {
+        "id": 501077,
+        "code": "IND",
+        "name": "India",
+        "nameInLocal": "ഇന്‍ഡ്യ",
+        "active": true,
+        "nationalityName": "Indian",
+        "nationalityNameInLocal": "ഇന്ത്യൻ",
+        "countryCode": "91"
+    },
+    {
+        "id": 501078,
+        "code": "IDN",
+        "name": "Indonesia",
+        "nameInLocal": "ഇന്തോനേഷ്യ",
+        "active": true,
+        "nationalityName": "Indonesian",
+        "nationalityNameInLocal": "ഇന്തോനേഷ്യൻ",
+        "countryCode": "62"
+    },
+    {
+        "id": 501079,
+        "code": "IRN",
+        "name": "Iran, Islamic Republic of...",
+        "nameInLocal": "ഇറാന്‍, ഇസ്ലാമിക് റിപ്പബ്ലിക് ഓഫ്",
+        "active": false,
+        "nationalityName": "Iranian, Persian",
+        "nationalityNameInLocal": "ഇറാനിയൻ, പേർഷ്യൻ",
+        "countryCode": "98"
+    },
+    {
+        "id": 501080,
+        "code": "IRQ",
+        "name": "Iraq",
+        "nameInLocal": "ഇറാഖ്",
+        "active": true,
+        "nationalityName": "Iraqi",
+        "nationalityNameInLocal": "ഇറാഖി",
+        "countryCode": "964"
+    },
+    {
+        "id": 501081,
+        "code": "IRL",
+        "name": "Ireland",
+        "nameInLocal": "അയര്‍ലാന്റ്",
+        "active": true,
+        "nationalityName": "Irish",
+        "nationalityNameInLocal": "ഐറിഷ്",
+        "countryCode": "353"
+    },
+    {
+        "id": 501082,
+        "code": "ISR",
+        "name": "Israel",
+        "nameInLocal": "ഇസ്രായേല്‍",
+        "active": true,
+        "nationalityName": "Israeli",
+        "nationalityNameInLocal": "ഇസ്രായേലി",
+        "countryCode": "972"
+    },
+    {
+        "id": 501083,
+        "code": "ITA",
+        "name": "Italy",
+        "nameInLocal": "ഇറ്റലി",
+        "active": true,
+        "nationalityName": "Italian",
+        "nationalityNameInLocal": "ഇറ്റാലിയൻ",
+        "countryCode": "39"
+    },
+    {
+        "id": 501084,
+        "code": "JAM",
+        "name": "Jamaica",
+        "nameInLocal": "ജമൈക്ക",
+        "active": true,
+        "nationalityName": "Jamaican",
+        "nationalityNameInLocal": "ജമൈക്കൻ",
+        "countryCode": "1-876"
+    },
+    {
+        "id": 501085,
+        "code": "JPN",
+        "name": "Japan",
+        "nameInLocal": "ജപ്പാന്‍",
+        "active": true,
+        "nationalityName": "Japanese",
+        "nationalityNameInLocal": "ജാപ്പനീസ്",
+        "countryCode": "81"
+    },
+    {
+        "id": 501086,
+        "code": "JOR",
+        "name": "Jordan",
+        "nameInLocal": "ജോര്‍ദാന്‍",
+        "active": true,
+        "nationalityName": "Jordanian",
+        "nationalityNameInLocal": "ജോർദാനിയൻ",
+        "countryCode": "962"
+    },
+    {
+        "id": 501087,
+        "code": "KAZ",
+        "name": "Kazakhstan",
+        "nameInLocal": "കസാക്കിസ്താന്‍",
+        "active": true,
+        "nationalityName": "Kazakhstani",
+        "nationalityNameInLocal": "കസാഖ്‌സ്താനി",
+        "countryCode": "7"
+    },
+    {
+        "id": 501088,
+        "code": "KEN",
+        "name": "Kenya",
+        "nameInLocal": "കെനിയ",
+        "active": true,
+        "nationalityName": "Kenyan",
+        "nationalityNameInLocal": "കെനിയൻ",
+        "countryCode": "254"
+    },
+    {
+        "id": 501089,
+        "code": "KIR",
+        "name": "Kiribati",
+        "nameInLocal": "കിരിബാട്ടി",
+        "active": true,
+        "nationalityName": "I-Kiribati",
+        "nationalityNameInLocal": "ഐ-കിരിബതി",
+        "countryCode": "686"
+    },
+    {
+        "id": 501090,
+        "code": "KWT",
+        "name": "Kuwait",
+        "nameInLocal": "കുവൈറ്റ്",
+        "active": true,
+        "nationalityName": "Kuwaiti",
+        "nationalityNameInLocal": "കുവൈറ്റി",
+        "countryCode": "965"
+    },
+    {
+        "id": 501091,
+        "code": "KGS",
+        "name": "Kyrgyzstan",
+        "nameInLocal": "കൈര്‍ജിസ്താന്‍",
+        "active": true,
+        "nationalityName": "Kyrgyzstani",
+        "nationalityNameInLocal": "കെർഗിസ്ഥാനി",
+        "countryCode": "996"
+    },
+    {
+        "id": 501092,
+        "code": "LAO",
+        "name": "Lao People's Democratic Republic",
+        "nameInLocal": "ലാവോ പീപ്പിള്‍സ് ഡെമോക്രാറ്റിക് റിപ്പബ്ലിക്",
+        "active": true,
+        "nationalityName": "Lao, Laotian",
+        "nationalityNameInLocal": "ലാവോ, ലാവോഷ്യൻ",
+        "countryCode": "856"
+    },
+    {
+        "id": 501093,
+        "code": "LVA",
+        "name": "Latvia",
+        "nameInLocal": "ലാറ്റ്വിയ",
+        "active": true,
+        "nationalityName": "Latvian",
+        "nationalityNameInLocal": "ലാത്വിയൻ",
+        "countryCode": "371"
+    },
+    {
+        "id": 501094,
+        "code": "LBN",
+        "name": "Lebanon",
+        "nameInLocal": "ലെബനന്‍",
+        "active": true,
+        "nationalityName": "Lebanese",
+        "nationalityNameInLocal": "ലെബനീസ്",
+        "countryCode": "961"
+    },
+    {
+        "id": 501095,
+        "code": "LSO",
+        "name": "Lesotho",
+        "nameInLocal": "ലിസോത്തോ",
+        "active": true,
+        "nationalityName": "Basotho",
+        "nationalityNameInLocal": "ബസോതോ",
+        "countryCode": "266"
+    },
+    {
+        "id": 501096,
+        "code": "LBR",
+        "name": "Liberia",
+        "nameInLocal": "ലിബേറിയ",
+        "active": true,
+        "nationalityName": "Liberian",
+        "nationalityNameInLocal": "ലൈബീരിയൻ",
+        "countryCode": "231"
+    },
+    {
+        "id": 501097,
+        "code": "LBY",
+        "name": "Libyan Arab Jamahiriya",
+        "nameInLocal": "ലിബിയന്‍ അറബ് ജമാഹിരിയ",
+        "active": true,
+        "nationalityName": "Libyan",
+        "nationalityNameInLocal": "ലിബിയൻ",
+        "countryCode": "218"
+    },
+    {
+        "id": 501098,
+        "code": "LIE",
+        "name": "Liechtenstein",
+        "nameInLocal": "ലിക്കെന്‍സ്റ്റീന്‍",
+        "active": true,
+        "nationalityName": "Liechtensteiner",
+        "nationalityNameInLocal": "ലിച്ചെൻസ്റ്റെയിൻ",
+        "countryCode": "423"
+    },
+    {
+        "id": 501099,
+        "code": "LTU",
+        "name": "Lithuania",
+        "nameInLocal": "ലിത്വാനിയ",
+        "active": true,
+        "nationalityName": "Lithuanian",
+        "nationalityNameInLocal": "ലിത്വാനിയൻ",
+        "countryCode": "370"
+    },
+    {
+        "id": 501100,
+        "code": "LUX",
+        "name": "Luxembourg",
+        "nameInLocal": "ലക്സംബര്‍ഗ്",
+        "active": true,
+        "nationalityName": "Luxembourger",
+        "nationalityNameInLocal": "ലക്സംബർഗർ",
+        "countryCode": "352"
+    },
+    {
+        "id": 501101,
+        "code": "MDG",
+        "name": "Madagascar",
+        "nameInLocal": "മഡഗാസ്കര്‍",
+        "active": true,
+        "nationalityName": "Malagasy",
+        "nationalityNameInLocal": "മലഗാസി",
+        "countryCode": "261"
+    },
+    {
+        "id": 501102,
+        "code": "MWI",
+        "name": "Malawi",
+        "nameInLocal": "മാലവി",
+        "active": true,
+        "nationalityName": "Malawian",
+        "nationalityNameInLocal": "മലാവിയൻ",
+        "countryCode": "265"
+    },
+    {
+        "id": 501103,
+        "code": "MYS",
+        "name": "Malaysia",
+        "nameInLocal": "മലേഷ്യ",
+        "active": true,
+        "nationalityName": "Malaysian",
+        "nationalityNameInLocal": "മലേഷ്യൻ",
+        "countryCode": "60"
+    },
+    {
+        "id": 501104,
+        "code": "MDV",
+        "name": "Maldives",
+        "nameInLocal": "മാല്‍ഡീവ്സ്",
+        "active": true,
+        "nationalityName": "Maldivan",
+        "nationalityNameInLocal": "മാലിദ്വീപ്",
+        "countryCode": "960"
+    },
+    {
+        "id": 501105,
+        "code": "MLI",
+        "name": "Mali",
+        "nameInLocal": "മാലി",
+        "active": true,
+        "nationalityName": "Malian",
+        "nationalityNameInLocal": "മാലിയൻ",
+        "countryCode": "223"
+    },
+    {
+        "id": 501106,
+        "code": "MLT",
+        "name": "Malta",
+        "nameInLocal": "മാള്‍ട്ടാ",
+        "active": true,
+        "nationalityName": "Maltese",
+        "nationalityNameInLocal": "മാൾട്ടീസ്",
+        "countryCode": "356"
+    },
+    {
+        "id": 501107,
+        "code": "MHL",
+        "name": "Marshall Islands",
+        "nameInLocal": "മാര്‍ഷല്‍ ഐലന്റ്",
+        "active": true,
+        "nationalityName": "Marshallese",
+        "nationalityNameInLocal": "മാർഷല്ലീസ്",
+        "countryCode": "692"
+    },
+    {
+        "id": 501108,
+        "code": "MRT",
+        "name": "Mauritania",
+        "nameInLocal": "മൗറിത്തേനിയ",
+        "active": true,
+        "nationalityName": "Mauritanian",
+        "nationalityNameInLocal": "മൗറിറ്റാനിയൻ",
+        "countryCode": "222"
+    },
+    {
+        "id": 501109,
+        "code": "MUS",
+        "name": "Mauritius",
+        "nameInLocal": "മൗറീഷ്യസ്",
+        "active": true,
+        "nationalityName": "Mauritian",
+        "nationalityNameInLocal": "മൗറീഷ്യൻ",
+        "countryCode": "230"
+    },
+    {
+        "id": 501110,
+        "code": "MEX",
+        "name": "Mexico",
+        "nameInLocal": "മെക്സിക്കോ",
+        "active": true,
+        "nationalityName": "Mexican",
+        "nationalityNameInLocal": "മെക്സിക്കൻ",
+        "countryCode": "52"
+    },
+    {
+        "id": 501111,
+        "code": "FSM",
+        "name": "Micronesia, Federated States",
+        "nameInLocal": "മൈക്രോനേഷ്യ, ഫെഡറേറ്റഡ് സ്റ്റേറ്റ്സ് ഓഫ്",
+        "active": false,
+        "nationalityName": "Micronesian",
+        "nationalityNameInLocal": "മൈക്രോനേഷ്യൻ",
+        "countryCode": "691"
+    },
+    {
+        "id": 501112,
+        "code": "MDA",
+        "name": "Moldova",
+        "nameInLocal": "മല്‍ഡോവ",
+        "active": true,
+        "nationalityName": "Moldovan",
+        "nationalityNameInLocal": "മോൾഡോവൻ",
+        "countryCode": "373"
+    },
+    {
+        "id": 501113,
+        "code": "MCO",
+        "name": "Monaco",
+        "nameInLocal": "മൊണാക്കോ",
+        "active": true,
+        "nationalityName": "Monacan",
+        "nationalityNameInLocal": "മൊനാകാൻ",
+        "countryCode": "377"
+    },
+    {
+        "id": 501114,
+        "code": "MNG",
+        "name": "Mongolia",
+        "nameInLocal": "മംഗോളിയ",
+        "active": true,
+        "nationalityName": "Mongolian",
+        "nationalityNameInLocal": "മംഗോളിയൻ",
+        "countryCode": "976"
+    },
+    {
+        "id": 501115,
+        "code": "MNE",
+        "name": "Montenegro",
+        "nameInLocal": "മൊണ്ടേനിഗ്രോ",
+        "active": true,
+        "nationalityName": "Montenegrin",
+        "nationalityNameInLocal": "മോണ്ടിനെഗ്രിൻ",
+        "countryCode": "382"
+    },
+    {
+        "id": 501116,
+        "code": "MAR",
+        "name": "Morocco",
+        "nameInLocal": "മൊറോക്കോ",
+        "active": true,
+        "nationalityName": "Moroccan",
+        "nationalityNameInLocal": "മൊറോക്കൻ",
+        "countryCode": "212"
+    },
+    {
+        "id": 501117,
+        "code": "MOZ",
+        "name": "Mozambique",
+        "nameInLocal": "മൊസാംബിക്",
+        "active": true,
+        "nationalityName": "Mozambican",
+        "nationalityNameInLocal": "മൊസാംബിക്കൻ",
+        "countryCode": "258"
+    },
+    {
+        "id": 501118,
+        "code": "MMR",
+        "name": "Myanmar",
+        "nameInLocal": "മ്യാന്‍മാര്‍",
+        "active": true,
+        "nationalityName": "Burmese",
+        "nationalityNameInLocal": "ബർമീസ്",
+        "countryCode": "95"
+    },
+    {
+        "id": 501119,
+        "code": "NAM",
+        "name": "Namibia",
+        "nameInLocal": "നമീബിയ",
+        "active": true,
+        "nationalityName": "Namibian",
+        "nationalityNameInLocal": "നമീബിയൻ",
+        "countryCode": "264"
+    },
+    {
+        "id": 501120,
+        "code": "NRU",
+        "name": "Nauru",
+        "nameInLocal": "നൗറു",
+        "active": true,
+        "nationalityName": "Nauruan",
+        "nationalityNameInLocal": "നൗറാൻ",
+        "countryCode": "674"
+    },
+    {
+        "id": 501121,
+        "code": "NPL",
+        "name": "Nepal",
+        "nameInLocal": "നേപ്പാള്‍",
+        "active": true,
+        "nationalityName": "Nepalese",
+        "nationalityNameInLocal": "നേപ്പാളിസ്",
+        "countryCode": "977"
+    },
+    {
+        "id": 501122,
+        "code": "NLD",
+        "name": "Netherlands",
+        "nameInLocal": "നെതര്‍ലാന്റ്സ്",
+        "active": true,
+        "nationalityName": "Dutch, Netherlandic",
+        "nationalityNameInLocal": "ഡച്ച്, നെതർലാൻഡിക്",
+        "countryCode": "31"
+    },
+    {
+        "id": 501123,
+        "code": "NZL",
+        "name": "New Zealand",
+        "nameInLocal": "ന്യൂസിലാന്റ്",
+        "active": true,
+        "nationalityName": "New Zealander",
+        "nationalityNameInLocal": "ന്യൂസിലാൻഡ്",
+        "countryCode": "64"
+    },
+    {
+        "id": 501124,
+        "code": "NIC",
+        "name": "Nicaragua",
+        "nameInLocal": "നിക്കാരഗ്വാ",
+        "active": true,
+        "nationalityName": "Nicaraguan",
+        "nationalityNameInLocal": "നിക്കരാഗ്വാൻ",
+        "countryCode": "505"
+    },
+    {
+        "id": 501125,
+        "code": "NER",
+        "name": "Niger",
+        "nameInLocal": "നൈഗെര്‍",
+        "active": true,
+        "nationalityName": "Nigerien",
+        "nationalityNameInLocal": "നൈജീരിയൻ",
+        "countryCode": "227"
+    },
+    {
+        "id": 501126,
+        "code": "NGA",
+        "name": "Nigeria",
+        "nameInLocal": "നൈജീരിയ",
+        "active": true,
+        "nationalityName": "Nigerian",
+        "nationalityNameInLocal": "നൈജീരിയൻ",
+        "countryCode": "234"
+    },
+    {
+        "id": 501127,
+        "code": "NOR",
+        "name": "Norway",
+        "nameInLocal": "നോര്‍വേ",
+        "active": true,
+        "nationalityName": "Norwegian",
+        "nationalityNameInLocal": "നോർവീജിയൻ",
+        "countryCode": "47"
+    },
+    {
+        "id": 501128,
+        "code": "OMN",
+        "name": "Oman",
+        "nameInLocal": "ഒമാന്‍",
+        "active": true,
+        "nationalityName": "Omani",
+        "nationalityNameInLocal": "ഒമാനി",
+        "countryCode": "968"
+    },
+    {
+        "id": 501129,
+        "code": "PAK",
+        "name": "Pakistan",
+        "nameInLocal": "പാക്കിസ്താന്‍",
+        "active": true,
+        "nationalityName": "Pakistani",
+        "nationalityNameInLocal": "പാക്കിസ്ഥാനി",
+        "countryCode": "92"
+    },
+    {
+        "id": 501130,
+        "code": "PLW",
+        "name": "Palau",
+        "nameInLocal": "പാലാവു",
+        "active": true,
+        "nationalityName": "Palauan",
+        "nationalityNameInLocal": "പലാവാൻ",
+        "countryCode": "680"
+    },
+    {
+        "id": 501131,
+        "code": "PAN",
+        "name": "Panama",
+        "nameInLocal": "പനാമ",
+        "active": true,
+        "nationalityName": "Panamanian",
+        "nationalityNameInLocal": "പനാമിയൻ",
+        "countryCode": "507"
+    },
+    {
+        "id": 501132,
+        "code": "PNG",
+        "name": "Papua New Guinea",
+        "nameInLocal": "പാപ്വാ ന്യൂ ഗിനിയ",
+        "active": true,
+        "nationalityName": "Papua New Guinean, Papuan",
+        "nationalityNameInLocal": "പാപ്പുവ ന്യൂ ഗിനിയൻ, പാപുആൻ",
+        "countryCode": "675"
+    },
+    {
+        "id": 501133,
+        "code": "PRY",
+        "name": "Paraguay",
+        "nameInLocal": "പരാഗ്വാ",
+        "active": true,
+        "nationalityName": "Paraguayan",
+        "nationalityNameInLocal": "പരാഗ്വേയൻ",
+        "countryCode": "595"
+    },
+    {
+        "id": 501134,
+        "code": "PER",
+        "name": "Peru",
+        "nameInLocal": "പെറു",
+        "active": true,
+        "nationalityName": "Peruvian",
+        "nationalityNameInLocal": "പെറുവിയൻ",
+        "countryCode": "51"
+    },
+    {
+        "id": 501135,
+        "code": "PHL",
+        "name": "Philippines",
+        "nameInLocal": "ഫിലിപ്പൈന്‍സ്",
+        "active": true,
+        "nationalityName": "Philippine, Filipino",
+        "nationalityNameInLocal": "ഫിലിപ്പൈൻ, ഫിലിപ്പിനോ",
+        "countryCode": "63"
+    },
+    {
+        "id": 501136,
+        "code": "POL",
+        "name": "Poland",
+        "nameInLocal": "പോളണ്ട്",
+        "active": true,
+        "nationalityName": "Polish",
+        "nationalityNameInLocal": "പോളിഷ്",
+        "countryCode": "48"
+    },
+    {
+        "id": 501137,
+        "code": "PRT",
+        "name": "Portugal",
+        "nameInLocal": "പോര്‍ച്ചുഗല്‍",
+        "active": true,
+        "nationalityName": "Portuguese",
+        "nationalityNameInLocal": "പോർച്ചുഗീസ്",
+        "countryCode": "351"
+    },
+    {
+        "id": 501138,
+        "code": "QAT",
+        "name": "Qatar",
+        "nameInLocal": "ഖത്തര്‍",
+        "active": true,
+        "nationalityName": "Qatari",
+        "nationalityNameInLocal": "ഖത്തരീ",
+        "countryCode": "974"
+    },
+    {
+        "id": 501139,
+        "code": "KOR",
+        "name": "Republic of Korea",
+        "nameInLocal": "റിപ്പബ്ലിക് ഓഫ് കൊറിയ",
+        "active": false,
+        "nationalityName": "South Korean",
+        "nationalityNameInLocal": "ദക്ഷിണ കൊറിയൻ",
+        "countryCode": "82"
+    },
+    {
+        "id": 501140,
+        "code": "ROU",
+        "name": "Romania",
+        "nameInLocal": "റുമേനിയ",
+        "active": true,
+        "nationalityName": "Romanian",
+        "nationalityNameInLocal": "റൊമാനിയൻ",
+        "countryCode": "40"
+    },
+    {
+        "id": 501141,
+        "code": "RUS",
+        "name": "Russian Federation",
+        "nameInLocal": "റഷ്യന്‍ ഫെഡറേഷന്‍",
+        "active": true,
+        "nationalityName": "Russian",
+        "nationalityNameInLocal": "റഷ്യൻ",
+        "countryCode": "7"
+    },
+    {
+        "id": 501142,
+        "code": "RWA",
+        "name": "Rwanda",
+        "nameInLocal": "റ്വാണ്ട",
+        "active": true,
+        "nationalityName": "Rwandan",
+        "nationalityNameInLocal": "റുവാണ്ടൻ",
+        "countryCode": "250"
+    },
+    {
+        "id": 501143,
+        "code": "KNA",
+        "name": "Saint Kitts and Nevis",
+        "nameInLocal": "സെന്റ് കിറ്റ്സ് ആന്റ് നെവിസ്",
+        "active": true,
+        "nationalityName": "Kittitian or Nevisian",
+        "nationalityNameInLocal": "കിറ്റിഷ്യൻ/നെവിഷ്യൻ",
+        "countryCode": "1-869"
+    },
+    {
+        "id": 501144,
+        "code": "LCA",
+        "name": "Saint Lucia",
+        "nameInLocal": "സെന്റ് ലൂസിയ",
+        "active": true,
+        "nationalityName": "Saint Lucian",
+        "nationalityNameInLocal": "സെന്റ് ല്യൂഷൻ",
+        "countryCode": "1-758"
+    },
+    {
+        "id": 501145,
+        "code": "VCT",
+        "name": "Saint Vincent and the Grenadines",
+        "nameInLocal": "സെന്റ് വിന്‍സെന്റ് ആന്റ് ദി ഗ്രെനേഡിന്‍സ്",
+        "active": true,
+        "nationalityName": "Saint Vincentian, Vincentian",
+        "nationalityNameInLocal": "സെന്റ് വിൻസെൻഷ്യൻ, വിൻസെൻഷ്യൻ",
+        "countryCode": "1-784"
+    },
+    {
+        "id": 501146,
+        "code": "WSM",
+        "name": "Samoa",
+        "nameInLocal": "സമോവ",
+        "active": true,
+        "nationalityName": "Samoan",
+        "nationalityNameInLocal": "സമോവൻ",
+        "countryCode": "685"
+    },
+    {
+        "id": 501147,
+        "code": "SMR",
+        "name": "San Marino",
+        "nameInLocal": "സാന്‍ മാരിനോ",
+        "active": true,
+        "nationalityName": "San Marinese",
+        "nationalityNameInLocal": "സാൻ മറീനീസ്",
+        "countryCode": "378"
+    },
+    {
+        "id": 501148,
+        "code": "STP",
+        "name": "Sao Tome and Principe",
+        "nameInLocal": "സാവോ ടോം ആന്റ് പ്രിന്‍സിപ്",
+        "active": true,
+        "nationalityName": "Sao Tomean",
+        "nationalityNameInLocal": "സാവോ ടോമിയൻ",
+        "countryCode": "239"
+    },
+    {
+        "id": 501149,
+        "code": "SAU",
+        "name": "Saudi Arabia",
+        "nameInLocal": "സൗദി അറേബ്യ",
+        "active": true,
+        "nationalityName": "Saudi, Saudi Arabian",
+        "nationalityNameInLocal": "സൗദി, സൗദി അറേബ്യൻ",
+        "countryCode": "966"
+    },
+    {
+        "id": 501150,
+        "code": "SEN",
+        "name": "Senegal",
+        "nameInLocal": "സെനഗല്‍",
+        "active": true,
+        "nationalityName": "Senegalese",
+        "nationalityNameInLocal": "സെനഗലീസ്",
+        "countryCode": "221"
+    },
+    {
+        "id": 501151,
+        "code": "SRB",
+        "name": "Serbia",
+        "nameInLocal": "സെര്‍ബിയ",
+        "active": true,
+        "nationalityName": "Serbian",
+        "nationalityNameInLocal": "സെർബിയൻ",
+        "countryCode": "381"
+    },
+    {
+        "id": 501152,
+        "code": "SYC",
+        "name": "Seychelles",
+        "nameInLocal": "സെയ്കെലസ്",
+        "active": true,
+        "nationalityName": "Seychellois",
+        "nationalityNameInLocal": "സെയ്ഷെല്ലോയിസ്",
+        "countryCode": "248"
+    },
+    {
+        "id": 501153,
+        "code": "SLE",
+        "name": "Sierra Leone",
+        "nameInLocal": "സിയറ ലിയോണ്‍",
+        "active": true,
+        "nationalityName": "Sierra Leonean",
+        "nationalityNameInLocal": "സിയറ ലിയോണിയൻ",
+        "countryCode": "232"
+    },
+    {
+        "id": 501154,
+        "code": "SGP",
+        "name": "Singapore",
+        "nameInLocal": "സിംഗപ്പൂര്‍",
+        "active": true,
+        "nationalityName": "Singaporean",
+        "nationalityNameInLocal": "സിംഗപ്പൂരിയൻ",
+        "countryCode": "65"
+    },
+    {
+        "id": 501155,
+        "code": "SVK",
+        "name": "Slovakia",
+        "nameInLocal": "സ്ലോവാക്യ",
+        "active": true,
+        "nationalityName": "Slovakian",
+        "nationalityNameInLocal": "സ്ലൊവാക്യൻ",
+        "countryCode": "421"
+    },
+    {
+        "id": 501156,
+        "code": "SVN",
+        "name": "Slovenia",
+        "nameInLocal": "സ്ലോവേനിയ",
+        "active": true,
+        "nationalityName": "Slovenian, Slovene",
+        "nationalityNameInLocal": "സ്ലോവേനിയൻ, സ്ലോവേൻ",
+        "countryCode": "386"
+    },
+    {
+        "id": 501157,
+        "code": "SLB",
+        "name": "Solomon Islands",
+        "nameInLocal": "സോളമന്‍ ഐലന്റ്",
+        "active": true,
+        "nationalityName": "Solomon Islander",
+        "nationalityNameInLocal": "സോളമൻ ദ്വീപ്",
+        "countryCode": "677"
+    },
+    {
+        "id": 501158,
+        "code": "SOM",
+        "name": "Somalia",
+        "nameInLocal": "സോമാലിയ",
+        "active": true,
+        "nationalityName": "Somali, Somalian",
+        "nationalityNameInLocal": "സൊമാലി, സൊമാലിയൻ",
+        "countryCode": "252"
+    },
+    {
+        "id": 501159,
+        "code": "ZAF",
+        "name": "South Africa",
+        "nameInLocal": "സൗത്ത് ആഫ്രിക്ക",
+        "active": true,
+        "nationalityName": "South African",
+        "nationalityNameInLocal": "ദക്ഷിണാഫ്രിക്കൻ",
+        "countryCode": "27"
+    },
+    {
+        "id": 501160,
+        "code": "ESP",
+        "name": "Spain",
+        "nameInLocal": "സ്പെയിന്‍",
+        "active": true,
+        "nationalityName": "Spanish",
+        "nationalityNameInLocal": "സ്പാനിഷ്",
+        "countryCode": "34"
+    },
+    {
+        "id": 501161,
+        "code": "LKA",
+        "name": "Sri Lanka",
+        "nameInLocal": "ശ്രീലങ്ക",
+        "active": true,
+        "nationalityName": "Sri Lankan",
+        "nationalityNameInLocal": "ശ്രീലങ്കൻ",
+        "countryCode": "94"
+    },
+    {
+        "id": 501162,
+        "code": "SDN",
+        "name": "Sudan",
+        "nameInLocal": "സുഡാന്‍",
+        "active": true,
+        "nationalityName": "Sudanese",
+        "nationalityNameInLocal": "സുഡാനിസ്",
+        "countryCode": "249"
+    },
+    {
+        "id": 501163,
+        "code": "SUR",
+        "name": "Suriname",
+        "nameInLocal": "സുറിനെയിം",
+        "active": true,
+        "nationalityName": "Surinamese",
+        "nationalityNameInLocal": "സുരിനാമീസ്",
+        "countryCode": "597"
+    },
+    {
+        "id": 501164,
+        "code": "SWZ",
+        "name": "Swaziland",
+        "nameInLocal": "സ്വാസിലാന്റ്",
+        "active": true,
+        "nationalityName": "Swazi",
+        "nationalityNameInLocal": "സ്വാസി",
+        "countryCode": "268"
+    },
+    {
+        "id": 501165,
+        "code": "SWE",
+        "name": "Sweden",
+        "nameInLocal": "സ്വീഡെന്‍",
+        "active": true,
+        "nationalityName": "Swedish",
+        "nationalityNameInLocal": "സ്വീഡിഷ്",
+        "countryCode": "46"
+    },
+    {
+        "id": 501166,
+        "code": "CHE",
+        "name": "Switzerland",
+        "nameInLocal": "സ്വിറ്റ്സെര്‍ലാന്റ്",
+        "active": true,
+        "nationalityName": "Swiss",
+        "nationalityNameInLocal": "സ്വിസ്",
+        "countryCode": "41"
+    },
+    {
+        "id": 501167,
+        "code": "SYR",
+        "name": "Syrian Arab Republic",
+        "nameInLocal": "സിറിയന്‍ അറബ് റിപ്പബ്ലിക്",
+        "active": true,
+        "nationalityName": "Syrian",
+        "nationalityNameInLocal": "സിറിയൻ",
+        "countryCode": "963"
+    },
+    {
+        "id": 501168,
+        "code": "TJK",
+        "name": "Tajikistan",
+        "nameInLocal": "താജികിസ്താന്‍",
+        "active": true,
+        "nationalityName": "Tajikistani",
+        "nationalityNameInLocal": "താജിക്കിസ്ഥാനി",
+        "countryCode": "992"
+    },
+    {
+        "id": 501169,
+        "code": "THA",
+        "name": "Thailand",
+        "nameInLocal": "തായ്‍ലന്റ്",
+        "active": true,
+        "nationalityName": "Thai",
+        "nationalityNameInLocal": "തായ്",
+        "countryCode": "66"
+    },
+    {
+        "id": 501170,
+        "code": "MKD",
+        "name": "Macedonia",
+        "nameInLocal": "മാസിഡോണിയ",
+        "active": true,
+        "nationalityName": "Macedonian",
+        "nationalityNameInLocal": "മാസിഡോണിയൻ",
+        "countryCode": "389"
+    },
+    {
+        "id": 501171,
+        "code": "TLS",
+        "name": "Timor-Leste",
+        "nameInLocal": "ടൈമര്‍-ലിസ്റ്റ്",
+        "active": true,
+        "nationalityName": "Timorese",
+        "nationalityNameInLocal": "ടിമോറിസ്",
+        "countryCode": "670"
+    },
+    {
+        "id": 501172,
+        "code": "TGO",
+        "name": "Togo",
+        "nameInLocal": "ടോഗോ",
+        "active": true,
+        "nationalityName": "Togolese",
+        "nationalityNameInLocal": "ടോഗോളീസ്",
+        "countryCode": "228"
+    },
+    {
+        "id": 501173,
+        "code": "TON",
+        "name": "Tonga",
+        "nameInLocal": "ടോംഗാ",
+        "active": true,
+        "nationalityName": "Tongan",
+        "nationalityNameInLocal": "ടോംഗൻ",
+        "countryCode": "676"
+    },
+    {
+        "id": 501174,
+        "code": "TTO",
+        "name": "Trinidad and Tobago",
+        "nameInLocal": "ട്രിനിഡാഡ് ആന്റ് ടുബാക്കോ",
+        "active": true,
+        "nationalityName": "Trinidadian or Tobagonian",
+        "nationalityNameInLocal": "ട്രിനിഡാഡിയൻ / ടൊബാഗോണിയൻ",
+        "countryCode": "1-868"
+    },
+    {
+        "id": 501175,
+        "code": "TUN",
+        "name": "Tunisia",
+        "nameInLocal": "ടുണീഷ്യ",
+        "active": true,
+        "nationalityName": "Tunisian",
+        "nationalityNameInLocal": "ടുണീഷ്യൻ",
+        "countryCode": "216"
+    },
+    {
+        "id": 501176,
+        "code": "TUR",
+        "name": "Turkey",
+        "nameInLocal": "ടര്‍ക്കി",
+        "active": true,
+        "nationalityName": "Turkish",
+        "nationalityNameInLocal": "ടർക്കിഷ്",
+        "countryCode": "90"
+    },
+    {
+        "id": 501177,
+        "code": "TKM",
+        "name": "Turkmenistan",
+        "nameInLocal": "ടര്‍ക്ക്മെനിസ്താന്‍",
+        "active": true,
+        "nationalityName": "Turkmen",
+        "nationalityNameInLocal": "തുർക്ക്മെൻ",
+        "countryCode": "993"
+    },
+    {
+        "id": 501178,
+        "code": "TUV",
+        "name": "Tuvalu",
+        "nameInLocal": "ടുവാലു",
+        "active": true,
+        "nationalityName": "Tuvaluan",
+        "nationalityNameInLocal": "തുവാലുവാൻ",
+        "countryCode": "688"
+    },
+    {
+        "id": 501179,
+        "code": "UGA",
+        "name": "Uganda",
+        "nameInLocal": "ഉഗാണ്ട",
+        "active": true,
+        "nationalityName": "Ugandan",
+        "nationalityNameInLocal": "ഉഗാണ്ടൻ",
+        "countryCode": "256"
+    },
+    {
+        "id": 501180,
+        "code": "UKR",
+        "name": "Ukraine",
+        "nameInLocal": "ഉക്രൈന്‍",
+        "active": true,
+        "nationalityName": "Ukrainian",
+        "nationalityNameInLocal": "ഉക്രേനിയൻ",
+        "countryCode": "380"
+    },
+    {
+        "id": 501181,
+        "code": "ARE",
+        "name": "United Arab Emirates",
+        "nameInLocal": "യുണൈറ്റഡ് അറബ് എമിറേറ്റ്സ്",
+        "active": true,
+        "nationalityName": "Emirati, Emirian, Emiri",
+        "nationalityNameInLocal": "എമിറാത്തി, എമിറിയൻ, എമിറി",
+        "countryCode": "971"
+    },
+    {
+        "id": 501182,
+        "code": "GBR",
+        "name": "United Kingdom of Great Britain and Northern Ireland",
+        "nameInLocal": "യുണൈറ്റഡ് കിംഗ്ഡം ഓഫ് ഗ്രേറ്റ് ബ്രിട്ടന്‍ ആന്റ് നോര്‍ത്തേന്‍ അയര്‍ലാന്റ്",
+        "active": false,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "44"
+    },
+    {
+        "id": 501183,
+        "code": "TZA",
+        "name": "United Republic of Tanzania",
+        "nameInLocal": "യുണൈറ്റഡ് റിപ്പബ്ലിക് ഓഫ് ടാന്‍സാനിയ",
+        "active": false,
+        "nationalityName": "Tanzanian",
+        "nationalityNameInLocal": "ടാൻസാനിയൻ",
+        "countryCode": "255"
+    },
+    {
+        "id": 501184,
+        "code": "USA",
+        "name": "United States of America",
+        "nameInLocal": "യുണൈറ്റഡ് സ്റ്റേറ്റ്സ് ഓഫ് അമേരിക്ക",
+        "active": true,
+        "nationalityName": "American",
+        "nationalityNameInLocal": "അമേരിക്കൻ",
+        "countryCode": "1"
+    },
+    {
+        "id": 501185,
+        "code": "URY",
+        "name": "Uruguay",
+        "nameInLocal": "ഉറുഗ്വേ",
+        "active": true,
+        "nationalityName": "Uruguayan",
+        "nationalityNameInLocal": "ഉറുഗ്വേൻ",
+        "countryCode": "598"
+    },
+    {
+        "id": 501186,
+        "code": "UZB",
+        "name": "Uzbekistan",
+        "nameInLocal": "ഉസ്ബെകിസ്താന്‍",
+        "active": true,
+        "nationalityName": "Uzbekistani, Uzbek",
+        "nationalityNameInLocal": "ഉസ്ബെക്കിസ്ഥാനി, ഉസ്ബെക്ക്",
+        "countryCode": "998"
+    },
+    {
+        "id": 501187,
+        "code": "VUT",
+        "name": "Vanuatu",
+        "nameInLocal": "വണാട്",
+        "active": true,
+        "nationalityName": "Ni-Vanuatu, Vanuatuan",
+        "nationalityNameInLocal": "നി-വാനുവാട്ടു, വാനുവാട്ടു",
+        "countryCode": "678"
+    },
+    {
+        "id": 501188,
+        "code": "VEN",
+        "name": "Venezuela, Bolivarian",
+        "nameInLocal": "വെനിസുല, ബൊളീവിയന്‍ റിപ്പബ്ലിക് ഓഫ്",
+        "active": false,
+        "nationalityName": "Venezuelan",
+        "nationalityNameInLocal": "വെനിസ്വേലൻ",
+        "countryCode": "58"
+    },
+    {
+        "id": 501189,
+        "code": "VNM",
+        "name": "Viet Nam",
+        "nameInLocal": "വിയറ്റ്നാം",
+        "active": true,
+        "nationalityName": "Vietnamese",
+        "nationalityNameInLocal": "വിയറ്റ്നാമീസ്",
+        "countryCode": "84"
+    },
+    {
+        "id": 501190,
+        "code": "YEM",
+        "name": "Yemen",
+        "nameInLocal": "യമന്‍",
+        "active": true,
+        "nationalityName": "Yemeni",
+        "nationalityNameInLocal": "യെമനി",
+        "countryCode": "967"
+    },
+    {
+        "id": 501191,
+        "code": "ZMB",
+        "name": "Zambia",
+        "nameInLocal": "സാംബിയ",
+        "active": true,
+        "nationalityName": "Zambian",
+        "nationalityNameInLocal": "സാംബിയൻ",
+        "countryCode": "260"
+    },
+    {
+        "id": 501192,
+        "code": "ZWE",
+        "name": "Zimbabwe",
+        "nameInLocal": "സിംബാബ്വേ",
+        "active": true,
+        "nationalityName": "Zimbabwean",
+        "nationalityNameInLocal": "സിംബാബ്വേൻ",
+        "countryCode": "263"
+    },
+    {
+        "id": 501193,
+        "code": "ASM",
+        "name": "American Samoa",
+        "nameInLocal": "അമേരിക്കൻ സമോവ",
+        "active": true,
+        "nationalityName": "Samoan",
+        "nationalityNameInLocal": "സമോവൻ",
+        "countryCode": "1-684"
+    },
+    {
+        "id": 501194,
+        "code": "AIA",
+        "name": "Anguilla",
+        "nameInLocal": "അംഗുല",
+        "active": true,
+        "nationalityName": "Anguillian",
+        "nationalityNameInLocal": "",
+        "countryCode": "1-264"
+    },
+    {
+        "id": 501195,
+        "code": "ATA",
+        "name": "Antarctica",
+        "nameInLocal": "അന്റാര്‍ട്ടിക്ക",
+        "active": true,
+        "nationalityName": "Antarcticans",
+        "nationalityNameInLocal": "",
+        "countryCode": "672"
+    },
+    {
+        "id": 501196,
+        "code": "ABW",
+        "name": "Aruba",
+        "nameInLocal": "അറൂബ",
+        "active": true,
+        "nationalityName": "Aruban",
+        "nationalityNameInLocal": "",
+        "countryCode": "297"
+    },
+    {
+        "id": 501197,
+        "code": "BMU",
+        "name": "Bermuda",
+        "nameInLocal": "ബര്‍മുഡ",
+        "active": true,
+        "nationalityName": "Bermudian",
+        "nationalityNameInLocal": "ബർമുഡാൻ",
+        "countryCode": "1-441"
+    },
+    {
+        "id": 501198,
+        "code": "IOT",
+        "name": "British Indian Ocean Territory",
+        "nameInLocal": "ബ്രിട്ടീഷ് ഇന്ത്യന്‍ മഹാസമുദ്ര പ്രദേശം",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "246"
+    },
+    {
+        "id": 501199,
+        "code": "VGB",
+        "name": "British Virgin Islands",
+        "nameInLocal": "ബ്രിട്ടീഷ് വിര്‍ജിന്‍ ദ്വീപുകള്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "1-284"
+    },
+    {
+        "id": 501200,
+        "code": "BRN",
+        "name": "Brunei",
+        "nameInLocal": "ബ്രൂണെ",
+        "active": true,
+        "nationalityName": "Bruneian",
+        "nationalityNameInLocal": "ബ്രൂണിയൻ",
+        "countryCode": "673"
+    },
+    {
+        "id": 501201,
+        "code": "CYM",
+        "name": "Cayman Islands",
+        "nameInLocal": "കേമാന്‍ ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "Caymanians",
+        "nationalityNameInLocal": "",
+        "countryCode": "1-345"
+    },
+    {
+        "id": 501202,
+        "code": "CXR",
+        "name": "Christmas Island",
+        "nameInLocal": "ക്രിസ്മസ് ദ്വീപ്",
+        "active": true,
+        "nationalityName": "Australian",
+        "nationalityNameInLocal": "ഓസ്‌ട്രേലിയൻ",
+        "countryCode": "61"
+    },
+    {
+        "id": 501203,
+        "code": "CCK",
+        "name": "Cocos Islands",
+        "nameInLocal": "കൊക്കോസ് ദ്വീപുകള്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "61"
+    },
+    {
+        "id": 501204,
+        "code": "COK",
+        "name": "Cook Islands",
+        "nameInLocal": "കുക്ക് ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "Bermudian",
+        "nationalityNameInLocal": "ബർമുഡിയൻ",
+        "countryCode": "682"
+    },
+    {
+        "id": 501205,
+        "code": "CUW",
+        "name": "Curacao",
+        "nameInLocal": "കുറക്കാവോ",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "599"
+    },
+    {
+        "id": 501206,
+        "code": "TLS",
+        "name": "East Timor",
+        "nameInLocal": "കിഴക്കന്‍ തിമോര്‍",
+        "active": false,
+        "nationalityName": "Timorese",
+        "nationalityNameInLocal": "ടിമോറിസ്",
+        "countryCode": "670"
+    },
+    {
+        "id": 501207,
+        "code": "FLK",
+        "name": "Falkland Islands",
+        "nameInLocal": "ഫോക്ക് ലാന്‍ഡ് ദ്വീപുകള്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "500"
+    },
+    {
+        "id": 501208,
+        "code": "FRO",
+        "name": "Faroe Islands",
+        "nameInLocal": "ഫറോ ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "Faroese",
+        "nationalityNameInLocal": "ഫറോസി",
+        "countryCode": "298"
+    },
+    {
+        "id": 501209,
+        "code": "PYF",
+        "name": "French Polynesia",
+        "nameInLocal": "ഫ്രഞ്ച് പോളിനേഷ്യ",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "689"
+    },
+    {
+        "id": 501210,
+        "code": "GIB",
+        "name": "Gibraltar",
+        "nameInLocal": "ജിബ്രാള്‍ട്ടര്‍",
+        "active": true,
+        "nationalityName": "Bermudian",
+        "nationalityNameInLocal": "ബർമുഡിയൻ",
+        "countryCode": "350"
+    },
+    {
+        "id": 501211,
+        "code": "GRL",
+        "name": "Greenland",
+        "nameInLocal": "ഗ്രീന്‍ ലാന്‍ഡ്",
+        "active": true,
+        "nationalityName": "Danish",
+        "nationalityNameInLocal": "ഡാനിഷ്",
+        "countryCode": "299"
+    },
+    {
+        "id": 501212,
+        "code": "GUM",
+        "name": "Guam",
+        "nameInLocal": "ഗുവാം",
+        "active": true,
+        "nationalityName": "Guatemalan",
+        "nationalityNameInLocal": "ഗ്വാടിമലൻ",
+        "countryCode": "1-671"
+    },
+    {
+        "id": 501213,
+        "code": "GGY",
+        "name": "Guernsey",
+        "nameInLocal": "ഗുര്‍ണ്‍സി",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "44-1481"
+    },
+    {
+        "id": 501214,
+        "code": "HKG",
+        "name": "Hong Kong",
+        "nameInLocal": "ഹോങ്കോംഗ്",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "852"
+    },
+    {
+        "id": 501215,
+        "code": "IRN",
+        "name": "Iran",
+        "nameInLocal": "ഇറാന്‍",
+        "active": true,
+        "nationalityName": "Iranian, Persian",
+        "nationalityNameInLocal": "ഇറാനിയൻ, പേർഷ്യൻ",
+        "countryCode": "98"
+    },
+    {
+        "id": 501216,
+        "code": "IMN",
+        "name": "Isle of Man",
+        "nameInLocal": "ഐല്‍ ഓഫ് മാന്‍",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "44-1624"
+    },
+    {
+        "id": 501217,
+        "code": "CIV",
+        "name": "Ivory Coast",
+        "nameInLocal": "ഐവറി കോസ്റ്റ്",
+        "active": false,
+        "nationalityName": "Ivorian",
+        "nationalityNameInLocal": "ഇവോറിയൻ",
+        "countryCode": "225"
+    },
+    {
+        "id": 501218,
+        "code": "JEY",
+        "name": "Jersey",
+        "nameInLocal": "ജേഴ്സി",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "44-1534"
+    },
+    {
+        "id": 501219,
+        "code": "XKX",
+        "name": "Kosovo",
+        "nameInLocal": "കൊസോവോ",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "383"
+    },
+    {
+        "id": 501220,
+        "code": "LBY",
+        "name": "Libya",
+        "nameInLocal": "ലിബിയ",
+        "active": true,
+        "nationalityName": "Libyan",
+        "nationalityNameInLocal": "ലിബിയൻ",
+        "countryCode": "218"
+    },
+    {
+        "id": 501221,
+        "code": "MAC",
+        "name": "Macau",
+        "nameInLocal": "മക്കാവു",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "853"
+    },
+    {
+        "id": 501222,
+        "code": "MYT",
+        "name": "Mayotte",
+        "nameInLocal": "മായോട്ട്",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "262"
+    },
+    {
+        "id": 501223,
+        "code": "FSM",
+        "name": "Micronesia",
+        "nameInLocal": "മൈക്രോനേഷ്യ",
+        "active": true,
+        "nationalityName": "Micronesian",
+        "nationalityNameInLocal": "മൈക്രോനേഷ്യൻ",
+        "countryCode": "691"
+    },
+    {
+        "id": 501224,
+        "code": "MSR",
+        "name": "Montserrat",
+        "nameInLocal": "മോണ്ട്സെറാറ്റ്",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "1-664"
+    },
+    {
+        "id": 501225,
+        "code": "ANT",
+        "name": "Netherlands Antilles",
+        "nameInLocal": "നെതര്‍ ലാന്‍ഡ് ആന്റിലെസ്",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "599"
+    },
+    {
+        "id": 501226,
+        "code": "NCL",
+        "name": "New Caledonia",
+        "nameInLocal": "ന്യൂ കാലിഡോണിയ",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "687"
+    },
+    {
+        "id": 501227,
+        "code": "NIU",
+        "name": "Niue",
+        "nameInLocal": "നിയു",
+        "active": true,
+        "nationalityName": "New Zealand",
+        "nationalityNameInLocal": "ന്യൂസിലാന്റ്",
+        "countryCode": "683"
+    },
+    {
+        "id": 501228,
+        "code": "PRK",
+        "name": "North Korea",
+        "nameInLocal": "ഉത്തര കൊറിയ",
+        "active": true,
+        "nationalityName": "North Korean",
+        "nationalityNameInLocal": "ഉത്തര കൊറിയൻ",
+        "countryCode": "850"
+    },
+    {
+        "id": 501229,
+        "code": "MNP",
+        "name": "Northern Mariana Islands",
+        "nameInLocal": "വടക്കൻ മരിയാന ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "American",
+        "nationalityNameInLocal": "അമേരിക്കൻ",
+        "countryCode": "1-670"
+    },
+    {
+        "id": 501230,
+        "code": "PSE",
+        "name": "Palestine",
+        "nameInLocal": "പലസ്തീന്‍",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "970"
+    },
+    {
+        "id": 501231,
+        "code": "PCN",
+        "name": "Pitcairn",
+        "nameInLocal": "പിറ്റ്കെയിന്‍",
+        "active": true,
+        "nationalityName": "British Overseas Territory Citizen",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ് ഓവർസീസ് ടെറിട്ടറി സിറ്റിസൺ",
+        "countryCode": "64"
+    },
+    {
+        "id": 501232,
+        "code": "PRI",
+        "name": "Puerto Rico",
+        "nameInLocal": "പ്യൂര്‍ട്ടോ റിക്കോ",
+        "active": true,
+        "nationalityName": "American",
+        "nationalityNameInLocal": "അമേരിക്കൻ",
+        "countryCode": "1-787, 1-939"
+    },
+    {
+        "id": 501233,
+        "code": "COG",
+        "name": "Republic of the Congo",
+        "nameInLocal": "റിപ്പബ്ലിക് ഓഫ് കോംഗോ",
+        "active": false,
+        "nationalityName": "Congolese",
+        "nationalityNameInLocal": "കോംഗൊളീസ്",
+        "countryCode": "242"
+    },
+    {
+        "id": 501234,
+        "code": "REU",
+        "name": "Reunion",
+        "nameInLocal": "റീയൂണിയന്‍",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "262"
+    },
+    {
+        "id": 501235,
+        "code": "RUS",
+        "name": "Russia",
+        "nameInLocal": "റഷ്യ",
+        "active": true,
+        "nationalityName": "Russian",
+        "nationalityNameInLocal": "റഷ്യൻ",
+        "countryCode": "7"
+    },
+    {
+        "id": 501236,
+        "code": "BLM",
+        "name": "Saint Barthelemy",
+        "nameInLocal": "സെയിന്റ്  ബര്‍ത്തലെമി",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "590"
+    },
+    {
+        "id": 501237,
+        "code": "SHN",
+        "name": "Saint Helena",
+        "nameInLocal": "സെയിന്റ്  ഹെലീന",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "290"
+    },
+    {
+        "id": 501238,
+        "code": "MAF",
+        "name": "Saint Martin",
+        "nameInLocal": "സെയിന്റ്  മാര്‍ട്ടിന്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "590"
+    },
+    {
+        "id": 501239,
+        "code": "SPM",
+        "name": "Saint Pierre and Miquelon",
+        "nameInLocal": "സെയിന്റ്  പിയറി   ആന്‍ഡ്  മൈക്‌ലോന്‍",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "508"
+    },
+    {
+        "id": 501240,
+        "code": "SXM",
+        "name": "Sint Maarten",
+        "nameInLocal": "സിന്റ് മാര്‍ട്ടന്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "1-721"
+    },
+    {
+        "id": 501241,
+        "code": "KOR",
+        "name": "South Korea",
+        "nameInLocal": "ദക്ഷിണ കൊറിയ",
+        "active": true,
+        "nationalityName": "South Korean",
+        "nationalityNameInLocal": "ദക്ഷിണ കൊറിയൻ",
+        "countryCode": "82"
+    },
+    {
+        "id": 501242,
+        "code": "SSD",
+        "name": "South Sudan",
+        "nameInLocal": "ദക്ഷിണ സുഡാന്‍",
+        "active": true,
+        "nationalityName": "South Sudanese",
+        "nationalityNameInLocal": "സൗത്ത്  സുഡാനീസ്",
+        "countryCode": "211"
+    },
+    {
+        "id": 501243,
+        "code": "SJM",
+        "name": "Svalbard and Jan Mayen",
+        "nameInLocal": "സ്വാല്‍ബാര്‍ഡ്  ആന്‍ഡ്  ജാന്‍ മയന്‍",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "47"
+    },
+    {
+        "id": 501244,
+        "code": "SYR",
+        "name": "Syria",
+        "nameInLocal": "സിറിയ",
+        "active": true,
+        "nationalityName": "Syrian",
+        "nationalityNameInLocal": "സിറിയൻ",
+        "countryCode": "963"
+    },
+    {
+        "id": 501245,
+        "code": "TWN",
+        "name": "Taiwan",
+        "nameInLocal": "തായ്‌വാന്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "886"
+    },
+    {
+        "id": 501246,
+        "code": "TZA",
+        "name": "Tanzania",
+        "nameInLocal": "ടാന്‍സാനിയ",
+        "active": true,
+        "nationalityName": "Tanzanian",
+        "nationalityNameInLocal": "ടാൻസാനിയൻ",
+        "countryCode": "255"
+    },
+    {
+        "id": 501247,
+        "code": "TKL",
+        "name": "Tokelau",
+        "nameInLocal": "ടോകെലാവ്",
+        "active": true,
+        "nationalityName": "New Zealand",
+        "nationalityNameInLocal": "ന്യൂസിലാന്റ്",
+        "countryCode": "690"
+    },
+    {
+        "id": 501248,
+        "code": "TCA",
+        "name": "Turks and Caicos Islands",
+        "nameInLocal": "തുര്‍ക്സ്  ആന്‍ഡ്   കൈക്കോസ് ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "1-649"
+    },
+    {
+        "id": 501249,
+        "code": "VIR",
+        "name": "U.S. Virgin Islands",
+        "nameInLocal": "യു.എസ്. വിര്‍ജിന്‍ ദ്വീപുകള്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "1-340"
+    },
+    {
+        "id": 501250,
+        "code": "GBR",
+        "name": "United Kingdom",
+        "nameInLocal": "യുണൈറ്റഡ് കിംഗ്ഡം",
+        "active": true,
+        "nationalityName": "British, UK",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്, യുകെ",
+        "countryCode": "44"
+    },
+    {
+        "id": 501251,
+        "code": "USA",
+        "name": "United States",
+        "nameInLocal": "യുണൈറ്റഡ് സ്റ്റേറ്റ് ",
+        "active": false,
+        "nationalityName": "American",
+        "nationalityNameInLocal": "അമേരിക്കൻ",
+        "countryCode": "1"
+    },
+    {
+        "id": 501252,
+        "code": "VAT",
+        "name": "Vatican",
+        "nameInLocal": "വത്തിക്കാന്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "379"
+    },
+    {
+        "id": 501253,
+        "code": "VEN",
+        "name": "Venezuela",
+        "nameInLocal": "വെനിസ്വേല",
+        "active": true,
+        "nationalityName": "Venezuelan",
+        "nationalityNameInLocal": "വെനിസ്വേലൻ",
+        "countryCode": "58"
+    },
+    {
+        "id": 501254,
+        "code": "VNM",
+        "name": "Vietnam",
+        "nameInLocal": "വിയറ്റ്നാം",
+        "active": true,
+        "nationalityName": "Vietnamese",
+        "nationalityNameInLocal": "വിയറ്റ്നാമീസ്",
+        "countryCode": "84"
+    },
+    {
+        "id": 501255,
+        "code": "WLF",
+        "name": "Wallis and Futuna",
+        "nameInLocal": "വാലിസ് ആന്‍ഡ് ഫുട്‌നാ ",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "681"
+    },
+    {
+        "id": 501256,
+        "code": "ESH",
+        "name": "Western Sahara",
+        "nameInLocal": "പടിഞ്ഞാറന്‍ സഹാറ",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "212"
+    },
+    {
+        "id": 501257,
+        "code": "ALA",
+        "name": "Aland Islands",
+        "nameInLocal": "അലണ്ട് ദ്വീപുകള്‍",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": ""
+    },
+    {
+        "id": 501258,
+        "code": "BVT",
+        "name": "Bouvet Island",
+        "nameInLocal": "ബൗവെറ്റ് ദ്വീപ്",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": ""
+    },
+    {
+        "id": 501259,
+        "code": "CCK",
+        "name": "Cocos (Keeling) Islands",
+        "nameInLocal": "കൊക്കോസ് (കീലിംഗ്) ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "Australian",
+        "nationalityNameInLocal": "ഓസ്‌ട്രേലിയൻ",
+        "countryCode": "61"
+    },
+    {
+        "id": 501260,
+        "code": "COG",
+        "name": "Congo",
+        "nameInLocal": "കോംഗോ",
+        "active": true,
+        "nationalityName": "Congolese",
+        "nationalityNameInLocal": "കോംഗോലീസ്",
+        "countryCode": "242"
+    },
+    {
+        "id": 501261,
+        "code": "FLK",
+        "name": "Falkland Islands (Malvinas)",
+        "nameInLocal": "ഫോക്ക്‌ലാന്‍ഡ് ദ്വീപുകള്‍ (മാല്‍വിനാസ്)",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": "500"
+    },
+    {
+        "id": 501262,
+        "code": "GUF",
+        "name": "French Guiana",
+        "nameInLocal": "ഫ്രഞ്ച് ഗയാന",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": ""
+    },
+    {
+        "id": 501263,
+        "code": "ATF",
+        "name": "French Southern Territories",
+        "nameInLocal": "ഫ്രഞ്ച് സതേണ്‍ ടെറിട്ടറികള്‍",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": ""
+    },
+    {
+        "id": 501264,
+        "code": "GLP",
+        "name": "Guadeloupe",
+        "nameInLocal": "ഗ്വാഡലൂപ്പ്",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": ""
+    },
+    {
+        "id": 501265,
+        "code": "HMD",
+        "name": "Heard Island and Mcdonald Islands",
+        "nameInLocal": "ഹേര്‍ഡ് ദ്വീപ് ആന്‍ഡ് മക്ഡൊണാള്‍ഡ് ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": ""
+    },
+    {
+        "id": 501266,
+        "code": "VAT",
+        "name": "Holy See",
+        "nameInLocal": "ഹോളി സീ",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": "379"
+    },
+    {
+        "id": 501267,
+        "code": "IRN",
+        "name": "Iran, Islamic Republic Of",
+        "nameInLocal": "ഇറാന്‍, ഇസ്ലാമിക് റിപ്പബ്ലിക് ഓഫ്",
+        "active": true,
+        "nationalityName": "Iranian",
+        "nationalityNameInLocal": "ഇറാനിയൻ",
+        "countryCode": "98"
+    },
+    {
+        "id": 501268,
+        "code": "PRK",
+        "name": "Korea, Democratic People Republic of",
+        "nameInLocal": "കൊറിയ, ഡെമോക്രാറ്റിക് പീപ്പിള്‍ റിപ്പബ്ലിക് ഓഫ്",
+        "active": false,
+        "nationalityName": "North Korean",
+        "nationalityNameInLocal": "ഉത്തര കൊറിയ",
+        "countryCode": "850"
+    },
+    {
+        "id": 501269,
+        "code": "KOR",
+        "name": "Korea, Republic of",
+        "nameInLocal": "കൊറിയ, റിപ്പബ്ലിക് ഓഫ്",
+        "active": true,
+        "nationalityName": "South Korean",
+        "nationalityNameInLocal": "ദക്ഷിണ കൊറിയൻ",
+        "countryCode": "82"
+    },
+    {
+        "id": 501270,
+        "code": "LAO",
+        "name": "Lao People Democratic Republic",
+        "nameInLocal": "ലാവോ പീപ്പിള്‍ ഡെമോക്രാറ്റിക് റിപ്പബ്ലിക്",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "856"
+    },
+    {
+        "id": 501271,
+        "code": "MAC",
+        "name": "Macao",
+        "nameInLocal": "മക്കാവോ",
+        "active": true,
+        "nationalityName": "Macanese",
+        "nationalityNameInLocal": "",
+        "countryCode": "853"
+    },
+    {
+        "id": 501272,
+        "code": "MTQ",
+        "name": "Martinique",
+        "nameInLocal": "മാര്‍ട്ടിനിക്ക്",
+        "active": true,
+        "nationalityName": "French",
+        "nationalityNameInLocal": "ഫ്രഞ്ച്",
+        "countryCode": ""
+    },
+    {
+        "id": 501273,
+        "code": "FSM",
+        "name": "Micronesia, Federated States of",
+        "nameInLocal": "മൈക്രോനേഷ്യ, ഫെഡറേറ്റഡ് സ്റ്റേറ്റ്സ്",
+        "active": true,
+        "nationalityName": "Micronesian",
+        "nationalityNameInLocal": "മൈക്രോനേഷ്യൻ",
+        "countryCode": "691"
+    },
+    {
+        "id": 501274,
+        "code": "MDA",
+        "name": "Moldova, Republic of",
+        "nameInLocal": "മോള്‍ഡോവ, റിപ്പബ്ലിക് ഓഫ്",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": "373"
+    },
+    {
+        "id": 501275,
+        "code": "NFK",
+        "name": "Norfolk Island",
+        "nameInLocal": "നോര്‍ഫോക്ക് ദ്വീപ്",
+        "active": true,
+        "nationalityName": "Australian",
+        "nationalityNameInLocal": "ഓസ്‌ട്രേലിയൻ",
+        "countryCode": ""
+    },
+    {
+        "id": 501276,
+        "code": "PSE",
+        "name": "Palestinian Territory, Occupied",
+        "nameInLocal": "പലസ്തീന്‍ പ്രദേശം, അധിനിവേശം",
+        "active": true,
+        "nationalityName": "Palestinians",
+        "nationalityNameInLocal": "പാലസ്തീനിയൻസ്",
+        "countryCode": "970"
+    },
+    {
+        "id": 501277,
+        "code": "CSM",
+        "name": "Serbia and Montenegro",
+        "nameInLocal": "സെര്‍ബിയ ആന്‍ഡ് മോണ്ടിനെഗ്രോ",
+        "active": false,
+        "nationalityName": "",
+        "nationalityNameInLocal": "",
+        "countryCode": ""
+    },
+    {
+        "id": 501278,
+        "code": "SGS",
+        "name": "South Georgia and the South Sandwich Islands",
+        "nameInLocal": "സൗത്ത് ജോര്‍ജിയ  ആന്‍ഡ്  സൗത്ത് സാന്‍ഡ്‌വിച്ച് ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "British",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ്",
+        "countryCode": ""
+    },
+    {
+        "id": 501279,
+        "code": "TWN",
+        "name": "Taiwan, Province of China",
+        "nameInLocal": "തായ്‌വാന്‍, ചൈനയുടെ പ്രവിശ്യ",
+        "active": true,
+        "nationalityName": "Taiwanese",
+        "nationalityNameInLocal": "തായ്‌വാനീസ്",
+        "countryCode": "886"
+    },
+    {
+        "id": 501280,
+        "code": "TZA",
+        "name": "Tanzania, United Republic of",
+        "nameInLocal": "ടാന്‍സാനിയ, യുണൈറ്റഡ് റിപ്പബ്ലിക് ഓഫ്",
+        "active": true,
+        "nationalityName": "Tanzanian",
+        "nationalityNameInLocal": "ടാൻസാനിയൻ",
+        "countryCode": "255"
+    },
+    {
+        "id": 501281,
+        "code": "UMI",
+        "name": "United States Minor Outlying Islands",
+        "nameInLocal": "യുണൈറ്റഡ് സ്റ്റേറ്റ്സ് മൈനര്‍ ഔട്ട്ലൈയിംഗ് ദ്വീപുകള്‍",
+        "active": true,
+        "nationalityName": "American",
+        "nationalityNameInLocal": "അമേരിക്കൻ",
+        "countryCode": ""
+    },
+    {
+        "id": 501282,
+        "code": "VGB",
+        "name": "Virgin Islands British",
+        "nameInLocal": "വിര്‍ജിന്‍ ദ്വീപുകള്‍, ബ്രിട്ടീഷ്",
+        "active": true,
+        "nationalityName": "British Virgin Islander",
+        "nationalityNameInLocal": "ബ്രിട്ടീഷ് വിർജിൻ ഐലൻഡർ",
+        "countryCode": "1-284"
+    },
+    {
+        "id": 501283,
+        "code": "VIR",
+        "name": "Virgin Islands U.S",
+        "nameInLocal": "വിര്‍ജിന്‍ ദ്വീപുകള്‍, യു.എസ്.",
+        "active": true,
+        "nationalityName": "American",
+        "nationalityNameInLocal": "അമേരിക്കൻ",
+        "countryCode": "1-340"
+    }
+]

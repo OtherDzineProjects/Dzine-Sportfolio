@@ -1,0 +1,160 @@
+
+.accordian-carousel {
+    width: 100%;
+    height: 450px;
+    overflow: hidden;
+    margin: 0px auto;
+  }
+  
+  .accordian-carousel ul {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .accordian-carousel ul li {
+    display: table-cell;
+    vertical-align: bottom;
+    position: relative;
+    width: 16.666%;
+    height: 450px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    transition: all 1000ms ease-in-out;
+    opacity: 0.5;
+  }
+  
+  .accordian-carousel ul li div {
+    display: block;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .accordian-carousel ul li div a {
+    display: block;
+    height: 350px;
+    width: 100%;
+    position: relative;
+    z-index: 3;
+    vertical-align: bottom;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
+    /*filter: invert(100%);*/
+    text-decoration: none;
+    font-family: Open Sans, sans-serif;
+    transition: all 300ms ease-in-out;
+  }
+  
+  .accordian-carousel ul li div a * {
+    opacity: 1;
+    
+    margin: 0 0 0 10px;
+    width: 100%;
+    position: relative;
+    z-index: 5;
+    white-space: nowrap;
+    -webkit-transform: translateX(-20px);
+    transform: translateX(-20px);
+    -webkit-transition: all 400ms ease-in-out;
+    transition: all 400ms ease-in-out;
+  }
+  .accordian-carousel ul li div a h2 {
+    text-overflow: clip;
+    font-size: 24px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    top: 220px;
+    font-weight: 600;
+  }
+  .accordian-carousel ul li div .title {
+    text-overflow: clip;
+    font-size: 32px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    top: 210px;
+    color:#ffffff;text-shadow: 1px 1px 2px #000;
+    left:5%;
+    position:absolute;
+    opacity:1;
+  }
+  .accordian-carousel ul li div a p {
+    top: 240px;
+    font-size: 18px;
+    padding-left: 0;
+  }
+  
+  .accordian-carousel ul li:nth-child(1) { 
+    background-position: 50% 30%;
+  }
+  
+  .accordian-carousel ul li:nth-child(2) { 
+   background-position: 70% 0%;
+  }
+  
+  .accordian-carousel ul li:nth-child(3) { 
+  background-position: 50% 50%;
+  }
+  
+  .accordian-carousel ul li:nth-child(4) { 
+    background-position: 30% 40%;
+  }
+  
+  .accordian-carousel ul li:nth-child(5) { 
+    background-position: 60% 64%;
+  }
+  
+  .accordian-carousel ul li:nth-child(6) { 
+    background-position: 70% 25%;
+  }
+  .accordian-carousel ul li:nth-child(7) { 
+    background-position: 50% 30%;
+  }
+  
+  .accordian-carousel ul li:nth-child(8) { 
+    background-position: 50% 30%;
+  }
+  .accordian-carousel ul li { background-size: cover; }
+  .accordian-carousel ul:hover li { width: 10%; }
+  .accordian-carousel ul:hover li:hover { width: 90%; opacity: 1; }
+  
+  /*.accordian-carousel ul:hover li:hover a { background: rgba(0, 0, 0, 0.4); }*/
+  
+  .accordian-carousel ul:hover li:hover a * {
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  .accordian-carousel ul:hover li:hover .title * {
+    opacity: 0;
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  
+   @media screen and (max-width: 680px) {
+    
+    body { margin: 0; }
+    .accordian-carousel { height: auto; }
+  
+    .accordian-carousel ul li,
+    .accordian-carousel ul li:hover,
+    .accordian-carousel ul:hover li,
+    .accordian-carousel ul:hover li:hover {
+      position: relative;
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+      -webkit-transition: none;
+      transition: none;
+    }
+    .accordian-carousel ul li div a * {
+      opacity: 1;
+      -webkit-transform: translateX(0);
+      transform: translateX(0);
+    }
+  }
+  
+  

@@ -1,0 +1,25 @@
+.count-container {
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+  font-family: "Inter";
+
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.count-container.active {
+  color: #ffffff;
+  background-color: #078dee;
+}
+
+.inactive-tab {
+  color: #787878;
+}
+
+.inactive-tab svg path {
+  stroke: #787878;
+}

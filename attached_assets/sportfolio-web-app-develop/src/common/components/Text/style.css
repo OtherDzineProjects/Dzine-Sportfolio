@@ -1,0 +1,68 @@
+.input-container.focus {
+  border: 1px solid rgb(7, 141, 238);
+  outline: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.input-container.error {
+  border: 1px solid #ff2457;
+  outline: none;
+}
+
+.input-container {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  position: relative;
+}
+
+.input-container legend {
+  margin-left: 20px;
+  font-size: 14px;
+  position: absolute;
+  top: -10px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.input-container legend .star {
+  padding-inline: 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ff2457;
+}
+
+.input-container input {
+  outline: none;
+  width: 100%;
+  border: none;
+  padding: 0px 20px 5px 20px;
+  height: 50px;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+.input-container .input-flex {
+  display: flex;
+  align-items: center;
+}
+.input-container .left {
+  padding: 10px 0px 10px 10px;
+}
+.input-container .right {
+  padding: 0px 10px 0 10px;
+}
+
+.input-container .error {
+  position: absolute;
+  text-align: right;
+  bottom: -20px;
+  right: 0;
+  color: #ff2457;
+  font-size: 12px;
+}
+
+.no-shrink {
+  margin-bottom: 10px;
+  display: block;
+}

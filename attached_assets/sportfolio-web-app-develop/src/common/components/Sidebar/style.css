@@ -1,0 +1,35 @@
+.side-bar{
+    border-right: 1px solid #eee;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.header{
+    border-bottom: 1px solid #eee;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    height: 90px;
+}
+.menu-container{
+    padding: 20px;
+}
+.menu-container .menu-item{
+    border-radius: 10px;
+    padding: 13px 10px 13px 20px;
+    font-weight: 500;
+    color: #242A2D;
+}
+.menu-container .menu-item.active-menu, .menu-container .menu-item:hover{
+    background: rgba(42,63,248, .1);
+    color: rgb(7, 141, 238);
+}
+.menu-container .menu-item .icon svg{
+    stroke: #242A2D;
+}
+.menu-container .menu-item.active-menu .icon svg, .menu-container .menu-item:hover .icon svg{
+    stroke: rgb(7, 141, 238);
+}
+.profile-menu{
+    border: 1px solid rgb(7, 141, 238);
+}
+.profile-menu .subtitle{
+    font-size: 13px;
+    color: #aaa;
+}

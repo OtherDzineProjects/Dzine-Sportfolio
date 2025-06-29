@@ -1,0 +1,8 @@
+.normal-table{
+    border: 1px solid #eee;
+    border-radius: 10px;
+}
+.normal-table td, .normal-table th{
+    border: 1px solid #eee;
+    padding: 10px;
+}

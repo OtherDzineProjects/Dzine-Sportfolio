@@ -1,0 +1,25 @@
+.pagination-key {
+  width: 1.375rem;
+  height: 1.5rem;
+  cursor: pointer;
+  background-color: rgba(7, 141, 238, 0.1);
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  color: #078dee;
+  user-select: none;
+}
+
+.pagination-key svg path {
+  stroke: #078dee;
+}
+
+.pagination-key.active {
+  background-color: #078dee;
+  color: #fff;
+}
+
+.pagination-key.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

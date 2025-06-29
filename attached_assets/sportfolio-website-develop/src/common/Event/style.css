@@ -1,0 +1,30 @@
+
+.event-carousel-container{
+    width: 100%;
+}
+.event-carousel-container .slick-list{
+    height: auto
+}
+.event-carousel-container .slick-track{
+    display: flex;
+    gap: 20px
+}
+.event-carousel-item{
+    width: 100%;
+    position: relative;
+}
+
+.event-carousel-container .slick-arrow{
+    top: -30px;
+}
+.event-carousel-container .slick-prev{
+    right: 50px;
+    left: auto;
+}
+.event-carousel-container .slick-next{
+    right: 15px;
+    left: auto;
+}
+button svg{
+    margin: auto;
+}

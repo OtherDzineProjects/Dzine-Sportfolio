@@ -1,0 +1,16 @@
+.not-found-header {
+  border: 1px solid #e8e8e8;
+}
+
+.not-found-page-container {
+  width: 100%;
+  height: calc(100vh - 4.5rem);
+  height: calc(100dvh - 4.5rem);
+  height: calc(100svh - 4.5rem);
+  background-image: url("../../../assets/404-bg.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: grid;
+  place-items: center;
+}

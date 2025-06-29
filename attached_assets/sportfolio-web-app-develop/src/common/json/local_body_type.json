@@ -1,0 +1,42 @@
+[
+    {
+        
+        "id": 1,
+        "code": "LB_TYPE_DISTRICT_PANCHAYATH",
+        "name": "District Panchayath",
+        "nameInLocal": "ജില്ലാ പഞ്ചായത്ത്",
+        "active": true
+    },
+    {
+        
+        "id": 2,
+        "code": "LB_TYPE_BLOCK_PANCHAYATH",
+        "name": "Block Panchayath",
+        "nameInLocal": "ബ്ലോക്ക് പഞ്ചായത്ത്",
+        "active": true
+    },
+    {
+        
+        "id": 3,
+        "code": "LB_TYPE_MUNICIPALITY",
+        "name": "Municipality",
+        "nameInLocal": "മുനിസിപ്പാലിറ്റി",
+        "active": true
+    },
+    {
+        
+        "id": 4,
+        "code": "LB_TYPE_CORPORATION",
+        "name": "Municipal Corporation",
+        "nameInLocal": "മുനിസിപ്പല്‍ കോര്‍പ്പറേഷന്‍",
+        "active": true
+    },
+    {
+        
+        "id": 5,
+        "code": "LB_TYPE_GRAMA_PANCHAYATH",
+        "name": "Grama Panchayath",
+        "nameInLocal": "ഗ്രാമ പഞ്ചായത്ത്",
+        "active": true
+    }
+]

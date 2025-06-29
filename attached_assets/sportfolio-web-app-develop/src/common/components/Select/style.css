@@ -1,0 +1,13 @@
+.options-cover.single-select {
+  display: flex;
+  justify-content: space-between;
+}
+
+.dropdown-arrow {
+  transform: rotate(0deg);
+  transition: transform 0.3s ease-in-out;
+}
+
+.dropdown-arrow-up {
+  transform: rotate(180deg);
+}
