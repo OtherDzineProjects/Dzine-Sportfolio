@@ -2,7 +2,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { seedInitialData } from "./seedData";
-import { globalConstants } from "./globalConstants";
+const globalConstants = require("./common/globalConstants");
 
 const app = express();
 
