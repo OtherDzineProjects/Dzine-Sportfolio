@@ -277,6 +277,26 @@ export async function seedInitialData() {
 
         console.log("Created default admin user: admin@sportfolio.com / admin123");
       }
+
+      // Create test user if none exists
+      const testUserExists = existingUsers.find(u => u.email === "ahammedsukarno@gmail.com");
+      if (!testUserExists) {
+        const bcrypt = await import("bcryptjs");
+        const hashedPassword = await bcrypt.hash("test123", 10);
+        
+        const testUser = await storage.createUser({
+          email: "ahammedsukarno@gmail.com",
+          username: "ahammed",
+          password: hashedPassword,
+          firstName: "Ahmed",
+          lastName: "Sukarno",
+          userType: "athlete",
+          approvalStatus: "approved",
+          isActive: true
+        });
+
+        console.log("Created test user: ahammedsukarno@gmail.com / test123");
+      }
     } catch (error) {
       console.log("Error creating default admin user:", error);
     }
