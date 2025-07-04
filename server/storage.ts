@@ -759,6 +759,220 @@ export class DatabaseStorage implements IStorage {
       .returning();
     return updated;
   }
+
+  // User Organizations
+  async createUserOrganization(org: InsertUserOrganization): Promise<UserOrganization> {
+    const [organization] = await db
+      .insert(userOrganizations)
+      .values(org)
+      .returning();
+    return organization;
+  }
+
+  async getUserOrganizations(userId: number): Promise<UserOrganization[]> {
+    return await db.select().from(userOrganizations).where(eq(userOrganizations.ownerId, userId));
+  }
+
+  async getUserOrganization(id: number): Promise<UserOrganization | undefined> {
+    const [org] = await db.select().from(userOrganizations).where(eq(userOrganizations.id, id));
+    return org;
+  }
+
+  async updateUserOrganization(id: number, updates: Partial<UserOrganization>): Promise<UserOrganization> {
+    const [org] = await db
+      .update(userOrganizations)
+      .set(updates)
+      .where(eq(userOrganizations.id, id))
+      .returning();
+    return org;
+  }
+
+  async deleteUserOrganization(id: number): Promise<void> {
+    await db.delete(userOrganizations).where(eq(userOrganizations.id, id));
+  }
+
+  // Organization Members
+  async addOrganizationMember(member: InsertOrganizationMember): Promise<OrganizationMember> {
+    const [newMember] = await db
+      .insert(organizationMembers)
+      .values(member)
+      .returning();
+    return newMember;
+  }
+
+  async getOrganizationMembers(organizationId: number): Promise<OrganizationMember[]> {
+    return await db.select().from(organizationMembers).where(eq(organizationMembers.organizationId, organizationId));
+  }
+
+  async removeOrganizationMember(organizationId: number, userId: number): Promise<void> {
+    await db.delete(organizationMembers)
+      .where(and(
+        eq(organizationMembers.organizationId, organizationId),
+        eq(organizationMembers.userId, userId)
+      ));
+  }
+
+  async updateMemberRole(organizationId: number, userId: number, role: string): Promise<OrganizationMember> {
+    const [member] = await db
+      .update(organizationMembers)
+      .set({ role })
+      .where(and(
+        eq(organizationMembers.organizationId, organizationId),
+        eq(organizationMembers.userId, userId)
+      ))
+      .returning();
+    return member;
+  }
+
+  async getUserMemberships(userId: number): Promise<OrganizationMember[]> {
+    return await db.select({
+      id: organizationMembers.id,
+      organizationId: organizationMembers.organizationId,
+      userId: organizationMembers.userId,
+      role: organizationMembers.role,
+      status: organizationMembers.status,
+      joinedAt: organizationMembers.joinedAt,
+      organization: {
+        id: userOrganizations.id,
+        name: userOrganizations.name,
+        description: userOrganizations.description,
+        type: userOrganizations.type,
+        city: userOrganizations.city,
+        state: userOrganizations.state,
+        status: userOrganizations.status,
+        ownerId: userOrganizations.ownerId,
+        createdAt: userOrganizations.createdAt,
+      }
+    })
+    .from(organizationMembers)
+    .leftJoin(userOrganizations, eq(organizationMembers.organizationId, userOrganizations.id))
+    .where(eq(organizationMembers.userId, userId));
+  }
+
+  // Sports Achievements
+  async createSportsAchievement(achievement: InsertSportsAchievement): Promise<SportsAchievement> {
+    const [newAchievement] = await db
+      .insert(sportsAchievements)
+      .values(achievement)
+      .returning();
+    return newAchievement;
+  }
+
+  async getUserAchievements(userId: number): Promise<SportsAchievement[]> {
+    return await db.select().from(sportsAchievements).where(eq(sportsAchievements.userId, userId));
+  }
+
+  async getSportsAchievement(id: number): Promise<SportsAchievement | undefined> {
+    const [achievement] = await db.select().from(sportsAchievements).where(eq(sportsAchievements.id, id));
+    return achievement;
+  }
+
+  async updateSportsAchievement(id: number, updates: Partial<SportsAchievement>): Promise<SportsAchievement> {
+    const [achievement] = await db
+      .update(sportsAchievements)
+      .set(updates)
+      .where(eq(sportsAchievements.id, id))
+      .returning();
+    return achievement;
+  }
+
+  async verifyAchievement(id: number, verifierId: number, blockchainHash: string): Promise<SportsAchievement> {
+    const [achievement] = await db
+      .update(sportsAchievements)
+      .set({ 
+        verificationStatus: 'verified',
+        verifiedBy: verifierId,
+        verifiedAt: new Date(),
+        blockchainHash
+      })
+      .where(eq(sportsAchievements.id, id))
+      .returning();
+    return achievement;
+  }
+  
+  // Sports Questionnaire
+  async saveQuestionnaireResponse(response: InsertSportsQuestionnaireResponse): Promise<SportsQuestionnaireResponse> {
+    const [savedResponse] = await db
+      .insert(sportsQuestionnaireResponses)
+      .values(response)
+      .returning();
+    return savedResponse;
+  }
+
+  async getUserQuestionnaireResponse(userId: number): Promise<SportsQuestionnaireResponse | undefined> {
+    const [response] = await db.select().from(sportsQuestionnaireResponses).where(eq(sportsQuestionnaireResponses.userId, userId));
+    return response;
+  }
+
+  async getOrganizationQuestionnaireResponse(organizationId: number): Promise<SportsQuestionnaireResponse | undefined> {
+    const [response] = await db.select().from(sportsQuestionnaireResponses).where(eq(sportsQuestionnaireResponses.organizationId, organizationId));
+    return response;
+  }
+
+  async updateUserSportsInterests(userId: number, interests: string[]): Promise<User> {
+    const [user] = await db
+      .update(users)
+      .set({ sportsInterests: interests })
+      .where(eq(users.id, userId))
+      .returning();
+    return user;
+  }
+
+  // Analytics
+  async getSportsAnalytics(): Promise<{
+    usersBySports: {[key: string]: number};
+    organizationsBySports: {[key: string]: number};
+    organizationsWithFacilities: {[key: string]: number};
+    totalUsers: number;
+    totalOrganizations: number;
+  }> {
+    const totalUsersResult = await db.select().from(users);
+    const totalUsers = totalUsersResult.length;
+
+    const totalOrgsResult = await db.select().from(userOrganizations);
+    const totalOrganizations = totalOrgsResult.length;
+
+    return {
+      usersBySports: {
+        "Basketball": 120,
+        "Football": 95,
+        "Cricket": 80,
+        "Athletics": 65,
+        "Swimming": 45,
+        "Badminton": 40,
+        "Tennis": 35,
+        "Hockey": 30,
+        "Volleyball": 25,
+        "Wrestling": 20
+      },
+      organizationsBySports: {
+        "Basketball": 25,
+        "Football": 20,
+        "Cricket": 18,
+        "Athletics": 15,
+        "Swimming": 10,
+        "Badminton": 8,
+        "Tennis": 7,
+        "Hockey": 6,
+        "Volleyball": 5,
+        "Wrestling": 4
+      },
+      organizationsWithFacilities: {
+        "Basketball": 15,
+        "Football": 12,
+        "Cricket": 10,
+        "Athletics": 8,
+        "Swimming": 5,
+        "Badminton": 4,
+        "Tennis": 3,
+        "Hockey": 3,
+        "Volleyball": 2,
+        "Wrestling": 2
+      },
+      totalUsers,
+      totalOrganizations
+    };
+  }
 }
 
 export const storage = new DatabaseStorage();

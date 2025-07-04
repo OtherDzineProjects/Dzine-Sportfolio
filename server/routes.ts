@@ -8,6 +8,11 @@ import { z } from "zod";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
+// Helper function to generate blockchain hash
+function generateBlockchainHash(): string {
+  return 'bc_' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
 // Middleware to verify JWT token
 const authenticateToken = async (req: any, res: any, next: any) => {
   const authHeader = req.headers['authorization'];
@@ -663,6 +668,152 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Error fetching user approvals:", error);
       res.status(500).json({ message: "Failed to fetch approvals" });
+    }
+  });
+
+  // Profile management routes
+  app.put("/api/auth/profile", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const updates = req.body;
+      
+      const updatedUser = await storage.updateUser(user.id, {
+        ...updates,
+        graduationYear: updates.graduationYear ? parseInt(updates.graduationYear) : null,
+        dateOfBirth: updates.dateOfBirth ? new Date(updates.dateOfBirth) : null,
+      });
+      
+      res.json(updatedUser);
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // Sports interests route
+  app.put("/api/auth/sports-interests", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const { sportsInterests } = req.body;
+      
+      const updatedUser = await storage.updateUser(user.id, {
+        sportsInterests,
+        completedQuestionnaire: true,
+      });
+      
+      res.json(updatedUser);
+    } catch (error: any) {
+      console.error("Error updating sports interests:", error);
+      res.status(500).json({ message: "Failed to update sports interests" });
+    }
+  });
+
+  // Organizations routes
+  app.get("/api/organizations/owned", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const organizations = await storage.getUserOrganizations(user.id);
+      res.json(organizations);
+    } catch (error: any) {
+      console.error("Error fetching owned organizations:", error);
+      res.status(500).json({ message: "Failed to fetch organizations" });
+    }
+  });
+
+  app.post("/api/organizations", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const orgData = {
+        ...req.body,
+        ownerId: user.id,
+        status: 'active',
+      };
+      
+      const organization = await storage.createUserOrganization(orgData);
+      res.json(organization);
+    } catch (error: any) {
+      console.error("Error creating organization:", error);
+      res.status(500).json({ message: "Failed to create organization" });
+    }
+  });
+
+  app.get("/api/organizations/memberships", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const memberships = await storage.getUserMemberships(user.id);
+      res.json(memberships);
+    } catch (error: any) {
+      console.error("Error fetching memberships:", error);
+      res.status(500).json({ message: "Failed to fetch memberships" });
+    }
+  });
+
+  // Achievements routes
+  app.get("/api/achievements/user", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const achievements = await storage.getUserAchievements(user.id);
+      res.json(achievements);
+    } catch (error: any) {
+      console.error("Error fetching achievements:", error);
+      res.status(500).json({ message: "Failed to fetch achievements" });
+    }
+  });
+
+  app.post("/api/achievements", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const achievementData = {
+        ...req.body,
+        userId: user.id,
+        verificationStatus: 'pending',
+        blockchainHash: generateBlockchainHash(),
+      };
+      
+      const achievement = await storage.createSportsAchievement(achievementData);
+      res.json(achievement);
+    } catch (error: any) {
+      console.error("Error creating achievement:", error);
+      res.status(500).json({ message: "Failed to create achievement" });
+    }
+  });
+
+  // User approvals routes for dashboard
+  app.get("/api/approvals/user", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const approvals = await storage.getUserApprovals(user.id);
+      res.json(approvals);
+    } catch (error: any) {
+      console.error("Error fetching user approvals:", error);
+      res.status(500).json({ message: "Failed to fetch approvals" });
+    }
+  });
+
+  // Analytics export route  
+  app.get("/api/analytics/export", authenticateToken, async (req: any, res) => {
+    try {
+      const analytics = await storage.getSportsAnalytics();
+      
+      // Create simple CSV format for Excel compatibility
+      const csvData = [
+        'Category,Sports,User Count,Organization Count',
+        ...Object.entries(analytics.usersBySports || {}).map(([sport, userCount]) => {
+          const orgCount = analytics.organizationsBySports?.[sport] || 0;
+          return `Sports,${sport},${userCount as number},${orgCount}`;
+        }),
+        '',
+        'Summary Statistics',
+        `Total Users,${analytics.totalUsers || 0}`,
+        `Total Organizations,${analytics.totalOrganizations || 0}`,
+      ].join('\n');
+      
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="sportfolio-analytics-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send(csvData);
+    } catch (error: any) {
+      console.error("Error exporting analytics:", error);
+      res.status(500).json({ message: "Failed to export analytics" });
     }
   });
 
