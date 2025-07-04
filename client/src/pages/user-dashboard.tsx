@@ -437,6 +437,14 @@ export default function UserDashboard() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => window.location.href = '/analytics'}
+              >
+                <BarChart className="h-4 w-4 mr-2" />
+                Analytics & Reports
+              </Button>
               <Button variant="outline" size="sm">
                 <Settings className="h-4 w-4 mr-2" />
                 Settings
