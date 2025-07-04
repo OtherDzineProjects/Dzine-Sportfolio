@@ -39,7 +39,7 @@ export default function AuthModern() {
   const loginMutation = useMutation({
     mutationFn: async (data: typeof loginForm) => {
       const result = await apiRequest("POST", "/api/auth/login", data);
-      return result;
+      return result.json();
     },
     onSuccess: (data: any) => {
       localStorage.setItem("authToken", data.token);
@@ -64,7 +64,7 @@ export default function AuthModern() {
   const registerMutation = useMutation({
     mutationFn: async (data: typeof registerForm) => {
       const result = await apiRequest("POST", "/api/auth/register", data);
-      return result;
+      return result.json();
     },
     onSuccess: () => {
       setAlert({
