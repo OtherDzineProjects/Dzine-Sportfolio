@@ -4,8 +4,10 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
+import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import DashboardModern from "@/pages/dashboard-modern";
+import UserDashboard from "@/pages/user-dashboard";
 import Auth from "@/pages/auth";
 import AuthModern from "@/pages/auth-modern";
 import FacilityManagement from "@/pages/facility-management";
@@ -20,10 +22,12 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
+      <Route path="/landing" component={Landing} />
       <Route path="/auth" component={Auth} />
       <Route path="/auth-modern" component={AuthModern} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/dashboard-modern" component={DashboardModern} />
+      <Route path="/user-dashboard" component={UserDashboard} />
       <Route path="/facility-management" component={FacilityManagement} />
       <Route path="/fixtures-management" component={FixturesManagement} />
       <Route path="/live-scoring" component={LiveScoring} />

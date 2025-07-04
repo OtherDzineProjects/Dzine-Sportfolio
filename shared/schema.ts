@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, decimal, jsonb, varchar, date } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -23,6 +23,24 @@ export const users = pgTable("users", {
   subscriptionExpiry: timestamp("subscription_expires_at"),
   toolAccess: jsonb("tool_access").default({}), // {"facility": true, "fixtures": false, "scoring": true}
   blockchainWallet: text("blockchain_wallet"),
+  // Profile information
+  address: text("address"),
+  city: text("city"),
+  state: text("state"),
+  pincode: text("pincode"),
+  dateOfBirth: date("date_of_birth"),
+  profileImageUrl: text("profile_image_url"),
+  // Education
+  educationQualification: text("education_qualification"),
+  institution: text("institution"),
+  graduationYear: integer("graduation_year"),
+  // Career
+  currentPosition: text("current_position"),
+  currentOrganization: text("current_organization"),
+  workExperience: integer("work_experience"),
+  // Sports interests
+  sportsInterests: jsonb("sports_interests").$type<string[]>(),
+  completedQuestionnaire: boolean("completed_questionnaire").default(false),
   isActive: boolean("is_active").default(true),
   lastLoginAt: timestamp("last_login_at"),
   createdAt: timestamp("created_at").defaultNow(),
@@ -304,7 +322,13 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   certificates: many(certificates),
   maintenanceRequests: many(maintenanceRecords),
   approvalRequests: many(userApprovals),
-  reviewedApprovals: many(userApprovals)
+  reviewedApprovals: many(userApprovals),
+  // New relations
+  ownedOrganizations: many(userOrganizations),
+  organizationMemberships: many(organizationMembers),
+  achievements: many(sportsAchievements),
+  questionnaireResponses: many(sportsQuestionnaireResponses),
+  verifiedAchievements: many(sportsAchievements) // For verifiedBy field
 }));
 
 export const rolesRelations = relations(roles, ({ many }) => ({
@@ -404,6 +428,118 @@ export const eventsRelations = relations(events, ({ one, many }) => ({
   certificates: many(certificates)
 }));
 
+// User Organizations
+export const userOrganizations = pgTable("user_organizations", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  ownerId: integer("owner_id").references(() => users.id).notNull(),
+  organizationType: text("organization_type").notNull(), // sports_club, academy, school, college, etc.
+  address: text("address"),
+  city: text("city"),
+  state: text("state"),
+  pincode: text("pincode"),
+  phone: text("phone"),
+  email: text("email"),
+  website: text("website"),
+  // Sports interests and facilities
+  sportsInterests: jsonb("sports_interests").$type<string[]>(),
+  availableFacilities: jsonb("available_facilities").$type<{[key: string]: boolean}>(),
+  completedQuestionnaire: boolean("completed_questionnaire").default(false),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Organization Members
+export const organizationMembers = pgTable("organization_members", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  role: text("role").notNull(), // owner, admin, member, coach, etc.
+  permissions: jsonb("permissions").$type<string[]>(),
+  joinedAt: timestamp("joined_at").defaultNow(),
+  isActive: boolean("is_active").default(true)
+});
+
+// Sports Achievements with blockchain verification
+export const sportsAchievements = pgTable("sports_achievements", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  sport: text("sport").notNull(),
+  category: text("category"), // national, state, district, etc.
+  eventName: text("event_name"),
+  position: text("position"), // gold, silver, bronze, participant
+  achievementDate: date("achievement_date"),
+  organizingBody: text("organizing_body"),
+  certificateUrl: text("certificate_url"),
+  // Blockchain verification
+  blockchainHash: text("blockchain_hash").unique(),
+  isVerified: boolean("is_verified").default(false),
+  verificationStatus: text("verification_status").default("pending"), // pending, verified, rejected
+  verifiedAt: timestamp("verified_at"),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Sports Questionnaire Responses
+export const sportsQuestionnaireResponses = pgTable("sports_questionnaire_responses", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  organizationId: integer("organization_id").references(() => userOrganizations.id),
+  responseType: text("response_type").notNull(), // user, organization
+  responses: jsonb("responses").$type<{[key: string]: string[]}>(), // {"athletics": ["track_100m", "field_long_jump"], "swimming": ["freestyle", "butterfly"]}
+  facilityResponses: jsonb("facility_responses").$type<{[key: string]: boolean}>(), // Only for organizations
+  completedAt: timestamp("completed_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Relations for new tables
+export const userOrganizationsRelations = relations(userOrganizations, ({ one, many }) => ({
+  owner: one(users, {
+    fields: [userOrganizations.ownerId],
+    references: [users.id]
+  }),
+  members: many(organizationMembers),
+  questionnaireResponses: many(sportsQuestionnaireResponses)
+}));
+
+export const organizationMembersRelations = relations(organizationMembers, ({ one }) => ({
+  organization: one(userOrganizations, {
+    fields: [organizationMembers.organizationId],
+    references: [userOrganizations.id]
+  }),
+  user: one(users, {
+    fields: [organizationMembers.userId],
+    references: [users.id]
+  })
+}));
+
+export const sportsAchievementsRelations = relations(sportsAchievements, ({ one }) => ({
+  user: one(users, {
+    fields: [sportsAchievements.userId],
+    references: [users.id]
+  }),
+  verifier: one(users, {
+    fields: [sportsAchievements.verifiedBy],
+    references: [users.id]
+  })
+}));
+
+export const sportsQuestionnaireResponsesRelations = relations(sportsQuestionnaireResponses, ({ one }) => ({
+  user: one(users, {
+    fields: [sportsQuestionnaireResponses.userId],
+    references: [users.id]
+  }),
+  organization: one(userOrganizations, {
+    fields: [sportsQuestionnaireResponses.organizationId],
+    references: [userOrganizations.id]
+  })
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   id: true,
@@ -464,6 +600,32 @@ export const insertModuleConfigurationSchema = createInsertSchema(moduleConfigur
   updatedAt: true
 });
 
+// New insert schemas
+export const insertUserOrganizationSchema = createInsertSchema(userOrganizations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+export const insertOrganizationMemberSchema = createInsertSchema(organizationMembers).omit({
+  id: true,
+  joinedAt: true
+});
+
+export const insertSportsAchievementSchema = createInsertSchema(sportsAchievements).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  verifiedAt: true,
+  verifiedBy: true
+});
+
+export const insertSportsQuestionnaireResponseSchema = createInsertSchema(sportsQuestionnaireResponses).omit({
+  id: true,
+  completedAt: true,
+  updatedAt: true
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -505,3 +667,16 @@ export type InsertUserApproval = z.infer<typeof insertUserApprovalSchema>;
 
 export type ModuleConfiguration = typeof moduleConfigurations.$inferSelect;
 export type InsertModuleConfiguration = z.infer<typeof insertModuleConfigurationSchema>;
+
+// New types
+export type UserOrganization = typeof userOrganizations.$inferSelect;
+export type InsertUserOrganization = z.infer<typeof insertUserOrganizationSchema>;
+
+export type OrganizationMember = typeof organizationMembers.$inferSelect;
+export type InsertOrganizationMember = z.infer<typeof insertOrganizationMemberSchema>;
+
+export type SportsAchievement = typeof sportsAchievements.$inferSelect;
+export type InsertSportsAchievement = z.infer<typeof insertSportsAchievementSchema>;
+
+export type SportsQuestionnaireResponse = typeof sportsQuestionnaireResponses.$inferSelect;
+export type InsertSportsQuestionnaireResponse = z.infer<typeof insertSportsQuestionnaireResponseSchema>;

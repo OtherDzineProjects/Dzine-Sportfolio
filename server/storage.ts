@@ -16,6 +16,11 @@ import {
   rolePermissions,
   userApprovals,
   moduleConfigurations,
+  // New tables
+  userOrganizations,
+  organizationMembers,
+  sportsAchievements,
+  sportsQuestionnaireResponses,
   type User, 
   type InsertUser,
   type AthleteProfile,
@@ -43,7 +48,16 @@ import {
   type UserApproval,
   type InsertUserApproval,
   type ModuleConfiguration,
-  type InsertModuleConfiguration
+  type InsertModuleConfiguration,
+  // New types
+  type UserOrganization,
+  type InsertUserOrganization,
+  type OrganizationMember,
+  type InsertOrganizationMember,
+  type SportsAchievement,
+  type InsertSportsAchievement,
+  type SportsQuestionnaireResponse,
+  type InsertSportsQuestionnaireResponse
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte, lte, desc, asc } from "drizzle-orm";
@@ -145,6 +159,42 @@ export interface IStorage {
   getModuleConfig(moduleName: string): Promise<ModuleConfiguration | undefined>;
   updateModuleConfig(moduleName: string, updates: Partial<ModuleConfiguration>): Promise<ModuleConfiguration>;
   toggleModule(moduleName: string, isEnabled: boolean): Promise<ModuleConfiguration>;
+
+  // User Organizations
+  createUserOrganization(org: InsertUserOrganization): Promise<UserOrganization>;
+  getUserOrganizations(userId: number): Promise<UserOrganization[]>;
+  getUserOrganization(id: number): Promise<UserOrganization | undefined>;
+  updateUserOrganization(id: number, updates: Partial<UserOrganization>): Promise<UserOrganization>;
+  deleteUserOrganization(id: number): Promise<void>;
+
+  // Organization Members
+  addOrganizationMember(member: InsertOrganizationMember): Promise<OrganizationMember>;
+  getOrganizationMembers(organizationId: number): Promise<OrganizationMember[]>;
+  removeOrganizationMember(organizationId: number, userId: number): Promise<void>;
+  updateMemberRole(organizationId: number, userId: number, role: string): Promise<OrganizationMember>;
+  getUserMemberships(userId: number): Promise<OrganizationMember[]>;
+
+  // Sports Achievements
+  createSportsAchievement(achievement: InsertSportsAchievement): Promise<SportsAchievement>;
+  getUserAchievements(userId: number): Promise<SportsAchievement[]>;
+  getSportsAchievement(id: number): Promise<SportsAchievement | undefined>;
+  updateSportsAchievement(id: number, updates: Partial<SportsAchievement>): Promise<SportsAchievement>;
+  verifyAchievement(id: number, verifierId: number, blockchainHash: string): Promise<SportsAchievement>;
+  
+  // Sports Questionnaire
+  saveQuestionnaireResponse(response: InsertSportsQuestionnaireResponse): Promise<SportsQuestionnaireResponse>;
+  getUserQuestionnaireResponse(userId: number): Promise<SportsQuestionnaireResponse | undefined>;
+  getOrganizationQuestionnaireResponse(organizationId: number): Promise<SportsQuestionnaireResponse | undefined>;
+  updateUserSportsInterests(userId: number, interests: string[]): Promise<User>;
+
+  // Analytics
+  getSportsAnalytics(): Promise<{
+    usersBySports: {[key: string]: number};
+    organizationsBySports: {[key: string]: number};
+    organizationsWithFacilities: {[key: string]: number};
+    totalUsers: number;
+    totalOrganizations: number;
+  }>;
 }
 
 export class DatabaseStorage implements IStorage {

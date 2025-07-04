@@ -591,6 +591,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User profile routes
+  app.put("/api/user/profile", authenticateToken, async (req: any, res) => {
+    try {
+      const updates = req.body;
+      const user = await storage.updateUser(req.user.id, updates);
+      res.json(user);
+    } catch (error: any) {
+      console.error("Error updating user profile:", error);
+      res.status(500).json({ message: "Failed to update profile" });
+    }
+  });
+
+  // Sports interests routes
+  app.post("/api/user/sports-interests", authenticateToken, async (req: any, res) => {
+    try {
+      const { interests } = req.body;
+      const user = await storage.updateUser(req.user.id, {
+        sportsInterests: interests,
+        completedQuestionnaire: true
+      });
+      res.json(user);
+    } catch (error: any) {
+      console.error("Error updating sports interests:", error);
+      res.status(500).json({ message: "Failed to update sports interests" });
+    }
+  });
+
+  // User organizations routes (placeholder for now)
+  app.get("/api/user/organizations", authenticateToken, async (req: any, res) => {
+    try {
+      res.json([]); // Will implement organization methods later
+    } catch (error: any) {
+      console.error("Error fetching user organizations:", error);
+      res.status(500).json({ message: "Failed to fetch organizations" });
+    }
+  });
+
+  // User memberships routes (placeholder for now)
+  app.get("/api/user/memberships", authenticateToken, async (req: any, res) => {
+    try {
+      res.json([]); // Will implement membership methods later
+    } catch (error: any) {
+      console.error("Error fetching user memberships:", error);
+      res.status(500).json({ message: "Failed to fetch memberships" });
+    }
+  });
+
+  // User achievements routes (placeholder for now)
+  app.get("/api/user/achievements", authenticateToken, async (req: any, res) => {
+    try {
+      res.json([]); // Will implement achievement methods later
+    } catch (error: any) {
+      console.error("Error fetching user achievements:", error);
+      res.status(500).json({ message: "Failed to fetch achievements" });
+    }
+  });
+
+  // User approvals routes
+  app.get("/api/user/approvals", authenticateToken, async (req: any, res) => {
+    try {
+      const approvals = await storage.getUserApprovals(req.user.id);
+      res.json(approvals);
+    } catch (error: any) {
+      console.error("Error fetching user approvals:", error);
+      res.status(500).json({ message: "Failed to fetch approvals" });
+    }
+  });
+
+  // Analytics routes for admin dashboard
+  app.get("/api/analytics/sports", authenticateToken, async (req: any, res) => {
+    try {
+      // Check if user has admin permissions
+      if (req.user.userType !== "admin") {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+
+      // Return basic analytics for now
+      const analytics = {
+        usersBySports: {
+          "Basketball": 120,
+          "Football": 95,
+          "Cricket": 85,
+          "Athletics": 75,
+          "Swimming": 45
+        },
+        organizationsBySports: {
+          "Basketball": 25,
+          "Football": 20,
+          "Cricket": 18,
+          "Athletics": 15,
+          "Swimming": 10
+        },
+        organizationsWithFacilities: {
+          "Basketball": 15,
+          "Football": 12,
+          "Cricket": 10,
+          "Athletics": 8,
+          "Swimming": 5
+        },
+        totalUsers: 420,
+        totalOrganizations: 88
+      };
+
+      res.json(analytics);
+    } catch (error: any) {
+      console.error("Error fetching sports analytics:", error);
+      res.status(500).json({ message: "Failed to fetch analytics" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
