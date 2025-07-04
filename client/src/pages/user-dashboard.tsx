@@ -105,10 +105,12 @@ export default function UserDashboard() {
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
 
   // Fetch user data
-  const { data: user, isLoading: userLoading } = useQuery<UserType>({
-    queryKey: ["/api/auth/user"],
+  const { data: userProfile, isLoading: userLoading } = useQuery<{ user: UserType; athleteProfile?: any }>({
+    queryKey: ["/api/user/profile"],
     retry: false,
   });
+  
+  const user = userProfile?.user;
 
   // Fetch user achievements
   const { data: achievements, isLoading: achievementsLoading } = useQuery({
@@ -392,18 +394,41 @@ export default function UserDashboard() {
 
   if (userLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-gray-400">Loading your dashboard...</p>
+        </div>
       </div>
     );
   }
 
   if (!user) {
+    // Check if we have a token stored
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      // No token, redirect to login
+      window.location.href = '/auth-modern';
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+          <div className="text-center">
+            <p className="text-gray-600 dark:text-gray-400">Redirecting to login...</p>
+          </div>
+        </div>
+      );
+    }
+    
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Access Denied</h2>
           <p className="text-gray-600 dark:text-gray-400 mt-2">Please log in to access your dashboard.</p>
+          <button 
+            onClick={() => window.location.href = '/auth-modern'}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Go to Login
+          </button>
         </div>
       </div>
     );
