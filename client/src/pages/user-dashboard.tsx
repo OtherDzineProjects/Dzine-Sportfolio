@@ -195,7 +195,7 @@ export default function UserDashboard() {
         graduationYear: user.graduationYear ? user.graduationYear.toString() : '',
         currentPosition: user.currentPosition || '',
         currentOrganization: user.currentOrganization || '',
-        workExperience: user.workExperience || '',
+        workExperience: user.workExperience?.toString() || '',
       });
 
       if (user.sportsInterests && Array.isArray(user.sportsInterests)) {
@@ -436,27 +436,31 @@ export default function UserDashboard() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex flex-wrap items-center gap-2">
               <Button 
                 variant="default" 
                 size="sm"
                 onClick={() => window.location.href = '/analytics'}
+                className="flex-shrink-0"
               >
-                <BarChart className="h-4 w-4 mr-2" />
-                Analytics & Reports
+                <BarChart3 className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Analytics & Reports</span>
+                <span className="md:hidden">Analytics</span>
               </Button>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
+              <Button variant="outline" size="sm" className="flex-shrink-0">
+                <Settings className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Settings</span>
               </Button>
               <Button 
                 variant="outline" 
                 size="sm"
                 onClick={exportAnalytics}
                 disabled={analyticsLoading}
+                className="flex-shrink-0"
               >
-                <Download className="h-4 w-4 mr-2" />
-                Export Data
+                <Download className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Export Data</span>
+                <span className="md:hidden">Export</span>
               </Button>
             </div>
           </div>
@@ -466,13 +470,13 @@ export default function UserDashboard() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="profile">Profile</TabsTrigger>
-            <TabsTrigger value="achievements">Achievements</TabsTrigger>
-            <TabsTrigger value="organizations">Organizations</TabsTrigger>
-            <TabsTrigger value="memberships">Memberships</TabsTrigger>
-            <TabsTrigger value="approvals">Approvals</TabsTrigger>
-            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-1">
+            <TabsTrigger value="profile" className="text-xs md:text-sm">Profile</TabsTrigger>
+            <TabsTrigger value="achievements" className="text-xs md:text-sm">Achievements</TabsTrigger>
+            <TabsTrigger value="organizations" className="text-xs md:text-sm">Organizations</TabsTrigger>
+            <TabsTrigger value="memberships" className="text-xs md:text-sm">Memberships</TabsTrigger>
+            <TabsTrigger value="approvals" className="text-xs md:text-sm">Approvals</TabsTrigger>
+            <TabsTrigger value="analytics" className="text-xs md:text-sm">Analytics</TabsTrigger>
           </TabsList>
 
           {/* Profile Tab */}
@@ -1234,7 +1238,7 @@ export default function UserDashboard() {
                           <Users className="h-8 w-8 text-blue-500" />
                           <div className="ml-4">
                             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
-                            <p className="text-2xl font-bold">{analytics.totalUsers || 0}</p>
+                            <p className="text-2xl font-bold">{analytics?.totalUsers || 0}</p>
                           </div>
                         </div>
                       </CardContent>
@@ -1245,7 +1249,7 @@ export default function UserDashboard() {
                           <Building className="h-8 w-8 text-green-500" />
                           <div className="ml-4">
                             <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Organizations</p>
-                            <p className="text-2xl font-bold">{analytics.totalOrganizations || 0}</p>
+                            <p className="text-2xl font-bold">{analytics?.totalOrganizations || 0}</p>
                           </div>
                         </div>
                       </CardContent>

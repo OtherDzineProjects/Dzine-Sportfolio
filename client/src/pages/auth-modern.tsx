@@ -42,7 +42,7 @@ export default function AuthModern() {
       return result.json();
     },
     onSuccess: (data: any) => {
-      localStorage.setItem("authToken", data.token);
+      localStorage.setItem("auth_token", data.token);
       
       toast({
         title: "Welcome back!",
@@ -50,7 +50,7 @@ export default function AuthModern() {
       });
       
       queryClient.invalidateQueries();
-      setLocation("/dashboard");
+      setLocation("/user-dashboard");
     },
     onError: (error: any) => {
       setAlert({
