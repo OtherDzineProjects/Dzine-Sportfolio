@@ -17,6 +17,7 @@ import AthleteProfile from "@/pages/athlete-profile";
 import Facilities from "@/pages/facilities";
 import AdminDashboard from "@/pages/admin";
 import Analytics from "@/pages/analytics";
+import ComprehensiveSportsManagement from "@/pages/comprehensive-sports-management";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/facilities" component={Facilities} />
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/analytics" component={Analytics} />
+      <Route path="/comprehensive-sports" component={ComprehensiveSportsManagement} />
       <Route component={NotFound} />
     </Switch>
   );

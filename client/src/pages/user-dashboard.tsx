@@ -452,13 +452,14 @@ export default function UserDashboard() {
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   Welcome, {user.firstName || user.username}!
                 </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Sportfolio ID: SP{user.id.toString().padStart(6, '0')} | Status: {user.approvalStatus === 'approved' ? (
-                    <Badge variant="default" className="ml-1">Approved</Badge>
+                <div className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
+                  <span>Sportfolio ID: SP{user.id.toString().padStart(6, '0')} | Status:</span>
+                  {user.approvalStatus === 'approved' ? (
+                    <Badge variant="default">Approved</Badge>
                   ) : (
-                    <Badge variant="secondary" className="ml-1">Pending</Badge>
+                    <Badge variant="secondary">Pending</Badge>
                   )}
-                </p>
+                </div>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
@@ -475,6 +476,16 @@ export default function UserDashboard() {
               <Button variant="outline" size="sm" className="flex-shrink-0">
                 <Settings className="h-4 w-4 md:mr-2" />
                 <span className="hidden md:inline">Settings</span>
+              </Button>
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => window.location.href = '/comprehensive-sports'}
+                className="flex-shrink-0"
+              >
+                <Trophy className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">9-Category Sports System</span>
+                <span className="md:hidden">Sports</span>
               </Button>
               <Button 
                 variant="outline" 

@@ -447,9 +447,22 @@ export const userOrganizations = pgTable("user_organizations", {
   phone: text("phone"),
   email: text("email"),
   website: text("website"),
-  // Sports interests and facilities
+  // Enhanced sports interests and facilities
   sportsInterests: jsonb("sports_interests").$type<string[]>(),
-  availableFacilities: jsonb("available_facilities").$type<{[key: string]: boolean}>(),
+  facilityAvailability: jsonb("facility_availability").$type<{
+    sport: string;
+    hasVenue: boolean;
+    venueType?: 'owned' | 'rented' | 'partnership';
+    capacity?: number;
+    hourlyRate?: number;
+    availableHours?: string[];
+    equipment?: string[];
+    maintenanceStatus?: 'excellent' | 'good' | 'fair' | 'needs_repair';
+    bookingAdvanceNotice?: number;
+    specialFeatures?: string[];
+  }[]>(),
+  // Kerala district for organization matching
+  district: text("district"),
   completedQuestionnaire: boolean("completed_questionnaire").default(false),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),

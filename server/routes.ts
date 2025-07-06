@@ -843,6 +843,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Analytics routes for admin dashboard
+  // Comprehensive analytics for College Sports League Kerala
+  app.get("/api/analytics/comprehensive", authenticateToken, async (req: any, res) => {
+    try {
+      const analytics = await storage.getSportsAnalytics();
+      res.json(analytics);
+    } catch (error: any) {
+      console.error("Error fetching comprehensive analytics:", error);
+      res.status(500).json({ message: "Failed to fetch comprehensive analytics" });
+    }
+  });
+
   app.get("/api/analytics/sports", authenticateToken, async (req: any, res) => {
     try {
       // Check if user has admin permissions

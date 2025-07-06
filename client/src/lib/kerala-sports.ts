@@ -6,89 +6,128 @@ export const KERALA_DISTRICTS = [
   "Kozhikode", "Wayanad", "Kannur", "Kasaragod"
 ];
 
-export const KERALA_SPORTS_CATEGORIES = {
+export const COMPREHENSIVE_SPORTS_CATEGORIES = {
   waterSports: {
     name: "🌊 Water Sports",
-    maxSelections: 1,
+    description: "Aquatic and water-based sports",
+    allowMultiple: true,
     sports: [
-      "Canoe Sprint/Slalom",
-      "Kayaking & Stand-Up Paddling", 
-      "Rowing (Coastal)",
-      "Beach Volleyball",
-      "Vallam Kali (Boat Race)"
-    ]
-  },
-  outdoorFieldSports: {
-    name: "⚽ Outdoor Field Sports",
-    maxSelections: 1,
-    sports: [
-      "Football",
-      "Cricket", 
-      "Softball",
-      "Volleyball",
-      "Kabaddi/Kho-Kho"
+      { name: "Canoe Sprint/Slalom", tooltip: "High-speed canoe racing and technical slalom navigation" },
+      { name: "Kayaking/Stand-Up Paddling", tooltip: "Paddle sports including kayak racing and SUP boarding" },
+      { name: "Rowing (Coastal)", tooltip: "Team rowing sport in open coastal waters" },
+      { name: "Swimming (Marathon/Artistic)", tooltip: "Long-distance swimming and synchronized swimming" },
+      { name: "Beach Volleyball", tooltip: "Volleyball played on sand courts" },
+      { name: "Surfing (Emerging)", tooltip: "Board riding on ocean waves - growing sport in Kerala" },
+      { name: "Vallam Kali (Boat Race)", tooltip: "Traditional Kerala snake boat racing" }
     ]
   },
   indoorSports: {
-    name: "🏟️ Indoor Sports", 
-    maxSelections: 1,
+    name: "🏠 Indoor Sports",
+    description: "Sports played in enclosed venues", 
+    allowMultiple: true,
     sports: [
-      "Badminton",
-      "Table Tennis",
-      "Chess/Carrom"
+      { name: "Badminton", tooltip: "Racquet sport with shuttlecock" },
+      { name: "Basketball", tooltip: "Team sport with hoops and dribbling" },
+      { name: "Boxing", tooltip: "Combat sport with gloved fists" },
+      { name: "Carrom", tooltip: "Traditional board game with striker and coins" },
+      { name: "Chess", tooltip: "Strategic board game - mental sport" },
+      { name: "Futsal", tooltip: "Indoor football with smaller teams" },
+      { name: "Judo/Karate", tooltip: "Japanese martial arts focusing on throws and strikes" },
+      { name: "Snooker/Billiards", tooltip: "Cue sports with colored balls and pockets" },
+      { name: "Table Tennis", tooltip: "Fast-paced paddle sport on table" },
+      { name: "Volleyball (Indoor)", tooltip: "Indoor team sport with net and spiking" }
     ]
   },
-  traditionalSports: {
-    name: "🎪 Traditional Sports (Kerala-Specific)",
-    maxSelections: 1,
+  outdoorFieldSports: {
+    name: "🌳 Outdoor Field Sports",
+    description: "Field and outdoor team sports",
+    allowMultiple: true,
     sports: [
-      "Vallam Kali",
-      "Kuttiyum Kolum", 
-      "Onam Kali",
-      "Kalaripayattu"
+      { name: "Football", tooltip: "World's most popular team sport" },
+      { name: "Cricket", tooltip: "Bat and ball sport popular across India" },
+      { name: "Athletics (Track & Field)", tooltip: "Running, jumping, and throwing events" },
+      { name: "Archery", tooltip: "Precision sport with bow and arrows" },
+      { name: "Baseball 5", tooltip: "5-player softball variant - Olympic sport" },
+      { name: "Softball", tooltip: "Bat and ball sport similar to baseball" },
+      { name: "Handball", tooltip: "Fast-paced team sport with goals" },
+      { name: "Kabaddi", tooltip: "Traditional Indian contact team sport" },
+      { name: "Kho-Kho", tooltip: "Traditional Indian tag sport with strategy" },
+      { name: "Tug of War", tooltip: "Team strength sport pulling rope" }
     ]
   },
-  trackAndField: {
-    name: "🏃 Track & Field (Expandable)",
-    maxSelections: 1,
-    requiresSubcategory: true,
-    sports: ["Track & Field (Athletics)"],
-    subcategories: {
-      runningEvents: {
-        name: "Running Events",
-        options: [
-          "100m/200m Sprint",
-          "400m/800m Middle-Distance", 
-          "1500m/5000m Long-Distance",
-          "Marathon/Cross-Country"
-        ]
-      },
-      jumpingEvents: {
-        name: "Jumping Events",
-        options: [
-          "Long Jump",
-          "High Jump",
-          "Triple Jump", 
-          "Pole Vault"
-        ]
-      },
-      throwingEvents: {
-        name: "Throwing Events", 
-        options: [
-          "Shot Put",
-          "Javelin Throw",
-          "Discus Throw",
-          "Hammer Throw"
-        ]
-      },
-      hurdlesAndRelays: {
-        name: "Hurdles & Relays",
-        options: [
-          "110m/400m Hurdles",
-          "4x100m/4x400m Relay"
-        ]
-      }
-    }
+  gymnasticsFitness: {
+    name: "🤸 Gymnastics & Fitness",
+    description: "Body movement and fitness sports",
+    allowMultiple: true,
+    sports: [
+      { name: "Artistic Gymnastics", tooltip: "Competitive gymnastics with apparatus" },
+      { name: "Yoga Sports", tooltip: "Competitive yoga focusing on precision and flexibility" },
+      { name: "Mallakhamb", tooltip: "Traditional Indian gymnastics with pole/rope" }
+    ]
+  },
+  cycling: {
+    name: "🚴 Cycling",
+    description: "Bicycle-based sports",
+    allowMultiple: true,
+    sports: [
+      { name: "Road Cycling", tooltip: "Long-distance cycling on roads" },
+      { name: "Track Cycling", tooltip: "High-speed cycling on banked tracks" },
+      { name: "BMX Racing", tooltip: "Off-road bicycle racing with jumps" }
+    ]
+  },
+  precisionSports: {
+    name: "🎯 Precision Sports",
+    description: "Accuracy and precision-based sports",
+    allowMultiple: true,
+    sports: [
+      { name: "Archery", tooltip: "Bow and arrow precision shooting" },
+      { name: "Shooting", tooltip: "Firearm and air gun precision sports" },
+      { name: "Darts", tooltip: "Throwing sport targeting dartboard" }
+    ]
+  },
+  combatSports: {
+    name: "🥋 Combat Sports",
+    description: "Martial arts and fighting sports",
+    allowMultiple: true,
+    sports: [
+      { name: "Boxing", tooltip: "Combat sport with gloved punches" },
+      { name: "Judo", tooltip: "Japanese martial art focusing on throws" },
+      { name: "Karate", tooltip: "Japanese martial art with strikes and blocks" },
+      { name: "Kalaripayattu", tooltip: "Ancient Kerala martial art - mother of all martial arts" },
+      { name: "Wrestling", tooltip: "Grappling combat sport" }
+    ]
+  },
+  traditionalKerala: {
+    name: "🛶 Traditional Kerala Sports",
+    description: "Ancient Kerala sporting traditions",
+    allowMultiple: true,
+    sports: [
+      { name: "Vallam Kali (Boat Race)", tooltip: "Traditional snake boat racing during Onam" },
+      { name: "Kuttiyum Kolum", tooltip: "Traditional Kerala martial training with sticks" },
+      { name: "Onathallu", tooltip: "Traditional Kerala wrestling during Onam festival" },
+      { name: "Kalaripayattu", tooltip: "World's oldest martial art form from Kerala" }
+    ]
+  },
+  mindGamesEsports: {
+    name: "🎮 Mind Games & Esports",
+    description: "Strategic and digital sports",
+    allowMultiple: true,
+    sports: [
+      { name: "Chess", tooltip: "Strategic board game - the royal game" },
+      { name: "Carrom", tooltip: "Traditional board game with striker and coins" },
+      { name: "Esports (Gaming)", tooltip: "Competitive video gaming tournaments" }
+    ]
+  },
+  emergingSports: {
+    name: "🚀 Emerging Sports in Kerala",
+    description: "New and developing sports",
+    allowMultiple: true,
+    sports: [
+      { name: "Surfing", tooltip: "Ocean wave riding - new in Kerala coastline" },
+      { name: "Skateboarding", tooltip: "Board sport with tricks and competitions" },
+      { name: "Baseball 5", tooltip: "Olympic softball variant gaining popularity" },
+      { name: "Esports", tooltip: "Professional competitive gaming" }
+    ]
   }
 };
 

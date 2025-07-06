@@ -825,25 +825,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserMemberships(userId: number): Promise<OrganizationMember[]> {
-    return await db.select({
-      id: organizationMembers.id,
-      organizationId: organizationMembers.organizationId,
-      userId: organizationMembers.userId,
-      role: organizationMembers.role,
-      status: organizationMembers.status,
-      joinedAt: organizationMembers.joinedAt,
-      organization: {
-        id: userOrganizations.id,
-        name: userOrganizations.name,
-        description: userOrganizations.description,
-        type: userOrganizations.type,
-        city: userOrganizations.city,
-        state: userOrganizations.state,
-        status: userOrganizations.status,
-        ownerId: userOrganizations.ownerId,
-        createdAt: userOrganizations.createdAt,
-      }
-    })
+    return await db.select()
     .from(organizationMembers)
     .leftJoin(userOrganizations, eq(organizationMembers.organizationId, userOrganizations.id))
     .where(eq(organizationMembers.userId, userId));
@@ -923,54 +905,168 @@ export class DatabaseStorage implements IStorage {
     usersBySports: {[key: string]: number};
     organizationsBySports: {[key: string]: number};
     organizationsWithFacilities: {[key: string]: number};
+    facilitiesReport: {[key: string]: {
+      totalOrganizations: number;
+      ownedFacilities: number;
+      rentedFacilities: number;
+      partnershipFacilities: number;
+      totalCapacity: number;
+      averageHourlyRate: number;
+      facilitiesNeedingRepair: number;
+    }};
+    districtAnalytics: {[key: string]: {
+      users: number;
+      organizations: number;
+      topSports: string[];
+    }};
+    leagueReadiness: {
+      sport: string;
+      readyOrganizations: number;
+      totalCapacity: number;
+      averageBookingNotice: number;
+      maintenanceScore: number;
+    }[];
+    sponsorROIData: {
+      sport: string;
+      participatingUsers: number;
+      organizationsWithFacilities: number;
+      estimatedAudience: number;
+      facilityCapacity: number;
+      averageTicketRevenue: number;
+    }[];
     totalUsers: number;
     totalOrganizations: number;
   }> {
-    const totalUsersResult = await db.select().from(users);
-    const totalUsers = totalUsersResult.length;
-
-    const totalOrgsResult = await db.select().from(userOrganizations);
-    const totalOrganizations = totalOrgsResult.length;
-
+    // Get real data from database
+    const allUsers = await db.select().from(users);
+    const allOrganizations = await db.select().from(userOrganizations);
+    
+    const usersBySports: {[key: string]: number} = {};
+    const organizationsBySports: {[key: string]: number} = {};
+    const organizationsWithFacilities: {[key: string]: number} = {};
+    const facilitiesReport: {[key: string]: any} = {};
+    const districtAnalytics: {[key: string]: any} = {};
+    const sponsorROIData: any[] = [];
+    
+    // Process users by sports and districts
+    allUsers.forEach(user => {
+      const district = user.district || "Unknown";
+      if (!districtAnalytics[district]) {
+        districtAnalytics[district] = { users: 0, organizations: 0, sports: {} };
+      }
+      districtAnalytics[district].users++;
+      
+      if (user.sportsInterests) {
+        user.sportsInterests.forEach(sport => {
+          usersBySports[sport] = (usersBySports[sport] || 0) + 1;
+          districtAnalytics[district].sports[sport] = (districtAnalytics[district].sports[sport] || 0) + 1;
+        });
+      }
+    });
+    
+    // Process organizations and facility data
+    allOrganizations.forEach(org => {
+      const district = org.district || "Unknown";
+      if (!districtAnalytics[district]) {
+        districtAnalytics[district] = { users: 0, organizations: 0, sports: {} };
+      }
+      districtAnalytics[district].organizations++;
+      
+      if (org.sportsInterests) {
+        org.sportsInterests.forEach(sport => {
+          organizationsBySports[sport] = (organizationsBySports[sport] || 0) + 1;
+          
+          // Initialize facility report for sport
+          if (!facilitiesReport[sport]) {
+            facilitiesReport[sport] = {
+              totalOrganizations: 0,
+              ownedFacilities: 0,
+              rentedFacilities: 0,
+              partnershipFacilities: 0,
+              totalCapacity: 0,
+              totalHourlyRate: 0,
+              rateCount: 0,
+              facilitiesNeedingRepair: 0
+            };
+          }
+          
+          facilitiesReport[sport].totalOrganizations++;
+          
+          // Check facility availability from facilityAvailability field
+          const facilityInfo = org.facilityAvailability?.find(f => f.sport === sport);
+          if (facilityInfo?.hasVenue) {
+            organizationsWithFacilities[sport] = (organizationsWithFacilities[sport] || 0) + 1;
+            
+            // Track facility details
+            if (facilityInfo.venueType === 'owned') facilitiesReport[sport].ownedFacilities++;
+            else if (facilityInfo.venueType === 'rented') facilitiesReport[sport].rentedFacilities++;
+            else if (facilityInfo.venueType === 'partnership') facilitiesReport[sport].partnershipFacilities++;
+            
+            if (facilityInfo.capacity) facilitiesReport[sport].totalCapacity += facilityInfo.capacity;
+            if (facilityInfo.hourlyRate) {
+              facilitiesReport[sport].totalHourlyRate += facilityInfo.hourlyRate;
+              facilitiesReport[sport].rateCount++;
+            }
+            if (facilityInfo.maintenanceStatus === 'needs_repair' || facilityInfo.maintenanceStatus === 'fair') {
+              facilitiesReport[sport].facilitiesNeedingRepair++;
+            }
+          }
+        });
+      }
+    });
+    
+    // Calculate league readiness and sponsor ROI data
+    const leagueReadiness: any[] = [];
+    Object.keys(facilitiesReport).forEach(sport => {
+      const report = facilitiesReport[sport];
+      const readyOrganizations = organizationsWithFacilities[sport] || 0;
+      const maintenanceScore = Math.max(0, 100 - (report.facilitiesNeedingRepair / Math.max(1, readyOrganizations)) * 100);
+      
+      report.averageHourlyRate = report.rateCount > 0 ? Math.round(report.totalHourlyRate / report.rateCount) : 0;
+      
+      leagueReadiness.push({
+        sport,
+        readyOrganizations,
+        totalCapacity: report.totalCapacity,
+        averageBookingNotice: 3,
+        maintenanceScore: Math.round(maintenanceScore)
+      });
+      
+      // Generate sponsor ROI data
+      const participatingUsers = usersBySports[sport] || 0;
+      const estimatedAudience = participatingUsers * 3;
+      const averageTicketRevenue = report.averageHourlyRate * 0.1;
+      
+      sponsorROIData.push({
+        sport,
+        participatingUsers,
+        organizationsWithFacilities: readyOrganizations,
+        estimatedAudience,
+        facilityCapacity: report.totalCapacity,
+        averageTicketRevenue: Math.round(averageTicketRevenue)
+      });
+    });
+    
+    // Process district analytics top sports
+    Object.keys(districtAnalytics).forEach(district => {
+      const districtData = districtAnalytics[district];
+      const sportCounts = districtData.sports;
+      districtData.topSports = Object.entries(sportCounts)
+        .sort(([,a], [,b]) => (b as number) - (a as number))
+        .slice(0, 3)
+        .map(([sport]) => sport);
+    });
+    
     return {
-      usersBySports: {
-        "Basketball": 120,
-        "Football": 95,
-        "Cricket": 80,
-        "Athletics": 65,
-        "Swimming": 45,
-        "Badminton": 40,
-        "Tennis": 35,
-        "Hockey": 30,
-        "Volleyball": 25,
-        "Wrestling": 20
-      },
-      organizationsBySports: {
-        "Basketball": 25,
-        "Football": 20,
-        "Cricket": 18,
-        "Athletics": 15,
-        "Swimming": 10,
-        "Badminton": 8,
-        "Tennis": 7,
-        "Hockey": 6,
-        "Volleyball": 5,
-        "Wrestling": 4
-      },
-      organizationsWithFacilities: {
-        "Basketball": 15,
-        "Football": 12,
-        "Cricket": 10,
-        "Athletics": 8,
-        "Swimming": 5,
-        "Badminton": 4,
-        "Tennis": 3,
-        "Hockey": 3,
-        "Volleyball": 2,
-        "Wrestling": 2
-      },
-      totalUsers,
-      totalOrganizations
+      usersBySports,
+      organizationsBySports,
+      organizationsWithFacilities,
+      facilitiesReport,
+      districtAnalytics,
+      leagueReadiness: leagueReadiness.sort((a, b) => b.readyOrganizations - a.readyOrganizations),
+      sponsorROIData: sponsorROIData.sort((a, b) => b.estimatedAudience - a.estimatedAudience),
+      totalUsers: allUsers.length,
+      totalOrganizations: allOrganizations.length
     };
   }
 }

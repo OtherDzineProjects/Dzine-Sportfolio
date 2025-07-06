@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { 
   KERALA_DISTRICTS, 
-  KERALA_SPORTS_CATEGORIES, 
+  COMPREHENSIVE_SPORTS_CATEGORIES, 
   SKILL_LEVELS, 
   SPORTS_GOALS, 
   PREFERRED_VENUES,
