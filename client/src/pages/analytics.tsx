@@ -15,24 +15,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Download, Users, Building, TrendingUp, Award, MapPin, FileText, Plus, Edit } from "lucide-react";
 import * as XLSX from 'xlsx';
 
-// Olympic Sports Categories
-const OLYMPIC_SPORTS = {
-  field: [
-    "Shot Put", "Discus Throw", "Hammer Throw", "Javelin Throw",
-    "Pole Vault", "High Jump", "Long Jump", "Triple Jump"
-  ],
-  track: [
-    "100m", "200m", "400m", "800m", "1500m", "5000m", "10000m", "Marathon",
-    "110m Hurdles", "400m Hurdles", "3000m Steeplechase", "4x100m Relay", "4x400m Relay"
-  ],
-  combat: [
-    "Boxing", "Wrestling", "Judo", "Taekwondo", "Karate", "Fencing"
-  ],
-  indoor: [
-    "Gymnastics", "Swimming", "Basketball", "Volleyball", "Badminton", 
-    "Table Tennis", "Tennis", "Handball", "Hockey"
-  ]
-};
+import KeralasSportsQuestionnaire from "@/components/kerala-sports-questionnaire";
+import { KERALA_SPORTS_CATEGORIES, KERALA_DISTRICTS } from "@/lib/kerala-sports";
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
@@ -40,13 +24,14 @@ export default function Analytics() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [questionnaireOpen, setQuestionnaireOpen] = useState(false);
+  const [keralaQuestionnaireOpen, setKeralaQuestionnaireOpen] = useState(false);
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
   const [questionnaireType, setQuestionnaireType] = useState<"user" | "organization">("user");
   const [organizationId, setOrganizationId] = useState<string>("");
 
   // Get current user
-  const { data: user } = useQuery({
-    queryKey: ["/api/auth/user"],
+  const { data: userProfile } = useQuery({
+    queryKey: ["/api/user/profile"],
     retry: false,
   });
 
@@ -116,13 +101,47 @@ export default function Analytics() {
         title: "Success",
         description: "Sports interests updated successfully!",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] });
       queryClient.invalidateQueries({ queryKey: ["/api/analytics"] });
     },
     onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message || "Failed to update sports interests",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update Kerala profile mutation
+  const updateKeralaProfileMutation = useMutation({
+    mutationFn: async (data: any) => {
+      return await apiRequest("PUT", "/api/user/kerala-profile", {
+        district: data.district,
+        ageGroup: data.ageGroup,
+        sportCategories: {
+          primary: data.primaryCategories,
+          trackAndField: data.trackAndFieldSubcategories
+        },
+        skillLevel: data.skillLevel,
+        sportsGoal: data.goal,
+        preferredVenue: data.preferredVenue,
+        sportsInterests: [...data.primaryCategories, ...data.trackAndFieldSubcategories]
+      });
+    },
+    onSuccess: () => {
+      toast({
+        title: "Kerala Profile Updated!",
+        description: "Your sports profile has been saved successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/analytics"] });
+      setKeralaQuestionnaireOpen(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update Kerala profile",
         variant: "destructive",
       });
     },
@@ -292,6 +311,31 @@ export default function Analytics() {
             <p className="text-gray-600 mt-2">Comprehensive sports data analysis for Kerala committee planning and sponsor ROI</p>
           </div>
           <div className="flex gap-4">
+            <Dialog open={keralaQuestionnaireOpen} onOpenChange={setKeralaQuestionnaireOpen}>
+              <DialogTrigger asChild>
+                <Button className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  {user?.district ? "Update" : "Setup"} Kerala Sports Profile
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <KeralasSportsQuestionnaire
+                  onSubmit={(data) => updateKeralaProfileMutation.mutate(data)}
+                  onClose={() => setKeralaQuestionnaireOpen(false)}
+                  initialData={{
+                    name: user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : "",
+                    district: user?.district || "",
+                    ageGroup: "", // Calculate from user data or ask
+                    primaryCategories: user?.sportCategories?.primary || [],
+                    trackAndFieldSubcategories: user?.sportCategories?.trackAndField || [],
+                    skillLevel: user?.skillLevel || "",
+                    goal: user?.sportsGoal || "",
+                    preferredVenue: user?.preferredVenue || ""
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
+
             <Dialog open={questionnaireOpen} onOpenChange={setQuestionnaireOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" className="flex items-center gap-2">

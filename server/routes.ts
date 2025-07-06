@@ -630,6 +630,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Kerala sports profile route
+  app.put("/api/user/kerala-profile", authenticateToken, async (req: any, res) => {
+    try {
+      const { district, ageGroup, sportCategories, skillLevel, sportsGoal, preferredVenue, sportsInterests } = req.body;
+      
+      const user = await storage.updateUser(req.user.id, {
+        district,
+        sportCategories,
+        skillLevel,
+        sportsGoal: sportsGoal,
+        preferredVenue,
+        sportsInterests,
+        completedQuestionnaire: true
+      });
+      
+      res.json({ 
+        user,
+        message: "Kerala sports profile updated successfully"
+      });
+    } catch (error: any) {
+      console.error("Error updating Kerala profile:", error);
+      res.status(500).json({ message: "Failed to update Kerala profile" });
+    }
+  });
+
   // User organizations routes (placeholder for now)
   app.get("/api/user/organizations", authenticateToken, async (req: any, res) => {
     try {

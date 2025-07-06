@@ -1,0 +1,174 @@
+Setup Instructions
+
+1. Sport Categories to Implement
+Primary Categories (Users select at least 3):
+
+🌊 Water Sports
+
+Canoe Sprint/Slalom
+
+Kayaking & Stand-Up Paddling
+
+Rowing (Coastal)
+
+Beach Volleyball
+
+Vallam Kali (Boat Race)
+
+⚽ Outdoor Field Sports
+
+Football
+
+Cricket
+
+Softball (New Addition)
+
+Volleyball
+
+Kabaddi/Kho-Kho
+
+🏟️ Indoor Sports
+
+Badminton
+
+Table Tennis
+
+Chess/Carrom
+
+🎪 Traditional Sports (Kerala-Specific)
+
+Vallam Kali
+
+Kuttiyum Kolum
+
+Onam Kali
+
+🏃 Track & Field (Expandable Subcategories)
+
+Track & Field (Athletics) (Detailed Selection – Optional)
+(Sub-categories with checkboxes)
+
+Running Events:
+
+100m/200m Sprint
+
+400m/800m Middle-Distance
+
+1500m/5000m Long-Distance
+
+Marathon/Cross-Country
+
+Jumping Events:
+
+Long Jump
+
+High Jump
+
+Triple Jump
+
+Pole Vault
+
+Throwing Events:
+
+Shot Put
+
+Javelin Throw
+
+Discus Throw
+
+Hammer Throw
+
+Hurdles & Relays:
+
+110m/400m Hurdles
+
+4x100m/4x400m Relay
+
+4. Additional Preferences
+Training Level: [ ] Beginner | [ ] Intermediate | [ ] Professional
+
+Goal: [ ] Fitness | [ ] Competition | [ ] Recreation
+
+Preferred Venue: [ ] Backwaters | [ ] Indoor Stadium | [ ] Local Ground
+
+
+
+2. User Interest Workflow
+Step 1: Basic Profile
+
+Collect:
+
+Name (Optional)
+
+District (Dropdown: Alappuzha, Ernakulam, etc.)
+
+Age Group (Under 18, 18-35, 36+)
+
+Step 2: Interest Selection
+
+UI: Checkbox/tile-based selection.
+
+Rules:
+
+Max 3 primary categories.
+
+Track & Field requires subcategory selection.
+
+Step 3: Skill & Goals
+
+Skill Level: Beginner / Intermediate / Advanced
+
+Goal: Recreation / Fitness / Competition
+
+3. Organization Matching Logic
+Key Rules:
+
+Geolocation: Match users to orgs in their district.
+
+Example: Alappuzha → Alleppey Boat Race Club.
+
+Sport-Specific:
+
+Softball → Kerala Softball Association.
+
+Kalaripayattu → Local Kalari Sangams.
+
+Skill-Based Filtering:
+
+Beginners: Training camps.
+
+Advanced: Competitions/clubs.
+
+4. Sample Output to Users
+After selection, show:
+
+plaintext
+"Based in Ernakulam? For Kayaking, try:  
+- Kochi Water Sports Club (Beginner-friendly)  
+- Vallam Kali events in July!"  
+5. Data Needed from Your Side
+Organization Database (Format):
+
+json
+{
+  "name": "CVN Kalari Sangam",
+  "sport": "Kalaripayattu",
+  "districts": ["Thiruvananthapuram"],
+  "levels": ["Beginner", "Advanced"]
+}
+District List: All Kerala districts.
+
+🚀 Next Steps 
+Set up the category/subcategory UI.
+
+Implement district-based org matching.
+
+Add skill-level filters.
+
+Need:
+
+Full traditional sports list
+
+Malayalam translations
+
+Example user flows

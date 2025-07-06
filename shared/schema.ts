@@ -38,8 +38,13 @@ export const users = pgTable("users", {
   currentPosition: text("current_position"),
   currentOrganization: text("current_organization"),
   workExperience: integer("work_experience"),
-  // Sports interests
+  // Sports interests with enhanced Kerala system
   sportsInterests: jsonb("sports_interests").$type<string[]>(),
+  sportCategories: jsonb("sport_categories").$type<{primary: string[], trackAndField?: string[]}>(),
+  district: text("district"), // Kerala districts
+  skillLevel: text("skill_level"), // beginner, intermediate, professional
+  sportsGoal: text("sports_goal"), // fitness, competition, recreation
+  preferredVenue: text("preferred_venue"), // backwaters, indoor_stadium, local_ground
   completedQuestionnaire: boolean("completed_questionnaire").default(false),
   isActive: boolean("is_active").default(true),
   lastLoginAt: timestamp("last_login_at"),
