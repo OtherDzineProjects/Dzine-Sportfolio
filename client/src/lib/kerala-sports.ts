@@ -38,6 +38,58 @@ export const COMPREHENSIVE_SPORTS_CATEGORIES = {
       { name: "Volleyball (Indoor)", tooltip: "Indoor team sport with net and spiking" }
     ]
   },
+  athletics: {
+    name: "🏃 Athletics (Track & Field)",
+    description: "Track and field events including running, jumping, and throwing",
+    allowMultiple: true,
+    sports: [
+      // Sprint Events
+      { name: "100m Sprint", tooltip: "Short distance speed race" },
+      { name: "200m Sprint", tooltip: "Curved track sprint race" },
+      { name: "400m Sprint", tooltip: "One lap around the track" },
+      
+      // Middle Distance
+      { name: "800m", tooltip: "Two lap middle distance race" },
+      { name: "1500m", tooltip: "Metric mile - middle distance race" },
+      
+      // Long Distance
+      { name: "3000m", tooltip: "Long distance track race" },
+      { name: "5000m", tooltip: "5K track race" },
+      { name: "10000m", tooltip: "10K track race" },
+      { name: "Marathon", tooltip: "42.195km road race" },
+      { name: "Half Marathon", tooltip: "21.1km road race" },
+      
+      // Hurdles
+      { name: "110m Hurdles (Men)", tooltip: "Sprint with barriers" },
+      { name: "100m Hurdles (Women)", tooltip: "Sprint with barriers" },
+      { name: "400m Hurdles", tooltip: "One lap with hurdles" },
+      { name: "3000m Steeplechase", tooltip: "Distance race with water jumps and barriers" },
+      
+      // Relays
+      { name: "4x100m Relay", tooltip: "Team sprint relay race" },
+      { name: "4x400m Relay", tooltip: "Team middle distance relay" },
+      
+      // Jumping Events
+      { name: "Long Jump", tooltip: "Horizontal jumping for distance" },
+      { name: "Triple Jump", tooltip: "Hop, step, and jump combination" },
+      { name: "High Jump", tooltip: "Vertical jumping over a bar" },
+      { name: "Pole Vault", tooltip: "Vaulting over bar using pole" },
+      
+      // Throwing Events
+      { name: "Shot Put", tooltip: "Heavy ball throwing event" },
+      { name: "Discus Throw", tooltip: "Spinning disc throwing event" },
+      { name: "Javelin Throw", tooltip: "Spear throwing event" },
+      { name: "Hammer Throw", tooltip: "Heavy ball on wire throwing event" },
+      
+      // Multi-Events
+      { name: "Decathlon (Men)", tooltip: "10-event competition over 2 days" },
+      { name: "Heptathlon (Women)", tooltip: "7-event competition over 2 days" },
+      
+      // Race Walking
+      { name: "20km Race Walk", tooltip: "Competitive walking event" },
+      { name: "50km Race Walk", tooltip: "Long distance walking event" }
+    ]
+  },
   outdoorFieldSports: {
     name: "🌳 Outdoor Field Sports",
     description: "Field and outdoor team sports",
@@ -45,8 +97,6 @@ export const COMPREHENSIVE_SPORTS_CATEGORIES = {
     sports: [
       { name: "Football", tooltip: "World's most popular team sport" },
       { name: "Cricket", tooltip: "Bat and ball sport popular across India" },
-      { name: "Athletics (Track & Field)", tooltip: "Running, jumping, and throwing events" },
-      { name: "Archery", tooltip: "Precision sport with bow and arrows" },
       { name: "Baseball 5", tooltip: "5-player softball variant - Olympic sport" },
       { name: "Softball", tooltip: "Bat and ball sport similar to baseball" },
       { name: "Handball", tooltip: "Fast-paced team sport with goals" },
