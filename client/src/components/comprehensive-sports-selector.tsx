@@ -33,7 +33,7 @@ interface ComprehensiveSportsSelectorProps {
 export default function ComprehensiveSportsSelector({
   selectedSports = [],
   onSportsChange,
-  maxSelections = 20,
+  maxSelections = 999,
   showCategoryDescriptions = true,
   allowSearch = true
 }: ComprehensiveSportsSelectorProps) {
@@ -70,8 +70,8 @@ export default function ComprehensiveSportsSelector({
       // Remove sport
       onSportsChange(selectedSports.filter(s => s !== sportName));
     } else {
-      // Add sport (check max limit)
-      if (selectedSports.length < maxSelections) {
+      // Add sport
+      if (true) {
         onSportsChange([...selectedSports, sportName]);
       }
     }
@@ -102,7 +102,7 @@ export default function ComprehensiveSportsSelector({
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Selected Sports ({selectedSports.length}/{maxSelections})</CardTitle>
+              <CardTitle className="text-lg">Selected Sports ({selectedSports.length})</CardTitle>
               <Button variant="outline" size="sm" onClick={clearAllSports}>
                 Clear All
               </Button>
@@ -209,16 +209,8 @@ export default function ComprehensiveSportsSelector({
         ))}
       </div>
 
-      {/* Selection Limit Warning */}
-      {selectedSports.length >= maxSelections && (
-        <Card className="border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20">
-          <CardContent className="pt-6">
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              You've reached the maximum of {maxSelections} sports selections. Remove some to add others.
-            </p>
-          </CardContent>
-        </Card>
-      )}
+
+
 
       {/* No Results */}
       {Object.keys(filteredCategories).length === 0 && (
