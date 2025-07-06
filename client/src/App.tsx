@@ -18,6 +18,7 @@ import Facilities from "@/pages/facilities";
 import AdminDashboard from "@/pages/admin";
 import Analytics from "@/pages/analytics";
 import ComprehensiveSportsManagement from "@/pages/comprehensive-sports-management";
+import Events from "@/pages/events";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -38,6 +39,7 @@ function Router() {
       <Route path="/admin" component={AdminDashboard} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/comprehensive-sports" component={ComprehensiveSportsManagement} />
+      <Route path="/events" component={Events} />
       <Route component={NotFound} />
     </Switch>
   );

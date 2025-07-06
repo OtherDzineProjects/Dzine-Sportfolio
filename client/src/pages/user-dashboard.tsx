@@ -17,7 +17,7 @@ import {
   User, Edit, Save, Award, Building, Users, FileText, Download, 
   Calendar, MapPin, Phone, Mail, GraduationCap, Briefcase,
   Shield, Star, Trophy, Globe, Plus, ExternalLink, CheckCircle,
-  Clock, X, Eye, Settings, BarChart3
+  Clock, X, Eye, Settings, BarChart3, CalendarDays
 } from "lucide-react";
 import { User as UserType } from "@shared/schema";
 
@@ -463,6 +463,16 @@ export default function UserDashboard() {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => window.location.href = '/events'}
+                className="flex-shrink-0"
+              >
+                <CalendarDays className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Browse Events</span>
+                <span className="md:hidden">Events</span>
+              </Button>
               <Button 
                 variant="default" 
                 size="sm"
