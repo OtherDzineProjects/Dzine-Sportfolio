@@ -15,7 +15,7 @@ import {
   Target,
   Globe
 } from "lucide-react";
-import logoPath from "@assets/Sportfolio Logo - new one edited_1751235594062.jpg";
+import logoPath from "@assets/Sportfolio_logo with white back ground_1751832551423.png";
 
 export default function Landing() {
   const features = [
@@ -74,7 +74,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
             <div className="flex justify-center mb-8">
-              <img src={logoPath} alt="Sportfolio" className="h-20" />
+              <img src={logoPath} alt="Sportfolio" className="h-24" />
             </div>
             
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">

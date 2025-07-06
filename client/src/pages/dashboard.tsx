@@ -19,7 +19,7 @@ import {
   Bell,
   LogOut
 } from "lucide-react";
-import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
+import logoImage from "@assets/Sportfolio_logo with white back ground_1751832551423.png";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
@@ -97,7 +97,7 @@ export default function Dashboard() {
                 <img 
                   src={logoImage} 
                   alt="Sportfolio Logo" 
-                  className="h-12 w-auto cursor-pointer"
+                  className="h-16 w-auto cursor-pointer"
                 />
               </Link>
               <h1 className="font-poppins font-bold text-xl text-gray-900">

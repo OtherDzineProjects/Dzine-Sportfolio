@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
+import logoImage from "@assets/Sportfolio_logo with white back ground_1751832551423.png";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -14,7 +14,7 @@ export default function Footer() {
                 <img 
                   src={logoImage} 
                   alt="Sportfolio Logo" 
-                  className="h-14 w-auto cursor-pointer"
+                  className="h-16 w-auto cursor-pointer"
                 />
               </Link>
             </div>

@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import logoPath from "@assets/Sportfolio Logo - new one edited_1751235594062.jpg";
+import logoPath from "@assets/Sportfolio_logo with white back ground_1751832551423.png";
 
 export default function DashboardModern() {
   // Sample data - in real app this would come from your API
@@ -150,7 +150,7 @@ export default function DashboardModern() {
       <header className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <img src={logoPath} alt="Sportfolio" className="h-8" />
+            <img src={logoPath} alt="Sportfolio" className="h-10" />
             <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
           </div>
           

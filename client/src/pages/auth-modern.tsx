@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin } from "lucide-react";
-import logoPath from "@assets/Sportfolio Logo - new one edited_1751235594062.jpg";
+import logoPath from "@assets/Sportfolio_logo with white back ground_1751832551423.png";
 
 export default function AuthModern() {
   const [, setLocation] = useLocation();
@@ -116,7 +116,7 @@ export default function AuthModern() {
           <img 
             src={logoPath} 
             alt="Sportfolio" 
-            className="h-24 mx-auto mb-8 filter brightness-110"
+            className="h-28 mx-auto mb-8 filter brightness-110"
           />
           <h1 className="text-4xl font-bold text-white mb-4">
             Start your
@@ -147,7 +147,7 @@ export default function AuthModern() {
             <img 
               src={logoPath} 
               alt="Sportfolio" 
-              className="h-16 mx-auto mb-4"
+              className="h-20 mx-auto mb-4"
             />
           </div>
 

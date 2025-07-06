@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Shield, Menu, X } from "lucide-react";
-import logoImage from "@assets/Sportfolio Logo with out background_1750012724737.png";
+import logoImage from "@assets/Sportfolio_logo with white back ground_1751832551423.png";
 
 export default function Navbar() {
   const [location] = useLocation();
@@ -18,7 +18,7 @@ export default function Navbar() {
               <img 
                 src={logoImage} 
                 alt="Sportfolio Logo" 
-                className="h-16 w-auto cursor-pointer"
+                className="h-20 w-auto cursor-pointer"
               />
             </Link>
             <div className="hidden md:flex items-center space-x-1">
