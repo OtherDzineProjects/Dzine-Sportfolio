@@ -740,33 +740,217 @@ export default function UserDashboard() {
           </DialogHeader>
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Please select at least 3 sports you're interested in:
+              Select your sports interests to personalize your experience:
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {[
-                'Athletics', 'Swimming', 'Football', 'Basketball', 'Cricket', 'Badminton',
-                'Tennis', 'Volleyball', 'Hockey', 'Kabaddi', 'Wrestling', 'Boxing',
-                'Table Tennis', 'Cycling', 'Gymnastics', 'Weight Lifting', 'Chess',
-                'Archery', 'Shooting', 'Martial Arts'
-              ].map((sport) => (
-                <div key={sport} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={sport}
-                    checked={selectedSports.includes(sport)}
-                    onChange={() => {
-                      if (selectedSports.includes(sport)) {
-                        setSelectedSports(selectedSports.filter(s => s !== sport));
-                      } else {
-                        setSelectedSports([...selectedSports, sport]);
-                      }
-                    }}
-                    className="rounded"
-                  />
-                  <label htmlFor={sport} className="text-sm">{sport}</label>
-                </div>
-              ))}
+            {/* Athletics Category */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Athletics</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  'Track & Field', 'Marathon', 'Sprint', 'Long Jump', 'High Jump', 
+                  'Shot Put', 'Discus Throw', 'Javelin Throw', 'Pole Vault', 'Hammer Throw',
+                  'Hurdles', 'Steeplechase', 'Race Walking', 'Decathlon', 'Heptathlon'
+                ].map((sport) => (
+                  <div key={sport} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={sport}
+                      checked={selectedSports.includes(sport)}
+                      onChange={() => {
+                        if (selectedSports.includes(sport)) {
+                          setSelectedSports(selectedSports.filter(s => s !== sport));
+                        } else {
+                          setSelectedSports([...selectedSports, sport]);
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={sport} className="text-sm">{sport}</label>
+                  </div>
+                ))}
+              </div>
             </div>
+
+            {/* Team Sports Category */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Team Sports</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  'Football', 'Basketball', 'Cricket', 'Volleyball', 'Hockey', 
+                  'Kabaddi', 'Kho-Kho', 'Handball', 'Rugby', 'Baseball',
+                  'Softball', 'Water Polo'
+                ].map((sport) => (
+                  <div key={sport} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={sport}
+                      checked={selectedSports.includes(sport)}
+                      onChange={() => {
+                        if (selectedSports.includes(sport)) {
+                          setSelectedSports(selectedSports.filter(s => s !== sport));
+                        } else {
+                          setSelectedSports([...selectedSports, sport]);
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={sport} className="text-sm">{sport}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Racquet Sports Category */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Racquet Sports</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  'Badminton', 'Tennis', 'Table Tennis', 'Squash', 'Pickleball'
+                ].map((sport) => (
+                  <div key={sport} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={sport}
+                      checked={selectedSports.includes(sport)}
+                      onChange={() => {
+                        if (selectedSports.includes(sport)) {
+                          setSelectedSports(selectedSports.filter(s => s !== sport));
+                        } else {
+                          setSelectedSports([...selectedSports, sport]);
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={sport} className="text-sm">{sport}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Combat Sports Category */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Combat Sports</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  'Boxing', 'Wrestling', 'Judo', 'Karate', 'Taekwondo', 
+                  'Mixed Martial Arts', 'Kickboxing', 'Fencing'
+                ].map((sport) => (
+                  <div key={sport} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={sport}
+                      checked={selectedSports.includes(sport)}
+                      onChange={() => {
+                        if (selectedSports.includes(sport)) {
+                          setSelectedSports(selectedSports.filter(s => s !== sport));
+                        } else {
+                          setSelectedSports([...selectedSports, sport]);
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={sport} className="text-sm">{sport}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Water Sports Category */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Water Sports</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  'Swimming', 'Diving', 'Synchronized Swimming', 'Water Skiing', 
+                  'Surfing', 'Rowing', 'Canoeing', 'Kayaking'
+                ].map((sport) => (
+                  <div key={sport} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={sport}
+                      checked={selectedSports.includes(sport)}
+                      onChange={() => {
+                        if (selectedSports.includes(sport)) {
+                          setSelectedSports(selectedSports.filter(s => s !== sport));
+                        } else {
+                          setSelectedSports([...selectedSports, sport]);
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={sport} className="text-sm">{sport}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Individual Sports Category */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Individual Sports</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  'Cycling', 'Gymnastics', 'Weight Lifting', 'Archery', 'Shooting', 
+                  'Golf', 'Rock Climbing', 'Skating', 'Skiing', 'Snowboarding'
+                ].map((sport) => (
+                  <div key={sport} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={sport}
+                      checked={selectedSports.includes(sport)}
+                      onChange={() => {
+                        if (selectedSports.includes(sport)) {
+                          setSelectedSports(selectedSports.filter(s => s !== sport));
+                        } else {
+                          setSelectedSports([...selectedSports, sport]);
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={sport} className="text-sm">{sport}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Mind Sports Category */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg">Mind Sports</h4>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {[
+                  'Chess', 'Checkers', 'Carrom', 'Bridge', 'E-Sports'
+                ].map((sport) => (
+                  <div key={sport} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={sport}
+                      checked={selectedSports.includes(sport)}
+                      onChange={() => {
+                        if (selectedSports.includes(sport)) {
+                          setSelectedSports(selectedSports.filter(s => s !== sport));
+                        } else {
+                          setSelectedSports([...selectedSports, sport]);
+                        }
+                      }}
+                      className="rounded"
+                    />
+                    <label htmlFor={sport} className="text-sm">{sport}</label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Selected Sports Summary */}
+            {selectedSports.length > 0 && (
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h5 className="font-medium mb-2">Selected Sports ({selectedSports.length}):</h5>
+                <div className="flex flex-wrap gap-1">
+                  {selectedSports.map((sport) => (
+                    <span key={sport} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                      {sport}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="flex justify-end space-x-2">
               <Button 
                 variant="outline" 
@@ -776,9 +960,9 @@ export default function UserDashboard() {
               </Button>
               <Button 
                 onClick={handleSportsSubmit}
-                disabled={selectedSports.length < 3 || updateSportsInterestsMutation.isPending}
+                disabled={selectedSports.length === 0 || updateSportsInterestsMutation.isPending}
               >
-                {updateSportsInterestsMutation.isPending ? "Saving..." : `Save Interests (${selectedSports.length}/3)`}
+                {updateSportsInterestsMutation.isPending ? "Saving..." : `Continue (${selectedSports.length} selected)`}
               </Button>
             </div>
           </div>
