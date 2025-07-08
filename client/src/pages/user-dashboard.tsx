@@ -21,7 +21,12 @@ import {
 } from "lucide-react";
 import { User as UserType } from "@shared/schema";
 import OrganizationFormEnhanced from "@/components/organization-form-enhanced";
-import { getDistrictOptions, getLSGDOptions } from "@shared/kerala-locations";
+// Kerala location imports removed - now handled in profile sections
+import { PersonalProfileSection } from "@/components/profile-sections/personal-profile";
+import { CareerProfileSection } from "@/components/profile-sections/career-profile";
+import { MedicalProfileSection } from "@/components/profile-sections/medical-profile";
+import { GuardianProfileSection } from "@/components/profile-sections/guardian-profile";
+import { PersonalProfile, CareerProfile, MedicalProfile, GuardianProfile } from "@shared/profile-types";
 
 interface Organization {
   id: number;
@@ -105,7 +110,7 @@ const OLYMPIC_SPORTS = {
 export default function UserDashboard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [editingProfile, setEditingProfile] = useState(false);
+  // Old editing profile state removed - now using 4-section system
   const [showQuestionnaireDialog, setShowQuestionnaireDialog] = useState(false);
   const [showOrganizationDialog, setShowOrganizationDialog] = useState(false);
   const [showAchievementDialog, setShowAchievementDialog] = useState(false);
@@ -184,24 +189,26 @@ export default function UserDashboard() {
     enabled: !!user,
   });
 
-  const [profileForm, setProfileForm] = useState({
-    firstName: '',
-    lastName: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: 'Kerala', // Default to Kerala
-    district: '',
-    lsgd: '',
-    pincode: '',
-    dateOfBirth: '',
-    educationQualification: '',
-    institution: '',
-    graduationYear: '',
-    currentPosition: '',
-    currentOrganization: '',
-    workExperience: '',
-  });
+  // Helper function to calculate age
+  const calculateAge = (dateOfBirth: string) => {
+    if (!dateOfBirth) return 0;
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  };
+
+  const userAge = user?.dateOfBirth ? calculateAge(user.dateOfBirth) : 0;
+
+  // Profile sections state
+  const [personalProfile, setPersonalProfile] = useState<Partial<PersonalProfile>>({});
+  const [careerProfile, setCareerProfile] = useState<Partial<CareerProfile>>({});
+  const [medicalProfile, setMedicalProfile] = useState<Partial<MedicalProfile>>({});
+  const [guardianProfile, setGuardianProfile] = useState<Partial<GuardianProfile>>({});
 
   const [organizationForm, setOrganizationForm] = useState({
     name: '',
@@ -224,26 +231,58 @@ export default function UserDashboard() {
     issuedBy: '',
   });
 
-  // Initialize form data when user data loads
+  // Initialize profile data when user data loads
   useEffect(() => {
     if (user) {
-      setProfileForm({
+      // Personal Profile
+      setPersonalProfile({
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         phone: user.phone || '',
         address: user.address || '',
         city: user.city || '',
-        state: user.state || 'Kerala', // Default to Kerala if not set
+        state: user.state || 'Kerala',
         district: user.district || '',
         lsgd: user.lsgd || '',
         pincode: user.pincode || '',
         dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
+        fatherName: user.fatherName || '',
+        motherName: user.motherName || '',
+        fatherOccupation: user.fatherOccupation || '',
+        motherOccupation: user.motherOccupation || '',
+        emergencyContact: user.emergencyContact || '',
+        emergencyContactRelation: user.emergencyContactRelation || '',
+      });
+
+      // Career Profile
+      setCareerProfile({
         educationQualification: user.educationQualification || '',
         institution: user.institution || '',
-        graduationYear: user.graduationYear ? user.graduationYear.toString() : '',
+        graduationYear: user.graduationYear || undefined,
         currentPosition: user.currentPosition || '',
         currentOrganization: user.currentOrganization || '',
-        workExperience: user.workExperience?.toString() || '',
+        workExperience: user.workExperience || undefined,
+        skills: user.skills || [],
+      });
+
+      // Medical Profile
+      setMedicalProfile({
+        height: user.height ? parseFloat(user.height.toString()) : undefined,
+        weight: user.weight ? parseFloat(user.weight.toString()) : undefined,
+        bmi: user.bmi ? parseFloat(user.bmi.toString()) : undefined,
+        bloodGroup: user.bloodGroup || '',
+        allergies: user.allergies || [],
+        medicalConditions: user.medicalConditions || [],
+        injuries: user.injuries || [],
+        lastMedicalCheckup: user.lastMedicalCheckup || '',
+        medicalClearance: user.medicalClearance || false,
+      });
+
+      // Guardian Profile
+      setGuardianProfile({
+        isMinor: user.isMinor || false,
+        guardianId: user.guardianId || undefined,
+        dependents: user.dependents || [],
       });
 
       if (user.sportsInterests && Array.isArray(user.sportsInterests)) {
@@ -263,23 +302,85 @@ export default function UserDashboard() {
   }, [user, questionnaireCompleted]);
 
   // Profile update mutation
-  const updateProfileMutation = useMutation({
-    mutationFn: async (data: typeof profileForm) => {
+  const updatePersonalProfileMutation = useMutation({
+    mutationFn: async (data: Partial<PersonalProfile>) => {
       const result = await apiRequest("PUT", "/api/auth/profile", data);
       return result.json();
     },
     onSuccess: () => {
       toast({
-        title: "Profile Updated",
-        description: "Your profile has been updated successfully.",
+        title: "Success",
+        description: "Personal profile updated successfully!",
       });
-      setEditingProfile(false);
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] });
     },
     onError: (error: any) => {
       toast({
-        title: "Update Failed",
-        description: error.message || "Failed to update profile.",
+        title: "Error",
+        description: error.message || "Failed to update personal profile",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateCareerProfileMutation = useMutation({
+    mutationFn: async (data: Partial<CareerProfile>) => {
+      const result = await apiRequest("PUT", "/api/auth/profile", data);
+      return result.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Career profile updated successfully!",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update career profile",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateMedicalProfileMutation = useMutation({
+    mutationFn: async (data: Partial<MedicalProfile>) => {
+      const result = await apiRequest("PUT", "/api/auth/profile", data);
+      return result.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Medical profile updated successfully!",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update medical profile",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const updateGuardianProfileMutation = useMutation({
+    mutationFn: async (data: Partial<GuardianProfile>) => {
+      const result = await apiRequest("PUT", "/api/auth/profile", data);
+      return result.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Guardian profile updated successfully!",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update guardian profile",
         variant: "destructive",
       });
     },
@@ -443,10 +544,7 @@ export default function UserDashboard() {
     );
   };
 
-  const handleProfileSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateProfileMutation.mutate(profileForm);
-  };
+  // Old profile form handler removed - now using 4-section system
 
   const handleSportsSubmit = () => {
     updateSportsInterestsMutation.mutate(selectedSports);
@@ -595,339 +693,44 @@ export default function UserDashboard() {
             <TabsTrigger value="analytics" className="text-xs md:text-sm">Analytics</TabsTrigger>
           </TabsList>
 
-          {/* Profile Tab */}
+          {/* Profile Tab - 4 Comprehensive Sections */}
           <TabsContent value="profile" className="space-y-6">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>Personal Information</CardTitle>
-                  <CardDescription>Manage your personal details and contact information</CardDescription>
-                </div>
-                <Button
-                  variant={editingProfile ? "default" : "outline"}
-                  onClick={() => setEditingProfile(!editingProfile)}
-                >
-                  {editingProfile ? <Save className="h-4 w-4 mr-2" /> : <Edit className="h-4 w-4 mr-2" />}
-                  {editingProfile ? "Save" : "Edit"}
-                </Button>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleProfileSubmit} className="space-y-6">
-                  {/* Contact Details */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 flex items-center">
-                      <Mail className="h-5 w-5 mr-2" />
-                      Contact Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={user.email}
-                          disabled
-                          className="bg-gray-50 dark:bg-gray-800"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone Number</Label>
-                        <Input
-                          id="phone"
-                          type="tel"
-                          value={profileForm.phone}
-                          onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter phone number"
-                        />
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="address">Address</Label>
-                        <Textarea
-                          id="address"
-                          value={profileForm.address}
-                          onChange={(e) => setProfileForm({ ...profileForm, address: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter full address"
-                          rows={3}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="state">State</Label>
-                        <Select
-                          value={profileForm.state || "Kerala"}
-                          onValueChange={(value) => setProfileForm({ 
-                            ...profileForm, 
-                            state: value,
-                            district: "", // Reset district when state changes
-                            lsgd: "" // Reset LSGD when state changes
-                          })}
-                          disabled={!editingProfile}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Kerala">Kerala</SelectItem>
-                            <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
-                            <SelectItem value="Karnataka">Karnataka</SelectItem>
-                            <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
-                            <SelectItem value="Telangana">Telangana</SelectItem>
-                            <SelectItem value="Maharashtra">Maharashtra</SelectItem>
-                            <SelectItem value="Gujarat">Gujarat</SelectItem>
-                            <SelectItem value="Rajasthan">Rajasthan</SelectItem>
-                            <SelectItem value="Uttar Pradesh">Uttar Pradesh</SelectItem>
-                            <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
-                            <SelectItem value="West Bengal">West Bengal</SelectItem>
-                            <SelectItem value="Bihar">Bihar</SelectItem>
-                            <SelectItem value="Odisha">Odisha</SelectItem>
-                            <SelectItem value="Jharkhand">Jharkhand</SelectItem>
-                            <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
-                            <SelectItem value="Assam">Assam</SelectItem>
-                            <SelectItem value="Punjab">Punjab</SelectItem>
-                            <SelectItem value="Haryana">Haryana</SelectItem>
-                            <SelectItem value="Himachal Pradesh">Himachal Pradesh</SelectItem>
-                            <SelectItem value="Uttarakhand">Uttarakhand</SelectItem>
-                            <SelectItem value="Goa">Goa</SelectItem>
-                            <SelectItem value="Delhi">Delhi</SelectItem>
-                            <SelectItem value="Jammu and Kashmir">Jammu and Kashmir</SelectItem>
-                            <SelectItem value="Ladakh">Ladakh</SelectItem>
-                            <SelectItem value="Chandigarh">Chandigarh</SelectItem>
-                            <SelectItem value="Puducherry">Puducherry</SelectItem>
-                            <SelectItem value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</SelectItem>
-                            <SelectItem value="Lakshadweep">Lakshadweep</SelectItem>
-                            <SelectItem value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</SelectItem>
-                            <SelectItem value="Arunachal Pradesh">Arunachal Pradesh</SelectItem>
-                            <SelectItem value="Manipur">Manipur</SelectItem>
-                            <SelectItem value="Meghalaya">Meghalaya</SelectItem>
-                            <SelectItem value="Mizoram">Mizoram</SelectItem>
-                            <SelectItem value="Nagaland">Nagaland</SelectItem>
-                            <SelectItem value="Sikkim">Sikkim</SelectItem>
-                            <SelectItem value="Tripura">Tripura</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      {/* Kerala-specific District Selection */}
-                      {profileForm.state === "Kerala" && (
-                        <div className="space-y-2">
-                          <Label htmlFor="district">District</Label>
-                          <Select
-                            value={profileForm.district || ""}
-                            onValueChange={(value) => setProfileForm({ 
-                              ...profileForm, 
-                              district: value,
-                              lsgd: "" // Reset LSGD when district changes
-                            })}
-                            disabled={!editingProfile}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select district" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {getDistrictOptions().map((district) => (
-                                <SelectItem key={district.value} value={district.value}>
-                                  {district.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                      
-                      {/* Kerala-specific LSGD Selection */}
-                      {profileForm.state === "Kerala" && profileForm.district && (
-                        <div className="space-y-2">
-                          <Label htmlFor="lsgd">LSGD (Ward/Corporation/Municipality)</Label>
-                          <Select
-                            value={profileForm.lsgd || ""}
-                            onValueChange={(value) => setProfileForm({ 
-                              ...profileForm, 
-                              lsgd: value
-                            })}
-                            disabled={!editingProfile}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select LSGD" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {getLSGDOptions(profileForm.district).map((lsgd) => (
-                                <SelectItem key={lsgd.value} value={lsgd.value}>
-                                  {lsgd.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                      
-                      {/* City field for non-Kerala states */}
-                      {profileForm.state !== "Kerala" && (
-                        <div className="space-y-2">
-                          <Label htmlFor="city">City</Label>
-                          <Input
-                            id="city"
-                            value={profileForm.city}
-                            onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
-                            disabled={!editingProfile}
-                            placeholder="Enter city"
-                          />
-                        </div>
-                      )}
-                      <div className="space-y-2">
-                        <Label htmlFor="pincode">PIN Code</Label>
-                        <Input
-                          id="pincode"
-                          value={profileForm.pincode}
-                          onChange={(e) => setProfileForm({ ...profileForm, pincode: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter PIN code"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="dateOfBirth">Date of Birth</Label>
-                        <Input
-                          id="dateOfBirth"
-                          type="date"
-                          value={profileForm.dateOfBirth}
-                          onChange={(e) => setProfileForm({ ...profileForm, dateOfBirth: e.target.value })}
-                          disabled={!editingProfile}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Education Details */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 flex items-center">
-                      <GraduationCap className="h-5 w-5 mr-2" />
-                      Education Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="educationQualification">Highest Qualification</Label>
-                        <Input
-                          id="educationQualification"
-                          value={profileForm.educationQualification}
-                          onChange={(e) => setProfileForm({ ...profileForm, educationQualification: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="e.g., Bachelor's, Master's, PhD"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="institution">Institution</Label>
-                        <Input
-                          id="institution"
-                          value={profileForm.institution}
-                          onChange={(e) => setProfileForm({ ...profileForm, institution: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter institution name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="graduationYear">Graduation Year</Label>
-                        <Input
-                          id="graduationYear"
-                          type="number"
-                          value={profileForm.graduationYear}
-                          onChange={(e) => setProfileForm({ ...profileForm, graduationYear: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter year"
-                          min="1950"
-                          max={new Date().getFullYear()}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Career Details */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 flex items-center">
-                      <Briefcase className="h-5 w-5 mr-2" />
-                      Career Details
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="currentPosition">Current Position</Label>
-                        <Input
-                          id="currentPosition"
-                          value={profileForm.currentPosition}
-                          onChange={(e) => setProfileForm({ ...profileForm, currentPosition: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter current position"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="currentOrganization">Current Organization</Label>
-                        <Input
-                          id="currentOrganization"
-                          value={profileForm.currentOrganization}
-                          onChange={(e) => setProfileForm({ ...profileForm, currentOrganization: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter organization name"
-                        />
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="workExperience">Work Experience</Label>
-                        <Textarea
-                          id="workExperience"
-                          value={profileForm.workExperience}
-                          onChange={(e) => setProfileForm({ ...profileForm, workExperience: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Describe your work experience"
-                          rows={4}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Sports Interests */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 flex items-center">
-                      <Trophy className="h-5 w-5 mr-2" />
-                      Sports Interests
-                    </h3>
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {user.sportsInterests && user.sportsInterests.length > 0 ? (
-                        user.sportsInterests.map((sport: string, index: number) => (
-                          <Badge key={index} variant="secondary">
-                            {sport}
-                          </Badge>
-                        ))
-                      ) : (
-                        <p className="text-gray-500 dark:text-gray-400">No sports interests added yet.</p>
-                      )}
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setShowQuestionnaireDialog(true)}
-                    >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Update Sports Interests
-                    </Button>
-                  </div>
-
-                  {editingProfile && (
-                    <div className="flex justify-end space-x-4">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setEditingProfile(false)}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="submit"
-                        disabled={updateProfileMutation.isPending}
-                      >
-                        {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
-                      </Button>
-                    </div>
-                  )}
-                </form>
-              </CardContent>
-            </Card>
+            <PersonalProfileSection
+              profile={personalProfile}
+              onUpdate={(updates) => {
+                setPersonalProfile({ ...personalProfile, ...updates });
+                updatePersonalProfileMutation.mutate(updates);
+              }}
+              isLoading={updatePersonalProfileMutation.isPending}
+            />
+            
+            <CareerProfileSection
+              profile={careerProfile}
+              onUpdate={(updates) => {
+                setCareerProfile({ ...careerProfile, ...updates });
+                updateCareerProfileMutation.mutate(updates);
+              }}
+              isLoading={updateCareerProfileMutation.isPending}
+            />
+            
+            <MedicalProfileSection
+              profile={medicalProfile}
+              onUpdate={(updates) => {
+                setMedicalProfile({ ...medicalProfile, ...updates });
+                updateMedicalProfileMutation.mutate(updates);
+              }}
+              isLoading={updateMedicalProfileMutation.isPending}
+            />
+            
+            <GuardianProfileSection
+              profile={guardianProfile}
+              userAge={userAge}
+              onUpdate={(updates) => {
+                setGuardianProfile({ ...guardianProfile, ...updates });
+                updateGuardianProfileMutation.mutate(updates);
+              }}
+              isLoading={updateGuardianProfileMutation.isPending}
+            />
           </TabsContent>
 
           {/* Achievements Tab */}

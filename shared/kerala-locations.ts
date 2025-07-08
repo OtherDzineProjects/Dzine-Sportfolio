@@ -4,6 +4,46 @@ export interface LSGD {
   type: 'Corporation' | 'Municipality' | 'Panchayat';
 }
 
+// Indian States list for address selection
+export const INDIAN_STATES = [
+  'Kerala',
+  'Tamil Nadu',
+  'Karnataka',
+  'Andhra Pradesh',
+  'Telangana',
+  'Maharashtra',
+  'Gujarat',
+  'Rajasthan',
+  'Uttar Pradesh',
+  'Madhya Pradesh',
+  'West Bengal',
+  'Bihar',
+  'Odisha',
+  'Jharkhand',
+  'Chhattisgarh',
+  'Assam',
+  'Punjab',
+  'Haryana',
+  'Himachal Pradesh',
+  'Uttarakhand',
+  'Goa',
+  'Delhi',
+  'Jammu and Kashmir',
+  'Ladakh',
+  'Chandigarh',
+  'Puducherry',
+  'Andaman and Nicobar Islands',
+  'Lakshadweep',
+  'Dadra and Nagar Haveli and Daman and Diu',
+  'Arunachal Pradesh',
+  'Manipur',
+  'Meghalaya',
+  'Mizoram',
+  'Nagaland',
+  'Sikkim',
+  'Tripura'
+];
+
 export interface District {
   name: string;
   lsgds: LSGD[];
@@ -317,6 +357,9 @@ export const KERALA_DISTRICTS: Record<string, District> = {
     ]
   }
 };
+
+// For backwards compatibility and simpler usage
+export const KERALA_LSGD = Object.keys(KERALA_DISTRICTS);
 
 export const getDistrictOptions = (): { value: string; label: string }[] => {
   return Object.entries(KERALA_DISTRICTS).map(([key, district]) => ({

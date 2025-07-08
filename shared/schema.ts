@@ -3,6 +3,9 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// Import verification tables
+export * from "./verification-schema";
+
 // Users table
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
@@ -23,21 +26,68 @@ export const users = pgTable("users", {
   subscriptionExpiry: timestamp("subscription_expires_at"),
   toolAccess: jsonb("tool_access").default({}), // {"facility": true, "fixtures": false, "scoring": true}
   blockchainWallet: text("blockchain_wallet"),
-  // Profile information
+  // 1. Personal Profile
   address: text("address"),
   city: text("city"),
   state: text("state"),
   pincode: text("pincode"),
   dateOfBirth: date("date_of_birth"),
   profileImageUrl: text("profile_image_url"),
-  // Education
+  fatherName: text("father_name"),
+  motherName: text("mother_name"),
+  fatherOccupation: text("father_occupation"),
+  motherOccupation: text("mother_occupation"),
+  emergencyContact: text("emergency_contact"),
+  emergencyContactRelation: text("emergency_contact_relation"),
+  
+  // 2. Career Profile
   educationQualification: text("education_qualification"),
   institution: text("institution"),
   graduationYear: integer("graduation_year"),
-  // Career
   currentPosition: text("current_position"),
   currentOrganization: text("current_organization"),
   workExperience: integer("work_experience"),
+  skills: jsonb("skills").$type<Array<{
+    name: string;
+    category: string; // sports, IT, academic, professional
+    level: string; // beginner, intermediate, advanced, expert
+    isVerified: boolean;
+    verifiedBy?: string;
+    verificationDate?: string;
+    certificates?: string[];
+  }>>(),
+  
+  // 3. Medical Profile
+  height: decimal("height", { precision: 5, scale: 2 }), // in cm
+  weight: decimal("weight", { precision: 5, scale: 2 }), // in kg
+  bmi: decimal("bmi", { precision: 4, scale: 2 }),
+  bloodGroup: text("blood_group"),
+  allergies: jsonb("allergies").$type<string[]>(),
+  medicalConditions: jsonb("medical_conditions").$type<Array<{
+    condition: string;
+    severity: string; // mild, moderate, severe
+    medications?: string[];
+    doctorNotes?: string;
+  }>>(),
+  injuries: jsonb("injuries").$type<Array<{
+    injury: string;
+    date: string;
+    recovered: boolean;
+    restrictions?: string[];
+  }>>(),
+  lastMedicalCheckup: date("last_medical_checkup"),
+  medicalClearance: boolean("medical_clearance").default(false),
+  
+  // 4. Guardian System (for under-18 and elderly support)
+  isMinor: boolean("is_minor").default(false),
+  guardianId: integer("guardian_id"), // References another user who is the guardian
+  dependents: jsonb("dependents").$type<Array<{
+    id: number;
+    name: string;
+    relation: string; // child, elderly_parent, spouse
+    dateOfBirth: string;
+    needsSupport: boolean;
+  }>>(),
   // Sports interests with enhanced Kerala system
   sportsInterests: jsonb("sports_interests").$type<string[]>(),
   sportCategories: jsonb("sport_categories").$type<{primary: string[], trackAndField?: string[]}>(),

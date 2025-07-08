@@ -7,7 +7,7 @@ import Home from "@/pages/home";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import DashboardModern from "@/pages/dashboard-modern";
-import UserDashboard from "@/pages/user-dashboard";
+import UserDashboard from "@/pages/user-dashboard-clean";
 import Auth from "@/pages/auth";
 import AuthModern from "@/pages/auth-modern";
 import FacilityManagement from "@/pages/facility-management";
