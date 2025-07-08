@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { User, Edit, Save, X } from "lucide-react";
 import { PersonalProfile } from "@shared/profile-types";
 import { INDIAN_STATES, KERALA_DISTRICTS, KERALA_LSGD } from "@shared/kerala-locations";
+import { formatDateToDDMMYYYY, formatDateForInput } from "@/utils/date-format";
 
 interface PersonalProfileSectionProps {
   profile: Partial<PersonalProfile>;
@@ -92,13 +93,22 @@ export function PersonalProfileSection({ profile, onUpdate, isLoading }: Persona
           </div>
           <div>
             <Label htmlFor="dateOfBirth">Date of Birth</Label>
-            <Input
-              id="dateOfBirth"
-              type="date"
-              value={formData.dateOfBirth || ''}
-              onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
-              disabled={!isEditing}
-            />
+            {isEditing ? (
+              <Input
+                id="dateOfBirth"
+                type="date"
+                value={formatDateForInput(formData.dateOfBirth)}
+                onChange={(e) => setFormData({ ...formData, dateOfBirth: e.target.value })}
+                disabled={!isEditing}
+              />
+            ) : (
+              <Input
+                id="dateOfBirth"
+                value={formData.dateOfBirth ? formatDateToDDMMYYYY(formData.dateOfBirth) : ''}
+                disabled={true}
+                placeholder="DD/MM/YYYY"
+              />
+            )}
           </div>
         </div>
 

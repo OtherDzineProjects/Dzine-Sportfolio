@@ -277,8 +277,22 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ ...updates, updatedAt: new Date() })
       .where(eq(users.id, id))
-      .returning();
-    return user;
+      .returning({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        password: users.password,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        phone: users.phone,
+        userType: users.userType,
+        approvalStatus: users.approvalStatus,
+        profileImageUrl: users.profileImageUrl,
+        isActive: users.isActive,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt
+      });
+    return user as User;
   }
 
   async getAthleteProfile(userId: number): Promise<AthleteProfile | undefined> {

@@ -23,6 +23,8 @@ import { MedicalProfileSection } from "@/components/profile-sections/medical-pro
 import { GuardianProfileSection } from "@/components/profile-sections/guardian-profile";
 import { ProfilePhotoSection } from "@/components/profile-photo-section";
 import { OrganizationDetailView } from "@/components/organization-detail-view";
+import { calculateProfileCompletion, getCompletionColor, getCompletionBadgeVariant } from "@/utils/profile-completion";
+import { Progress } from "@/components/ui/progress";
 
 interface Organization {
   id: number;
@@ -110,6 +112,9 @@ export default function UserDashboard() {
   const [careerProfile, setCareerProfile] = useState<Partial<CareerProfile>>({});
   const [medicalProfile, setMedicalProfile] = useState<Partial<MedicalProfile>>({});
   const [guardianProfile, setGuardianProfile] = useState<Partial<GuardianProfile>>({});
+
+  // Calculate profile completion
+  const completion = calculateProfileCompletion(personalProfile, careerProfile, medicalProfile, guardianProfile);
 
   // Organization form state
   const [organizationForm, setOrganizationForm] = useState({
