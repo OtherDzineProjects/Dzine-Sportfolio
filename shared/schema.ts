@@ -42,6 +42,7 @@ export const users = pgTable("users", {
   sportsInterests: jsonb("sports_interests").$type<string[]>(),
   sportCategories: jsonb("sport_categories").$type<{primary: string[], trackAndField?: string[]}>(),
   district: text("district"), // Kerala districts
+  lsgd: text("lsgd"), // Local Self Government Division (Ward/Corporation/Municipality)
   skillLevel: text("skill_level"), // beginner, intermediate, professional
   sportsGoal: text("sports_goal"), // fitness, competition, recreation
   preferredVenue: text("preferred_venue"), // backwaters, indoor_stadium, local_ground

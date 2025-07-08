@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { User as UserType } from "@shared/schema";
 import OrganizationFormEnhanced from "@/components/organization-form-enhanced";
+import { getDistrictOptions, getLSGDOptions } from "@shared/kerala-locations";
 
 interface Organization {
   id: number;
@@ -189,7 +190,9 @@ export default function UserDashboard() {
     phone: '',
     address: '',
     city: '',
-    state: '',
+    state: 'Kerala', // Default to Kerala
+    district: '',
+    lsgd: '',
     pincode: '',
     dateOfBirth: '',
     educationQualification: '',
@@ -230,7 +233,9 @@ export default function UserDashboard() {
         phone: user.phone || '',
         address: user.address || '',
         city: user.city || '',
-        state: user.state || '',
+        state: user.state || 'Kerala', // Default to Kerala if not set
+        district: user.district || '',
+        lsgd: user.lsgd || '',
         pincode: user.pincode || '',
         dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
         educationQualification: user.educationQualification || '',
@@ -648,25 +653,127 @@ export default function UserDashboard() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="city">City</Label>
-                        <Input
-                          id="city"
-                          value={profileForm.city}
-                          onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
-                          disabled={!editingProfile}
-                          placeholder="Enter city"
-                        />
-                      </div>
-                      <div className="space-y-2">
                         <Label htmlFor="state">State</Label>
-                        <Input
-                          id="state"
-                          value={profileForm.state}
-                          onChange={(e) => setProfileForm({ ...profileForm, state: e.target.value })}
+                        <Select
+                          value={profileForm.state || "Kerala"}
+                          onValueChange={(value) => setProfileForm({ 
+                            ...profileForm, 
+                            state: value,
+                            district: "", // Reset district when state changes
+                            lsgd: "" // Reset LSGD when state changes
+                          })}
                           disabled={!editingProfile}
-                          placeholder="Enter state"
-                        />
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Kerala">Kerala</SelectItem>
+                            <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
+                            <SelectItem value="Karnataka">Karnataka</SelectItem>
+                            <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
+                            <SelectItem value="Telangana">Telangana</SelectItem>
+                            <SelectItem value="Maharashtra">Maharashtra</SelectItem>
+                            <SelectItem value="Gujarat">Gujarat</SelectItem>
+                            <SelectItem value="Rajasthan">Rajasthan</SelectItem>
+                            <SelectItem value="Uttar Pradesh">Uttar Pradesh</SelectItem>
+                            <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
+                            <SelectItem value="West Bengal">West Bengal</SelectItem>
+                            <SelectItem value="Bihar">Bihar</SelectItem>
+                            <SelectItem value="Odisha">Odisha</SelectItem>
+                            <SelectItem value="Jharkhand">Jharkhand</SelectItem>
+                            <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
+                            <SelectItem value="Assam">Assam</SelectItem>
+                            <SelectItem value="Punjab">Punjab</SelectItem>
+                            <SelectItem value="Haryana">Haryana</SelectItem>
+                            <SelectItem value="Himachal Pradesh">Himachal Pradesh</SelectItem>
+                            <SelectItem value="Uttarakhand">Uttarakhand</SelectItem>
+                            <SelectItem value="Goa">Goa</SelectItem>
+                            <SelectItem value="Delhi">Delhi</SelectItem>
+                            <SelectItem value="Jammu and Kashmir">Jammu and Kashmir</SelectItem>
+                            <SelectItem value="Ladakh">Ladakh</SelectItem>
+                            <SelectItem value="Chandigarh">Chandigarh</SelectItem>
+                            <SelectItem value="Puducherry">Puducherry</SelectItem>
+                            <SelectItem value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</SelectItem>
+                            <SelectItem value="Lakshadweep">Lakshadweep</SelectItem>
+                            <SelectItem value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</SelectItem>
+                            <SelectItem value="Arunachal Pradesh">Arunachal Pradesh</SelectItem>
+                            <SelectItem value="Manipur">Manipur</SelectItem>
+                            <SelectItem value="Meghalaya">Meghalaya</SelectItem>
+                            <SelectItem value="Mizoram">Mizoram</SelectItem>
+                            <SelectItem value="Nagaland">Nagaland</SelectItem>
+                            <SelectItem value="Sikkim">Sikkim</SelectItem>
+                            <SelectItem value="Tripura">Tripura</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+                      
+                      {/* Kerala-specific District Selection */}
+                      {profileForm.state === "Kerala" && (
+                        <div className="space-y-2">
+                          <Label htmlFor="district">District</Label>
+                          <Select
+                            value={profileForm.district || ""}
+                            onValueChange={(value) => setProfileForm({ 
+                              ...profileForm, 
+                              district: value,
+                              lsgd: "" // Reset LSGD when district changes
+                            })}
+                            disabled={!editingProfile}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select district" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getDistrictOptions().map((district) => (
+                                <SelectItem key={district.value} value={district.value}>
+                                  {district.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      
+                      {/* Kerala-specific LSGD Selection */}
+                      {profileForm.state === "Kerala" && profileForm.district && (
+                        <div className="space-y-2">
+                          <Label htmlFor="lsgd">LSGD (Ward/Corporation/Municipality)</Label>
+                          <Select
+                            value={profileForm.lsgd || ""}
+                            onValueChange={(value) => setProfileForm({ 
+                              ...profileForm, 
+                              lsgd: value
+                            })}
+                            disabled={!editingProfile}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select LSGD" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {getLSGDOptions(profileForm.district).map((lsgd) => (
+                                <SelectItem key={lsgd.value} value={lsgd.value}>
+                                  {lsgd.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      
+                      {/* City field for non-Kerala states */}
+                      {profileForm.state !== "Kerala" && (
+                        <div className="space-y-2">
+                          <Label htmlFor="city">City</Label>
+                          <Input
+                            id="city"
+                            value={profileForm.city}
+                            onChange={(e) => setProfileForm({ ...profileForm, city: e.target.value })}
+                            disabled={!editingProfile}
+                            placeholder="Enter city"
+                          />
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <Label htmlFor="pincode">PIN Code</Label>
                         <Input
