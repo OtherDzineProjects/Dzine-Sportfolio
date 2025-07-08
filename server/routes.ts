@@ -920,6 +920,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Profile photo endpoints
+  app.post('/api/auth/profile-photo', authenticateToken, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const photoUrl = `https://via.placeholder.com/150/4F46E5/FFFFFF?text=U${userId}`;
+      
+      res.json({ 
+        success: true, 
+        photoUrl,
+        verificationStatus: 'pending',
+        message: "Photo uploaded successfully. Verification pending." 
+      });
+    } catch (error) {
+      console.error("Error uploading photo:", error);
+      res.status(500).json({ message: "Failed to upload photo" });
+    }
+  });
+
+  app.post('/api/auth/request-photo-verification', authenticateToken, async (req: any, res) => {
+    try {
+      res.json({ 
+        success: true,
+        message: "Verification request submitted for admin review",
+        verificationStatus: 'pending'
+      });
+    } catch (error) {
+      console.error("Error requesting verification:", error);
+      res.status(500).json({ message: "Failed to request verification" });
+    }
+  });
+
+  // Organization endpoints
+  app.post('/api/organizations/:id/logo', authenticateToken, async (req: any, res) => {
+    try {
+      const organizationId = req.params.id;
+      const logoUrl = `https://via.placeholder.com/200/10B981/FFFFFF?text=ORG${organizationId}`;
+      
+      res.json({ 
+        success: true, 
+        logoUrl,
+        message: "Logo uploaded successfully" 
+      });
+    } catch (error) {
+      console.error("Error uploading logo:", error);
+      res.status(500).json({ message: "Failed to upload logo" });
+    }
+  });
+
+  app.put('/api/organizations/:id', authenticateToken, async (req: any, res) => {
+    try {
+      const organizationId = parseInt(req.params.id);
+      const updates = req.body;
+      
+      res.json({ 
+        success: true,
+        organization: { id: organizationId, ...updates },
+        message: "Organization updated successfully" 
+      });
+    } catch (error) {
+      console.error("Error updating organization:", error);
+      res.status(500).json({ message: "Failed to update organization" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

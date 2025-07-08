@@ -21,6 +21,8 @@ import { PersonalProfileSection } from "@/components/profile-sections/personal-p
 import { CareerProfileSection } from "@/components/profile-sections/career-profile";
 import { MedicalProfileSection } from "@/components/profile-sections/medical-profile";
 import { GuardianProfileSection } from "@/components/profile-sections/guardian-profile";
+import { ProfilePhotoSection } from "@/components/profile-photo-section";
+import { OrganizationDetailView } from "@/components/organization-detail-view";
 
 interface Organization {
   id: number;
@@ -87,6 +89,8 @@ export default function UserDashboard() {
   const [showQuestionnaireDialog, setShowQuestionnaireDialog] = useState(false);
   const [showOrganizationDialog, setShowOrganizationDialog] = useState(false);
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
+  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
+  const [showOrgDetailDialog, setShowOrgDetailDialog] = useState(false);
 
   // Helper function to calculate age
   const calculateAge = (dateOfBirth: string) => {
@@ -396,8 +400,17 @@ export default function UserDashboard() {
           <TabsTrigger value="analytics" className="text-xs md:text-sm">Analytics</TabsTrigger>
         </TabsList>
 
-        {/* Profile Tab - 4 Comprehensive Sections */}
+        {/* Profile Tab - 4 Comprehensive Sections + Photo */}
         <TabsContent value="profile" className="space-y-6">
+          <ProfilePhotoSection
+            userId={user.id}
+            profileImage={user.profileImageUrl}
+            verificationStatus={user.photoVerificationStatus}
+            lastVerificationDate={user.lastPhotoVerification}
+            nextVerificationDue={user.nextPhotoVerificationDue}
+            onUpdate={() => queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] })}
+          />
+          
           <PersonalProfileSection
             profile={personalProfile}
             onUpdate={(updates) => {
@@ -531,10 +544,13 @@ export default function UserDashboard() {
               ) : ownedOrganizations && Array.isArray(ownedOrganizations) && ownedOrganizations.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {ownedOrganizations.map((org: Organization) => (
-                    <Card key={org.id}>
+                    <Card key={org.id} className="cursor-pointer hover:shadow-md transition-shadow">
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between">
-                          <div>
+                          <div className="flex-1" onClick={() => {
+                            setSelectedOrganization(org);
+                            setShowOrgDetailDialog(true);
+                          }}>
                             <h3 className="font-semibold">{org.name}</h3>
                             <p className="text-sm text-muted-foreground mb-2">{org.description}</p>
                             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
@@ -543,20 +559,39 @@ export default function UserDashboard() {
                               <MapPin className="h-3 w-3" />
                               <span>{org.city}, {org.state}</span>
                             </div>
-                          </div>
-                          <Badge variant={org.verificationStatus === 'verified' ? 'default' : 'secondary'}>
-                            {org.verificationStatus === 'verified' ? (
-                              <>
-                                <Check className="h-3 w-3 mr-1" />
-                                Verified
-                              </>
-                            ) : (
-                              <>
-                                <Clock className="h-3 w-3 mr-1" />
-                                Pending
-                              </>
+                            {org.registrationNumber && (
+                              <p className="text-xs text-muted-foreground mt-1">
+                                Reg: {org.registrationNumber}
+                              </p>
                             )}
-                          </Badge>
+                          </div>
+                          <div className="flex flex-col items-end space-y-2">
+                            <Badge variant={org.verificationStatus === 'verified' ? 'default' : 'secondary'}>
+                              {org.verificationStatus === 'verified' ? (
+                                <>
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  Verified
+                                </>
+                              ) : (
+                                <>
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  Pending
+                                </>
+                              )}
+                            </Badge>
+                            <Button 
+                              size="sm" 
+                              variant="outline"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedOrganization(org);
+                                setShowOrgDetailDialog(true);
+                              }}
+                            >
+                              <Eye className="h-3 w-3 mr-1" />
+                              View
+                            </Button>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -742,6 +777,27 @@ export default function UserDashboard() {
               </Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Organization Detail Dialog */}
+      <Dialog open={showOrgDetailDialog} onOpenChange={setShowOrgDetailDialog}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Organization Details</DialogTitle>
+            <DialogDescription>
+              View and edit your organization information
+            </DialogDescription>
+          </DialogHeader>
+          {selectedOrganization && (
+            <OrganizationDetailView 
+              organization={selectedOrganization}
+              onUpdate={() => {
+                queryClient.invalidateQueries({ queryKey: ["/api/organizations/owned"] });
+                setShowOrgDetailDialog(false);
+              }}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
