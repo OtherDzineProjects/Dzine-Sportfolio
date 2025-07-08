@@ -199,12 +199,41 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    const [user] = await db
+      .select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        password: users.password,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        phone: users.phone,
+        userType: users.userType,
+        approvalStatus: users.approvalStatus,
+        profileImageUrl: users.profileImageUrl,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt
+      })
+      .from(users)
+      .where(eq(users.id, id));
+    return user as User || undefined;
   }
 
   async getUsers(): Promise<User[]> {
-    return await db.select().from(users).orderBy(asc(users.createdAt));
+    return await db.select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        password: users.password,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        phone: users.phone,
+        userType: users.userType,
+        approvalStatus: users.approvalStatus,
+        profileImageUrl: users.profileImageUrl,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt
+      }).from(users).orderBy(asc(users.createdAt)) as User[];
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
@@ -213,8 +242,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user || undefined;
+    const [user] = await db
+      .select({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        password: users.password,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        phone: users.phone,
+        userType: users.userType,
+        approvalStatus: users.approvalStatus,
+        profileImageUrl: users.profileImageUrl,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt
+      })
+      .from(users)
+      .where(eq(users.email, email));
+    return user as User || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -260,7 +305,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getOrganizations(): Promise<Organization[]> {
-    return await db.select().from(organizations).orderBy(asc(organizations.name));
+    return await db.select({
+      id: organizations.id,
+      name: organizations.name,
+      type: organizations.type,
+      registrationNumber: organizations.registrationNumber,
+      address: organizations.address,
+      city: organizations.city,
+      state: organizations.state,
+      pincode: organizations.pincode,
+      contactEmail: organizations.contactEmail,
+      contactPhone: organizations.contactPhone,
+      adminUserId: organizations.adminUserId,
+      logo: organizations.logo,
+      website: organizations.website,
+      isVerified: organizations.isVerified,
+      createdAt: organizations.createdAt,
+      updatedAt: organizations.updatedAt
+    }).from(organizations).orderBy(asc(organizations.name)) as Organization[];
   }
 
   async getOrganization(id: number): Promise<Organization | undefined> {
@@ -702,8 +764,22 @@ export class DatabaseStorage implements IStorage {
       .update(users)
       .set({ roleId, updatedAt: new Date() })
       .where(eq(users.id, userId))
-      .returning();
-    return updated;
+      .returning({
+        id: users.id,
+        username: users.username,
+        email: users.email,
+        password: users.password,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        phone: users.phone,
+        userType: users.userType,
+        approvalStatus: users.approvalStatus,
+        profileImageUrl: users.profileImageUrl,
+        roleId: users.roleId,
+        createdAt: users.createdAt,
+        updatedAt: users.updatedAt
+      });
+    return updated as User;
   }
 
   async getUserPermissions(userId: number): Promise<Permission[]> {
