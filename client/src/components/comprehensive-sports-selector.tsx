@@ -70,8 +70,8 @@ export default function ComprehensiveSportsSelector({
       // Remove sport
       onSportsChange(selectedSports.filter(s => s !== sportName));
     } else {
-      // Add sport
-      if (true) {
+      // Add sport (check max selections)
+      if (selectedSports.length < maxSelections) {
         onSportsChange([...selectedSports, sportName]);
       }
     }

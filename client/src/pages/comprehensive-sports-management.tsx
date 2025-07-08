@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,18 @@ export default function ComprehensiveSportsManagement() {
     queryKey: ["/api/analytics/comprehensive"],
     retry: false
   });
+
+  // Initialize selected sports when user data is available and dialog opens
+  useEffect(() => {
+    if (userSportsDialogOpen && user?.sportsInterests) {
+      setSelectedUserSports(user.sportsInterests);
+    }
+  }, [userSportsDialogOpen, user?.sportsInterests]);
+
+  // Memoize the sports change handler to prevent infinite re-renders
+  const handleSportsChange = useCallback((sports: string[]) => {
+    setSelectedUserSports(sports);
+  }, []);
 
   // Update user sports interests
   const updateUserSportsMutation = useMutation({
@@ -260,7 +272,7 @@ export default function ComprehensiveSportsManagement() {
                 </DialogHeader>
                 <ComprehensiveSportsSelector
                   selectedSports={selectedUserSports}
-                  onSportsChange={setSelectedUserSports}
+                  onSportsChange={handleSportsChange}
                   maxSelections={10}
                 />
                 <div className="flex justify-end gap-2 pt-4">
