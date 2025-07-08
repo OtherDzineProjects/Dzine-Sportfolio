@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { MapPin, Clock, Users, DollarSign, Star } from "lucide-react";
+import { KERALA_DISTRICTS, getDistrictOptions, getLSGDOptions } from "@shared/kerala-locations";
 
 interface FacilityAvailability {
   sport: string;
@@ -20,6 +21,11 @@ interface FacilityAvailability {
   maintenanceStatus?: 'excellent' | 'good' | 'fair' | 'needs_repair';
   bookingAdvanceNotice?: number; // days
   specialFeatures?: string[];
+  location?: {
+    district?: string;
+    lsgd?: string;
+    address?: string;
+  };
 }
 
 interface OrganizationFacilitySelectorProps {
@@ -239,6 +245,89 @@ export default function OrganizationFacilitySelector({
                         onChange={(e) => 
                           updateFacility(sport, { bookingAdvanceNotice: parseInt(e.target.value) || 1 })
                         }
+                      />
+                    </div>
+                  </div>
+
+                  {/* Facility Location */}
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium flex items-center gap-1">
+                      <MapPin className="h-3 w-3" />
+                      Facility Location (if different from organization location)
+                    </Label>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs text-gray-600">District</Label>
+                        <Select
+                          value={facility.location?.district || ''}
+                          onValueChange={(value) => 
+                            updateFacility(sport, { 
+                              location: { 
+                                ...facility.location, 
+                                district: value,
+                                lsgd: '' // Reset LSGD when district changes
+                              } 
+                            })
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Same as organization" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Same as organization</SelectItem>
+                            {getDistrictOptions().map((district) => (
+                              <SelectItem key={district.value} value={district.value}>
+                                {district.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div>
+                        <Label className="text-xs text-gray-600">LSGD (Ward/Corporation/Municipality)</Label>
+                        <Select
+                          value={facility.location?.lsgd || ''}
+                          onValueChange={(value) => 
+                            updateFacility(sport, { 
+                              location: { 
+                                ...facility.location, 
+                                lsgd: value 
+                              } 
+                            })
+                          }
+                          disabled={!facility.location?.district}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Same as organization" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="">Same as organization</SelectItem>
+                            {facility.location?.district && getLSGDOptions(facility.location.district).map((lsgd) => (
+                              <SelectItem key={lsgd.value} value={lsgd.value}>
+                                {lsgd.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs text-gray-600">Facility Address</Label>
+                      <Textarea
+                        placeholder="Specific facility address (if different from organization address)"
+                        value={facility.location?.address || ''}
+                        onChange={(e) => 
+                          updateFacility(sport, { 
+                            location: { 
+                              ...facility.location, 
+                              address: e.target.value 
+                            } 
+                          })
+                        }
+                        rows={2}
                       />
                     </div>
                   </div>

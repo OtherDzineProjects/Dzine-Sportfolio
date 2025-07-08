@@ -189,7 +189,7 @@ export default function ComprehensiveSportsSelector({
                           >
                             <Checkbox
                               checked={selectedSports.includes(sport.name)}
-                              onChange={() => toggleSport(sport.name)}
+                              onCheckedChange={() => toggleSport(sport.name)}
                             />
                             <Label className="flex-1 cursor-pointer text-sm">
                               {sport.name}
