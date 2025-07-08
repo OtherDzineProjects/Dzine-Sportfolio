@@ -211,6 +211,7 @@ export class DatabaseStorage implements IStorage {
         userType: users.userType,
         approvalStatus: users.approvalStatus,
         profileImageUrl: users.profileImageUrl,
+        isActive: users.isActive,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt
       })
@@ -254,6 +255,7 @@ export class DatabaseStorage implements IStorage {
         userType: users.userType,
         approvalStatus: users.approvalStatus,
         profileImageUrl: users.profileImageUrl,
+        isActive: users.isActive,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt
       })
