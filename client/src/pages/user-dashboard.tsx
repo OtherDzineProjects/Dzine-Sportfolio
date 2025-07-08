@@ -20,6 +20,7 @@ import {
   Clock, X, Eye, Settings, BarChart3, CalendarDays
 } from "lucide-react";
 import { User as UserType } from "@shared/schema";
+import OrganizationFormEnhanced from "@/components/organization-form-enhanced";
 
 interface Organization {
   id: number;
@@ -110,6 +111,8 @@ export default function UserDashboard() {
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
   const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
+  const [viewingOrganization, setViewingOrganization] = useState<Organization | null>(null);
+  const [showViewDialog, setShowViewDialog] = useState(false);
 
   // Verification status icon component
   const getVerificationStatusIcon = (status: string) => {
@@ -333,6 +336,30 @@ export default function UserDashboard() {
       toast({
         title: "Creation Failed",
         description: error.message || "Failed to create organization.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Update organization mutation
+  const updateOrganizationMutation = useMutation({
+    mutationFn: async ({ id, ...data }: any) => {
+      return apiRequest("PUT", `/api/organizations/${id}`, data);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Organization updated successfully",
+        description: "Your organization details have been updated.",
+      });
+      setShowEditDialog(false);
+      setEditingOrganization(null);
+      queryClient.invalidateQueries({ queryKey: ["/api/organizations/owned"] });
+      refetchOrgs();
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error updating organization",
+        description: error.message || "Failed to update organization",
         variant: "destructive",
       });
     },
@@ -1184,11 +1211,8 @@ export default function UserDashboard() {
                                 size="sm" 
                                 variant="outline"
                                 onClick={() => {
-                                  // TODO: Implement view organization details
-                                  toast({
-                                    title: "View Organization",
-                                    description: "Organization details view coming soon!",
-                                  });
+                                  setViewingOrganization(org);
+                                  setShowViewDialog(true);
                                 }}
                               >
                                 <Eye className="h-3 w-3 mr-1" />
@@ -1505,6 +1529,188 @@ export default function UserDashboard() {
               {updateSportsInterestsMutation.isPending ? "Saving..." : "Save Interests"}
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Organization Dialog */}
+      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Building className="h-5 w-5" />
+              Organization Details
+              {viewingOrganization && getVerificationStatusIcon(viewingOrganization.verificationStatus || 'submitted')}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {viewingOrganization && (
+            <div className="space-y-6">
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Organization Name</Label>
+                  <p className="text-lg font-semibold">{viewingOrganization.name}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Type</Label>
+                  <p>{viewingOrganization.organizationType || viewingOrganization.type}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Status</Label>
+                  <Badge variant={viewingOrganization.status === 'active' ? 'default' : 'secondary'}>
+                    {viewingOrganization.status}
+                  </Badge>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Verification Status</Label>
+                  <div className="flex items-center gap-2 mt-1">
+                    {getVerificationStatusIcon(viewingOrganization.verificationStatus || 'submitted')}
+                    <span className="capitalize">{viewingOrganization.verificationStatus || 'submitted'}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              {viewingOrganization.description && (
+                <div>
+                  <Label className="text-sm font-medium">Description</Label>
+                  <p className="mt-1 text-gray-600 dark:text-gray-400">{viewingOrganization.description}</p>
+                </div>
+              )}
+
+              {/* Location */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">District</Label>
+                  <p>{viewingOrganization.district || viewingOrganization.city || 'Not specified'}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">LSGD</Label>
+                  <p>{viewingOrganization.lsgd || 'Not specified'}</p>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {viewingOrganization.email && (
+                  <div>
+                    <Label className="text-sm font-medium">Email</Label>
+                    <p>{viewingOrganization.email}</p>
+                  </div>
+                )}
+                {viewingOrganization.phone && (
+                  <div>
+                    <Label className="text-sm font-medium">Phone</Label>
+                    <p>{viewingOrganization.phone}</p>
+                  </div>
+                )}
+                {viewingOrganization.website && (
+                  <div className="md:col-span-2">
+                    <Label className="text-sm font-medium">Website</Label>
+                    <p>
+                      <a href={viewingOrganization.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                        {viewingOrganization.website}
+                      </a>
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Sports Interests */}
+              {viewingOrganization.sportsInterests && Array.isArray(viewingOrganization.sportsInterests) && viewingOrganization.sportsInterests.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium">Sports Interests</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {viewingOrganization.sportsInterests.map((sport, index) => (
+                      <Badge key={index} variant="secondary">
+                        {sport}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Facility Availability */}
+              {viewingOrganization.facilityAvailability && Array.isArray(viewingOrganization.facilityAvailability) && viewingOrganization.facilityAvailability.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium">Facility Availability</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {viewingOrganization.facilityAvailability.map((facility, index) => (
+                      <Badge key={index} variant="outline">
+                        {facility}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Statistics */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Members</Label>
+                  <p>{viewingOrganization.memberCount || 0}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Facilities</Label>
+                  <p>{viewingOrganization.facilityCount || 0}</p>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowViewDialog(false)}>
+                  Close
+                </Button>
+                <Button 
+                  onClick={() => {
+                    setShowViewDialog(false);
+                    setEditingOrganization(viewingOrganization);
+                    setShowEditDialog(true);
+                  }}
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Organization
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Organization Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Organization</DialogTitle>
+          </DialogHeader>
+          
+          {editingOrganization && (
+            <OrganizationFormEnhanced
+              initialData={{
+                name: editingOrganization.name,
+                description: editingOrganization.description || '',
+                organizationType: editingOrganization.organizationType || editingOrganization.type,
+                state: editingOrganization.state || 'Kerala',
+                district: editingOrganization.district || '',
+                lsgd: editingOrganization.lsgd || '',
+                email: editingOrganization.email || '',
+                phone: editingOrganization.phone || '',
+                website: editingOrganization.website || '',
+                sportsInterests: editingOrganization.sportsInterests || [],
+                facilityAvailability: editingOrganization.facilityAvailability || []
+              }}
+              onSubmit={(data) => {
+                updateOrganizationMutation.mutate({
+                  id: editingOrganization.id,
+                  ...data
+                });
+              }}
+              onCancel={() => {
+                setShowEditDialog(false);
+                setEditingOrganization(null);
+              }}
+              isEditing={true}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

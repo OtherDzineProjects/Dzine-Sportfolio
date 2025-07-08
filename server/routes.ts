@@ -762,6 +762,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/organizations/:id", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const orgId = parseInt(req.params.id);
+      
+      // Check if user owns this organization
+      const existingOrg = await storage.getUserOrganization(orgId);
+      if (!existingOrg || existingOrg.ownerId !== user.id) {
+        return res.status(403).json({ message: "You can only edit organizations you own" });
+      }
+      
+      const updates = {
+        ...req.body,
+        id: orgId, // Ensure ID is preserved
+        ownerId: user.id, // Ensure ownership is preserved
+      };
+      
+      const updatedOrganization = await storage.updateUserOrganization(orgId, updates);
+      res.json(updatedOrganization);
+    } catch (error: any) {
+      console.error("Error updating organization:", error);
+      res.status(500).json({ message: "Failed to update organization" });
+    }
+  });
+
   app.get("/api/organizations/memberships", authenticateToken, async (req: any, res) => {
     try {
       const user = req.user;
