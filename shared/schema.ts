@@ -440,13 +440,21 @@ export const userOrganizations = pgTable("user_organizations", {
   description: text("description"),
   ownerId: integer("owner_id").references(() => users.id).notNull(),
   organizationType: text("organization_type").notNull(), // sports_club, academy, school, college, etc.
+  // Kerala geo-location system
+  state: text("state").default("Kerala"),
+  district: text("district"),
+  lsgd: text("lsgd"), // Local Self Government (Corporation/Municipality/Panchayat)
+  lsgdType: text("lsgd_type"), // Corporation, Municipality, Panchayat
   address: text("address"),
-  city: text("city"),
-  state: text("state"),
   pincode: text("pincode"),
   phone: text("phone"),
   email: text("email"),
   website: text("website"),
+  // Verification status for organization approval
+  verificationStatus: text("verification_status").default("submitted"), // submitted, pending, verified, rejected
+  verifiedBy: integer("verified_by").references(() => users.id),
+  verificationDate: timestamp("verification_date"),
+  verificationComments: text("verification_comments"),
   // Enhanced sports interests and facilities
   sportsInterests: jsonb("sports_interests").$type<string[]>(),
   facilityAvailability: jsonb("facility_availability").$type<{
@@ -460,9 +468,12 @@ export const userOrganizations = pgTable("user_organizations", {
     maintenanceStatus?: 'excellent' | 'good' | 'fair' | 'needs_repair';
     bookingAdvanceNotice?: number;
     specialFeatures?: string[];
+    location?: {
+      district?: string;
+      lsgd?: string;
+      address?: string;
+    };
   }[]>(),
-  // Kerala district for organization matching
-  district: text("district"),
   completedQuestionnaire: boolean("completed_questionnaire").default(false),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),

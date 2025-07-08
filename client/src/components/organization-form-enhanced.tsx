@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,20 +11,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ComprehensiveSportsSelector from "./comprehensive-sports-selector";
 import OrganizationFacilitySelector from "./organization-facility-selector";
-import { KERALA_DISTRICTS } from "@/lib/kerala-sports";
+import { KERALA_DISTRICTS, getDistrictOptions, getLSGDOptions } from "@shared/kerala-locations";
 
 const organizationSchema = z.object({
   name: z.string().min(2, "Organization name must be at least 2 characters"),
   description: z.string().optional(),
   organizationType: z.string().min(1, "Organization type is required"),
-  address: z.string().optional(),
-  city: z.string().optional(),
+  // Kerala geo-location system
   state: z.string().default("Kerala"),
+  district: z.string().min(1, "District is required"),
+  lsgd: z.string().min(1, "LSGD (Ward/Corporation/Municipality) is required"),
+  lsgdType: z.string().optional(),
+  address: z.string().optional(),
   pincode: z.string().optional(),
   phone: z.string().optional(),
   email: z.string().email("Valid email is required").optional().or(z.literal("")),
   website: z.string().url("Valid website URL required").optional().or(z.literal("")),
-  district: z.string().min(1, "District is required"),
   sportsInterests: z.array(z.string()).min(1, "Select at least one sport"),
   facilityAvailability: z.array(z.object({
     sport: z.string(),
@@ -36,7 +38,12 @@ const organizationSchema = z.object({
     equipment: z.array(z.string()).optional(),
     maintenanceStatus: z.enum(['excellent', 'good', 'fair', 'needs_repair']).optional(),
     bookingAdvanceNotice: z.number().optional(),
-    specialFeatures: z.array(z.string()).optional()
+    specialFeatures: z.array(z.string()).optional(),
+    location: z.object({
+      district: z.string().optional(),
+      lsgd: z.string().optional(),
+      address: z.string().optional()
+    }).optional()
   })).default([])
 });
 
@@ -60,6 +67,8 @@ export default function OrganizationFormEnhanced({
   const [currentTab, setCurrentTab] = useState("basic");
   const [selectedSports, setSelectedSports] = useState<string[]>(initialData?.sportsInterests || []);
   const [facilityData, setFacilityData] = useState(initialData?.facilityAvailability || []);
+  const [selectedDistrict, setSelectedDistrict] = useState<string>(initialData?.district || "");
+  const [availableLSGDs, setAvailableLSGDs] = useState<{ value: string; label: string; type: string }[]>([]);
 
   const form = useForm<OrganizationFormData>({
     resolver: zodResolver(organizationSchema),
@@ -67,19 +76,42 @@ export default function OrganizationFormEnhanced({
       name: "",
       description: "",
       organizationType: "",
-      address: "",
-      city: "",
       state: "Kerala",
+      district: "",
+      lsgd: "",
+      lsgdType: "",
+      address: "",
       pincode: "",
       phone: "",
       email: "",
       website: "",
-      district: "",
       sportsInterests: [],
       facilityAvailability: [],
       ...initialData
     }
   });
+
+  // Update available LSGDs when district changes
+  useEffect(() => {
+    if (selectedDistrict) {
+      const lsgds = getLSGDOptions(selectedDistrict);
+      setAvailableLSGDs(lsgds);
+      // Clear LSGD selection when district changes
+      form.setValue("lsgd", "");
+      form.setValue("lsgdType", "");
+    } else {
+      setAvailableLSGDs([]);
+    }
+  }, [selectedDistrict, form]);
+
+  // Initialize LSGDs if editing with existing district
+  useEffect(() => {
+    if (initialData?.district) {
+      setSelectedDistrict(initialData.district);
+      const lsgds = getLSGDOptions(initialData.district);
+      setAvailableLSGDs(lsgds);
+    }
+  }, [initialData?.district]);
 
   const organizationTypes = [
     { value: "sports_club", label: "Sports Club" },
@@ -202,40 +234,112 @@ export default function OrganizationFormEnhanced({
                       )}
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FormField
-                        control={form.control}
-                        name="district"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>District *</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                    {/* Kerala Location System */}
+                    <div className="space-y-4">
+                      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border">
+                        <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Kerala Location Details</h4>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                          Select your organization's location within Kerala state for better geo-identification
+                        </p>
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="state"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>State *</FormLabel>
                               <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select district" />
-                                </SelectTrigger>
+                                <Input value="Kerala" disabled {...field} />
                               </FormControl>
-                              <SelectContent>
-                                {KERALA_DISTRICTS.map((district) => (
-                                  <SelectItem key={district} value={district}>
-                                    {district}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                              <FormDescription>Default state for Kerala organizations</FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
+                        <FormField
+                          control={form.control}
+                          name="district"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>District *</FormLabel>
+                              <Select 
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  setSelectedDistrict(value);
+                                }} 
+                                value={field.value}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Select district" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {getDistrictOptions().map((district) => (
+                                    <SelectItem key={district.value} value={district.value}>
+                                      {district.label}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="lsgd"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>LSGD (Corporation/Municipality/Panchayat) *</FormLabel>
+                              <Select 
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  const selected = availableLSGDs.find(l => l.value === value);
+                                  if (selected) {
+                                    form.setValue("lsgdType", selected.type);
+                                  }
+                                }} 
+                                value={field.value}
+                                disabled={!selectedDistrict}
+                              >
+                                <FormControl>
+                                  <SelectTrigger>
+                                    <SelectValue placeholder={selectedDistrict ? "Select LSGD" : "Select district first"} />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  {availableLSGDs.map((lsgd) => (
+                                    <SelectItem key={lsgd.value} value={lsgd.value}>
+                                      {lsgd.label} ({lsgd.type})
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
-                        name="city"
+                        name="address"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>City</FormLabel>
+                            <FormLabel>Address</FormLabel>
                             <FormControl>
-                              <Input placeholder="Kochi" {...field} />
+                              <Textarea 
+                                placeholder="Building name, street, landmark"
+                                {...field} 
+                                rows={2}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

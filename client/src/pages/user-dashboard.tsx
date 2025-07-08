@@ -16,7 +16,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { 
   User, Edit, Save, Award, Building, Users, FileText, Download, 
   Calendar, MapPin, Phone, Mail, GraduationCap, Briefcase,
-  Shield, Star, Trophy, Globe, Plus, ExternalLink, CheckCircle,
+  Shield, Star, Trophy, Globe, Plus, ExternalLink, CheckCircle, Check,
   Clock, X, Eye, Settings, BarChart3, CalendarDays
 } from "lucide-react";
 import { User as UserType } from "@shared/schema";
@@ -103,6 +103,37 @@ export default function UserDashboard() {
   const [showOrganizationDialog, setShowOrganizationDialog] = useState(false);
   const [showAchievementDialog, setShowAchievementDialog] = useState(false);
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
+
+  // Verification status icon component
+  const getVerificationStatusIcon = (status: string) => {
+    switch (status) {
+      case 'verified':
+        return (
+          <div className="flex items-center" title="Verified Organization">
+            <div className="flex">
+              <Check className="h-3 w-3 text-blue-600 -mr-1" />
+              <Check className="h-3 w-3 text-blue-600" />
+            </div>
+          </div>
+        );
+      case 'pending':
+        return (
+          <div className="flex items-center" title="Pending Verification">
+            <div className="flex">
+              <Check className="h-3 w-3 text-orange-500 -mr-1 opacity-70" />
+              <Check className="h-3 w-3 text-orange-500 opacity-70" />
+            </div>
+          </div>
+        );
+      case 'submitted':
+      default:
+        return (
+          <div className="flex items-center" title="Submitted for Verification">
+            <Check className="h-3 w-3 text-gray-400" />
+          </div>
+        );
+    }
+  };
 
   // Fetch user data
   const { data: userProfile, isLoading: userLoading } = useQuery<{ user: UserType; athleteProfile?: any }>({
@@ -1078,7 +1109,10 @@ export default function UserDashboard() {
                       <Card key={org.id} className="relative">
                         <CardContent className="pt-6">
                           <div className="flex items-start justify-between mb-2">
-                            <h4 className="font-semibold">{org.name}</h4>
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-semibold">{org.name}</h4>
+                              {getVerificationStatusIcon(org.verificationStatus || 'submitted')}
+                            </div>
                             <Badge variant={org.status === 'active' ? 'default' : 'secondary'}>
                               {org.status}
                             </Badge>
@@ -1149,7 +1183,10 @@ export default function UserDashboard() {
                         <CardContent className="pt-6">
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
-                              <h4 className="font-semibold">{membership.organization.name}</h4>
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold">{membership.organization.name}</h4>
+                                {getVerificationStatusIcon(membership.organization.verificationStatus || 'submitted')}
+                              </div>
                               <p className="text-sm text-gray-600 dark:text-gray-400">
                                 {membership.organization.description}
                               </p>
