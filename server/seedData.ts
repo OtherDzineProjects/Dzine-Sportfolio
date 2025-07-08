@@ -46,7 +46,7 @@ export async function seedInitialData() {
       sportsDirector = await storage.createUser({
         username: "sports_director",
         email: "emailcslkerala@gmail.com",
-      password: "$2a$10$rQvI7o1H0tXGNNqAMeM8ZOWC3F8ZPqE4QIXcS7SuTc/eBXDNpLdIa", // CSLKerala
+      password: "$2b$10$ZV8gAyo/2kx4q27i2sw5s.dcUINxKUkOGuG3YyoBx3fMCUYR1zpke", // CSLKerala
       firstName: "Sports",
       lastName: "Director",
       userType: "organization",

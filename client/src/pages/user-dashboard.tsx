@@ -162,7 +162,7 @@ export default function UserDashboard() {
   const [organizationForm, setOrganizationForm] = useState({
     name: '',
     description: '',
-    type: '',
+    organizationType: '',
     city: '',
     state: '',
     establishedYear: '',
@@ -956,8 +956,8 @@ export default function UserDashboard() {
                         <div className="space-y-2">
                           <Label htmlFor="orgType">Organization Type</Label>
                           <Select
-                            value={organizationForm.type}
-                            onValueChange={(value) => setOrganizationForm({ ...organizationForm, type: value })}
+                            value={organizationForm.organizationType}
+                            onValueChange={(value) => setOrganizationForm({ ...organizationForm, organizationType: value })}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select type" />
