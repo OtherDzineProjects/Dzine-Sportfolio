@@ -38,6 +38,11 @@ interface Organization {
   status: string;
   ownerId: number;
   createdAt: string;
+  verificationStatus?: string;
+  organizationType?: string;
+  district?: string;
+  lsgd?: string;
+  facilityAvailability?: string[];
 }
 
 interface Achievement {
@@ -103,6 +108,8 @@ export default function UserDashboard() {
   const [showOrganizationDialog, setShowOrganizationDialog] = useState(false);
   const [showAchievementDialog, setShowAchievementDialog] = useState(false);
   const [selectedSports, setSelectedSports] = useState<string[]>([]);
+  const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   // Verification status icon component
   const getVerificationStatusIcon = (status: string) => {
@@ -150,7 +157,7 @@ export default function UserDashboard() {
   });
 
   // Fetch user organizations (owned)
-  const { data: ownedOrganizations, isLoading: orgsLoading } = useQuery({
+  const { data: ownedOrganizations, isLoading: orgsLoading, refetch: refetchOrgs } = useQuery({
     queryKey: ["/api/organizations/owned"],
     enabled: !!user,
   });
@@ -1123,23 +1130,78 @@ export default function UserDashboard() {
                           <div className="flex items-center text-xs text-gray-500 dark:text-gray-400 space-x-4 mb-2">
                             <span className="flex items-center">
                               <Building className="h-3 w-3 mr-1" />
-                              {org.type}
+                              {org.organizationType || org.type}
                             </span>
                             <span className="flex items-center">
                               <MapPin className="h-3 w-3 mr-1" />
-                              {org.city}, {org.state}
+                              {org.district || org.city}, {org.state}
                             </span>
                           </div>
+                          
+                          {/* Sports Interests */}
+                          {org.sportsInterests && Array.isArray(org.sportsInterests) && org.sportsInterests.length > 0 && (
+                            <div className="mb-2">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Sports:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {org.sportsInterests.slice(0, 3).map((sport, index) => (
+                                  <Badge key={index} variant="secondary" className="text-xs">
+                                    {sport}
+                                  </Badge>
+                                ))}
+                                {org.sportsInterests.length > 3 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    +{org.sportsInterests.length - 3} more
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Facility Availability */}
+                          {org.facilityAvailability && Array.isArray(org.facilityAvailability) && org.facilityAvailability.length > 0 && (
+                            <div className="mb-2">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Facilities:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {org.facilityAvailability.slice(0, 2).map((facility, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">
+                                    {facility}
+                                  </Badge>
+                                ))}
+                                {org.facilityAvailability.length > 2 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    +{org.facilityAvailability.length - 2} more
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          )}
                           <div className="flex items-center justify-between mt-4">
                             <div className="text-xs text-gray-500 dark:text-gray-400">
                               {org.memberCount || 0} members • {org.facilityCount || 0} facilities
                             </div>
                             <div className="flex space-x-2">
-                              <Button size="sm" variant="outline">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  // TODO: Implement view organization details
+                                  toast({
+                                    title: "View Organization",
+                                    description: "Organization details view coming soon!",
+                                  });
+                                }}
+                              >
                                 <Eye className="h-3 w-3 mr-1" />
                                 View
                               </Button>
-                              <Button size="sm" variant="outline">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => {
+                                  setEditingOrganization(org);
+                                  setShowEditDialog(true);
+                                }}
+                              >
                                 <Edit className="h-3 w-3 mr-1" />
                                 Edit
                               </Button>
