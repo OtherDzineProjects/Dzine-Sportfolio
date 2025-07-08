@@ -25,6 +25,7 @@ import { ProfilePhotoSection } from "@/components/profile-photo-section";
 import { OrganizationDetailView } from "@/components/organization-detail-view";
 import { calculateProfileCompletion, getCompletionColor, getCompletionBadgeVariant } from "@/utils/profile-completion";
 import { Progress } from "@/components/ui/progress";
+import ComprehensiveSportsSelector from "@/components/comprehensive-sports-selector";
 
 interface Organization {
   id: number;
@@ -377,19 +378,54 @@ export default function UserDashboard() {
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
-      {/* Header */}
+      {/* Gamified Header */}
       <div className="mb-8">
-        <div className="flex items-center space-x-4 mb-6">
-          <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-            <User className="w-8 h-8 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold">
-              Welcome, {user.firstName} {user.lastName}
-            </h1>
-            <p className="text-muted-foreground">
-              {user.email} • User ID: {user.id} • Age: {userAge}
-            </p>
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg border border-blue-200">
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="relative">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center ring-4 ring-blue-200">
+                {user.profileImageUrl ? (
+                  <img src={user.profileImageUrl} alt="Profile" className="w-full h-full rounded-full object-cover" />
+                ) : (
+                  <User className="w-8 h-8 text-white" />
+                )}
+              </div>
+              {completion.percentage >= 80 && (
+                <div className="absolute -top-1 -right-1 bg-yellow-500 rounded-full p-1">
+                  <Star className="h-3 w-3 text-white" />
+                </div>
+              )}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                🎯 Welcome, {user.firstName} {user.lastName}!
+              </h1>
+              <div className="flex items-center space-x-2 text-muted-foreground">
+                <Badge className="bg-blue-100 text-blue-800">{user.userType || 'Athlete'}</Badge>
+                <span>•</span>
+                <span>{user.email}</span>
+                <span>•</span>
+                <span>Age: {userAge}</span>
+                <span>•</span>
+                <span className="flex items-center space-x-1">
+                  <Trophy className="h-3 w-3 text-yellow-500" />
+                  <span>{completion.percentage}% Complete</span>
+                </span>
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-3xl mb-1">
+                {completion.percentage >= 90 ? '🌟' : 
+                 completion.percentage >= 70 ? '🚀' : 
+                 completion.percentage >= 50 ? '💪' : '🌱'}
+              </div>
+              <div className="text-sm font-medium">
+                {completion.percentage >= 90 ? 'Sports Star' : 
+                 completion.percentage >= 70 ? 'Rising Athlete' : 
+                 completion.percentage >= 50 ? 'Growing Strong' : 'Getting Started'}
+              </div>
+              <Progress value={completion.percentage} className="w-24 h-2 mt-2" />
+            </div>
           </div>
         </div>
       </div>
@@ -469,14 +505,18 @@ export default function UserDashboard() {
               ) : achievements && Array.isArray(achievements) && achievements.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {achievements.map((achievement: Achievement) => (
-                    <Card key={achievement.id} className="relative">
+                    <Card key={achievement.id} className="relative hover:shadow-lg transition-all duration-300 hover:scale-[1.02] bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-l-yellow-500">
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="font-semibold">{achievement.title}</h3>
+                            <div className="flex items-center space-x-2 mb-2">
+                              <Trophy className="h-5 w-5 text-yellow-500" />
+                              <h3 className="font-semibold">{achievement.title}</h3>
+                              <span className="text-lg">🏆</span>
+                            </div>
                             <p className="text-sm text-muted-foreground mb-2">{achievement.description}</p>
                             <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                              <Badge variant="secondary">{achievement.category}</Badge>
+                              <Badge variant="secondary" className="bg-purple-100 text-purple-800">{achievement.category}</Badge>
                               <span>•</span>
                               <span>{achievement.achievementDate}</span>
                               {achievement.issuedBy && (
@@ -487,13 +527,21 @@ export default function UserDashboard() {
                               )}
                             </div>
                           </div>
-                          <div className="flex items-center space-x-1">
-                            {achievement.verificationStatus === 'verified' && (
-                              <CheckCircle className="h-4 w-4 text-green-600" />
-                            )}
-                            {achievement.blockchainHash && (
-                              <Shield className="h-4 w-4 text-blue-600" />
-                            )}
+                          <div className="flex flex-col items-end space-y-2">
+                            <div className="flex items-center space-x-1">
+                              {achievement.verificationStatus === 'verified' && (
+                                <Badge className="bg-green-100 text-green-800 border-green-300">
+                                  <CheckCircle className="h-3 w-3 mr-1" />
+                                  ✅ Verified
+                                </Badge>
+                              )}
+                              {achievement.blockchainHash && (
+                                <Badge variant="outline" className="bg-blue-50 text-blue-800 border-blue-300">
+                                  <Shield className="h-3 w-3 mr-1" />
+                                  🔗 Blockchain
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </CardContent>
@@ -549,7 +597,7 @@ export default function UserDashboard() {
               ) : ownedOrganizations && Array.isArray(ownedOrganizations) && ownedOrganizations.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {ownedOrganizations.map((org: Organization) => (
-                    <Card key={org.id} className="cursor-pointer hover:shadow-md transition-shadow">
+                    <Card key={org.id} className="cursor-pointer hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-l-4 border-l-blue-500">
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between">
                           <div className="flex-1" onClick={() => {
@@ -571,16 +619,24 @@ export default function UserDashboard() {
                             )}
                           </div>
                           <div className="flex flex-col items-end space-y-2">
-                            <Badge variant={org.verificationStatus === 'verified' ? 'default' : 'secondary'}>
+                            <Badge variant={org.verificationStatus === 'verified' ? 'default' : 'secondary'} 
+                                   className={org.verificationStatus === 'verified' ? 'bg-green-100 text-green-800 border-green-300' : 
+                                              org.verificationStatus === 'pending' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' : 
+                                              'bg-red-100 text-red-800 border-red-300'}>
                               {org.verificationStatus === 'verified' ? (
                                 <>
                                   <CheckCircle className="h-3 w-3 mr-1" />
-                                  Verified
+                                  <span>✓ Verified</span>
+                                </>
+                              ) : org.verificationStatus === 'pending' ? (
+                                <>
+                                  <Clock className="h-3 w-3 mr-1" />
+                                  <span>⏳ Pending</span>
                                 </>
                               ) : (
                                 <>
-                                  <Clock className="h-3 w-3 mr-1" />
-                                  Pending
+                                  <AlertCircle className="h-3 w-3 mr-1" />
+                                  <span>❌ Unverified</span>
                                 </>
                               )}
                             </Badge>
@@ -731,238 +787,60 @@ export default function UserDashboard() {
 
       {/* Sports Questionnaire Dialog */}
       <Dialog open={showQuestionnaireDialog} onOpenChange={setShowQuestionnaireDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Complete Your Sports Profile</DialogTitle>
+            <DialogTitle className="flex items-center space-x-2">
+              <Trophy className="h-6 w-6 text-yellow-500" />
+              <span>🏆 Complete Your Sports Profile</span>
+            </DialogTitle>
             <DialogDescription>
-              Select your sports interests to personalize your experience
+              Select your sports interests to unlock personalized features and connect with relevant opportunities
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Select your sports interests to personalize your experience:
-            </p>
-            {/* Athletics Category */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">Athletics</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  'Track & Field', 'Marathon', 'Sprint', 'Long Jump', 'High Jump', 
-                  'Shot Put', 'Discus Throw', 'Javelin Throw', 'Pole Vault', 'Hammer Throw',
-                  'Hurdles', 'Steeplechase', 'Race Walking', 'Decathlon', 'Heptathlon'
-                ].map((sport) => (
-                  <div key={sport} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={sport}
-                      checked={selectedSports.includes(sport)}
-                      onChange={() => {
-                        if (selectedSports.includes(sport)) {
-                          setSelectedSports(selectedSports.filter(s => s !== sport));
-                        } else {
-                          setSelectedSports([...selectedSports, sport]);
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <label htmlFor={sport} className="text-sm">{sport}</label>
-                  </div>
-                ))}
+          <div className="space-y-6">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+              <div className="flex items-center space-x-2 mb-2">
+                <Star className="h-5 w-5 text-yellow-500" />
+                <span className="font-medium">Build Your Sports Journey</span>
               </div>
+              <p className="text-sm text-muted-foreground">
+                Choose from Kerala's comprehensive sports categories. Each selection helps us personalize your experience!
+              </p>
             </div>
+            
+            <ComprehensiveSportsSelector
+              selectedSports={selectedSports}
+              onSportsChange={setSelectedSports}
+              maxSelections={999}
+              showCategoryDescriptions={true}
+              allowSearch={true}
+            />
 
-            {/* Team Sports Category */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">Team Sports</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  'Football', 'Basketball', 'Cricket', 'Volleyball', 'Hockey', 
-                  'Kabaddi', 'Kho-Kho', 'Handball', 'Rugby', 'Baseball',
-                  'Softball', 'Water Polo'
-                ].map((sport) => (
-                  <div key={sport} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={sport}
-                      checked={selectedSports.includes(sport)}
-                      onChange={() => {
-                        if (selectedSports.includes(sport)) {
-                          setSelectedSports(selectedSports.filter(s => s !== sport));
-                        } else {
-                          setSelectedSports([...selectedSports, sport]);
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <label htmlFor={sport} className="text-sm">{sport}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Racquet Sports Category */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">Racquet Sports</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  'Badminton', 'Tennis', 'Table Tennis', 'Squash', 'Pickleball'
-                ].map((sport) => (
-                  <div key={sport} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={sport}
-                      checked={selectedSports.includes(sport)}
-                      onChange={() => {
-                        if (selectedSports.includes(sport)) {
-                          setSelectedSports(selectedSports.filter(s => s !== sport));
-                        } else {
-                          setSelectedSports([...selectedSports, sport]);
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <label htmlFor={sport} className="text-sm">{sport}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Combat Sports Category */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">Combat Sports</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  'Boxing', 'Wrestling', 'Judo', 'Karate', 'Taekwondo', 
-                  'Mixed Martial Arts', 'Kickboxing', 'Fencing'
-                ].map((sport) => (
-                  <div key={sport} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={sport}
-                      checked={selectedSports.includes(sport)}
-                      onChange={() => {
-                        if (selectedSports.includes(sport)) {
-                          setSelectedSports(selectedSports.filter(s => s !== sport));
-                        } else {
-                          setSelectedSports([...selectedSports, sport]);
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <label htmlFor={sport} className="text-sm">{sport}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Water Sports Category */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">Water Sports</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  'Swimming', 'Diving', 'Synchronized Swimming', 'Water Skiing', 
-                  'Surfing', 'Rowing', 'Canoeing', 'Kayaking'
-                ].map((sport) => (
-                  <div key={sport} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={sport}
-                      checked={selectedSports.includes(sport)}
-                      onChange={() => {
-                        if (selectedSports.includes(sport)) {
-                          setSelectedSports(selectedSports.filter(s => s !== sport));
-                        } else {
-                          setSelectedSports([...selectedSports, sport]);
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <label htmlFor={sport} className="text-sm">{sport}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Individual Sports Category */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">Individual Sports</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  'Cycling', 'Gymnastics', 'Weight Lifting', 'Archery', 'Shooting', 
-                  'Golf', 'Rock Climbing', 'Skating', 'Skiing', 'Snowboarding'
-                ].map((sport) => (
-                  <div key={sport} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={sport}
-                      checked={selectedSports.includes(sport)}
-                      onChange={() => {
-                        if (selectedSports.includes(sport)) {
-                          setSelectedSports(selectedSports.filter(s => s !== sport));
-                        } else {
-                          setSelectedSports([...selectedSports, sport]);
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <label htmlFor={sport} className="text-sm">{sport}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Mind Sports Category */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-lg">Mind Sports</h4>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {[
-                  'Chess', 'Checkers', 'Carrom', 'Bridge', 'E-Sports'
-                ].map((sport) => (
-                  <div key={sport} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={sport}
-                      checked={selectedSports.includes(sport)}
-                      onChange={() => {
-                        if (selectedSports.includes(sport)) {
-                          setSelectedSports(selectedSports.filter(s => s !== sport));
-                        } else {
-                          setSelectedSports([...selectedSports, sport]);
-                        }
-                      }}
-                      className="rounded"
-                    />
-                    <label htmlFor={sport} className="text-sm">{sport}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Selected Sports Summary */}
-            {selectedSports.length > 0 && (
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h5 className="font-medium mb-2">Selected Sports ({selectedSports.length}):</h5>
-                <div className="flex flex-wrap gap-1">
-                  {selectedSports.map((sport) => (
-                    <span key={sport} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
-                      {sport}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div className="flex justify-end space-x-2">
+            <div className="flex justify-end space-x-2 pt-4 border-t">
               <Button 
                 variant="outline" 
                 onClick={() => setShowQuestionnaireDialog(false)}
+                className="flex items-center space-x-2"
               >
-                Skip for now
+                <Clock className="h-4 w-4" />
+                <span>Skip for now</span>
               </Button>
               <Button 
                 onClick={handleSportsSubmit}
                 disabled={selectedSports.length === 0 || updateSportsInterestsMutation.isPending}
+                className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
-                {updateSportsInterestsMutation.isPending ? "Saving..." : `Continue (${selectedSports.length} selected)`}
+                {updateSportsInterestsMutation.isPending ? (
+                  <>
+                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="h-4 w-4" />
+                    <span>Continue ({selectedSports.length} selected)</span>
+                  </>
+                )}
               </Button>
             </div>
           </div>
