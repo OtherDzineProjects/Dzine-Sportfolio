@@ -12,7 +12,7 @@ import {
   User, Award, Building, Users, FileText, Download, 
   Calendar, MapPin, Phone, Mail, 
   Shield, Star, Trophy, Globe, Plus, ExternalLink, CheckCircle, Check,
-  Clock, X, Eye, Settings, BarChart3, CalendarDays
+  Clock, X, Eye, Settings, BarChart3, CalendarDays, AlertCircle
 } from "lucide-react";
 import { User as UserType } from "@shared/schema";
 import OrganizationFormEnhanced from "@/components/organization-form-enhanced";
