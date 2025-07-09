@@ -784,6 +784,79 @@ export default function UserDashboard() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Admin Tab */}
+        <TabsContent value="admin" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Admin Dashboard</CardTitle>
+              <CardDescription>Access administrative functions and approval management</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="font-semibold">User Management</h3>
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('/dashboard-modern', '_blank')}
+                    >
+                      <Users className="h-4 w-4 mr-2" />
+                      Open Admin Dashboard
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('/dashboard-modern#approvals', '_blank')}
+                    >
+                      <CheckCircle className="h-4 w-4 mr-2" />
+                      User Approvals
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h3 className="font-semibold">System Management</h3>
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('/analytics', '_blank')}
+                    >
+                      <BarChart3 className="h-4 w-4 mr-2" />
+                      Analytics Dashboard
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start"
+                      onClick={() => window.open('/events', '_blank')}
+                    >
+                      <Calendar className="h-4 w-4 mr-2" />
+                      Event Management
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center space-x-2 mb-2">
+                  <Shield className="h-5 w-5 text-blue-600" />
+                  <span className="font-medium text-blue-900">Quick Access</span>
+                </div>
+                <p className="text-sm text-blue-700 mb-3">
+                  Use the buttons above to access admin functions. The approval dashboard allows you to:
+                </p>
+                <ul className="text-sm text-blue-700 space-y-1">
+                  <li>• Review pending user registrations</li>
+                  <li>• Approve or reject user accounts</li>
+                  <li>• Manage user roles and permissions</li>
+                  <li>• View user activity and analytics</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
 
       {/* Sports Questionnaire Dialog */}
@@ -847,79 +920,6 @@ export default function UserDashboard() {
           </div>
         </DialogContent>
       </Dialog>
-
-      {/* Admin Tab */}
-      <TabsContent value="admin" className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Admin Dashboard</CardTitle>
-            <CardDescription>Access administrative functions and approval management</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <h3 className="font-semibold">User Management</h3>
-                <div className="space-y-2">
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => window.open('/dashboard-modern', '_blank')}
-                  >
-                    <Users className="h-4 w-4 mr-2" />
-                    Open Admin Dashboard
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => window.open('/dashboard-modern#approvals', '_blank')}
-                  >
-                    <CheckCircle className="h-4 w-4 mr-2" />
-                    User Approvals
-                  </Button>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <h3 className="font-semibold">System Management</h3>
-                <div className="space-y-2">
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => window.open('/analytics', '_blank')}
-                  >
-                    <BarChart3 className="h-4 w-4 mr-2" />
-                    Analytics Dashboard
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => window.open('/events', '_blank')}
-                  >
-                    <Calendar className="h-4 w-4 mr-2" />
-                    Event Management
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <div className="flex items-center space-x-2 mb-2">
-                <Shield className="h-5 w-5 text-blue-600" />
-                <span className="font-medium text-blue-900">Quick Access</span>
-              </div>
-              <p className="text-sm text-blue-700 mb-3">
-                Use the buttons above to access admin functions. The approval dashboard allows you to:
-              </p>
-              <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Review pending user registrations</li>
-                <li>• Approve or reject user accounts</li>
-                <li>• Manage user roles and permissions</li>
-                <li>• View user activity and analytics</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      </TabsContent>
 
       {/* Organization Detail Dialog */}
       <Dialog open={showOrgDetailDialog} onOpenChange={setShowOrgDetailDialog}>
