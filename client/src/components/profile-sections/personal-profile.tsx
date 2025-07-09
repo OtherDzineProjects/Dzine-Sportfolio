@@ -6,7 +6,30 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { User, Edit, Save, X } from "lucide-react";
 import { PersonalProfile } from "@shared/profile-types";
-import { INDIAN_STATES, KERALA_DISTRICTS, KERALA_LSGD } from "@shared/kerala-locations";
+import { KERALA_DISTRICTS } from "@/lib/kerala-sports";
+
+// Indian states list
+const INDIAN_STATES = [
+  "Kerala", "Tamil Nadu", "Karnataka", "Andhra Pradesh", "Telangana", "Goa", "Maharashtra", "Gujarat", "Rajasthan", "Haryana", "Punjab", "Himachal Pradesh", "Uttarakhand", "Uttar Pradesh", "Bihar", "West Bengal", "Jharkhand", "Odisha", "Chhattisgarh", "Madhya Pradesh", "Assam", "Meghalaya", "Manipur", "Mizoram", "Nagaland", "Tripura", "Arunachal Pradesh", "Sikkim", "Delhi", "Puducherry", "Chandigarh", "Jammu and Kashmir", "Ladakh"
+];
+
+// Kerala LSGD data
+const KERALA_LSGD: Record<string, string[]> = {
+  "Thiruvananthapuram": ["Thiruvananthapuram Corporation", "Neyyattinkara Municipality", "Attingal Municipality", "Varkala Municipality", "Kazhakoottam", "Pappanamcode", "Ulloor", "Peyad", "Powdikonam", "Karakulam", "Venjaramoodu", "Balaramapuram", "Kilimanoor", "Parassala", "Karode", "Kallambalam", "Vilappilsala", "Mangalapuram", "Aruvikkara", "Navaikkarakunnu"],
+  "Kollam": ["Kollam Corporation", "Paravoor Municipality", "Karunagappally Municipality", "Punalur Municipality", "Anchal", "Kunnathur", "Sasthamcotta", "Kundara", "Kottarakkara", "Pathanapuram", "Chadayamangalam", "Clappana", "Mayyanad", "Thrikkadavoor", "Kulakkada", "Perinad", "Panmana", "Chavara", "Oachira", "Nilamel"],
+  "Pathanamthitta": ["Pathanamthitta Municipality", "Adoor Municipality", "Tiruvalla Municipality", "Pandalam Municipality", "Kozhenchery", "Ranni", "Mallappally", "Kuttanad", "Cherukolpuzha", "Konni", "Aranmula", "Omallur", "Elanthoor", "Eraviperoor", "Peringara", "Naranammoozhy", "Koipram", "Thumpamon", "Ayiroor", "Pulikeezhu"],
+  "Alappuzha": ["Alappuzha Municipality", "Cherthala Municipality", "Kayamkulam Municipality", "Mavelikkara Municipality", "Haripad Municipality", "Chengannur Municipality", "Kuttanad", "Karthikappally", "Ambalappuzha", "Bharanikavu", "Budhanoor", "Champakkulam", "Devikulangara", "Edathua", "Harippad", "Kadakkarappally", "Kandalloor", "Karuvatta", "Kavalam", "Krishnapuram"],
+  "Kottayam": ["Kottayam Municipality", "Changanassery Municipality", "Vaikom Municipality", "Palai Municipality", "Ettumanoor Municipality", "Erattupetta Municipality", "Pampady", "Kaduthuruthy", "Kanjirappally", "Mundakayam", "Lalam", "Madappally", "Aymanam", "Bharananganam", "Chempu", "Chirakkadavu", "Elikulam", "Erumely", "Koruthodu", "Kumarakom"],
+  "Idukki": ["Thodupuzha Municipality", "Kattappana Municipality", "Munnar", "Devikulam", "Udumbanchola", "Peerumedu", "Kumily", "Vandanmedu", "Santhanpara", "Rajakumari", "Nedumkandam", "Kamakshy", "Vazhathope", "Vattavada", "Mankulam", "Kanjikuzhy", "Karunapuram", "Keerithodu", "Senapathy", "Upputhara"],
+  "Ernakulam": ["Kochi Corporation", "Aluva Municipality", "Thrippunithura Municipality", "Kalamassery Municipality", "Angamaly Municipality", "Perumbavoor Municipality", "Kothamangalam Municipality", "Muvattupuzha Municipality", "North Paravur Municipality", "Eloor Municipality", "Kizhakkambalam", "Kunnathunad", "Kuttampuzha", "Karukutty", "Kalady", "Keerampara", "Keezhmad", "Kumbakonam", "Manjalloor", "Maneed"],
+  "Thrissur": ["Thrissur Corporation", "Chalakudy Municipality", "Kodungallur Municipality", "Irinjalakuda Municipality", "Kunnamkulam Municipality", "Guruvayoor Municipality", "Chavakkad Municipality", "Wadakkanchery Municipality", "Ollur Municipality", "Anthikad", "Avinissery", "Eriyad", "Kadangodu", "Kadavallur", "Kadukutty", "Kaiparambu", "Kaipparambu", "Karalam", "Kattur", "Kattoor"],
+  "Palakkad": ["Palakkad Municipality", "Ottapalam Municipality", "Shoranur Municipality", "Cherpulassery Municipality", "Pattambi Municipality", "Mannarkkad Municipality", "Chittur-Thathamangalam Municipality", "Sreekrishnapuram", "Kuzhalmannam", "Thrithala", "Kollengode", "Nemmara", "Ayilur", "Elavanchery", "Eruthenpathy", "Kanhangad", "Kappur", "Karimpuzha", "Kongad", "Koottanad"],
+  "Malappuram": ["Malappuram Municipality", "Manjeri Municipality", "Perinthalmanna Municipality", "Tirur Municipality", "Tanur Municipality", "Kottakkal Municipality", "Ponnani Municipality", "Nilambur Municipality", "Kondotty Municipality", "Valanchery Municipality", "Areekode", "Edarikkode", "Edavanna", "Irimbiliyam", "Kalikavu", "Karulai", "Keezhattur", "Kuruva", "Malappuram", "Mankada"],
+  "Kozhikode": ["Kozhikode Corporation", "Vadakara Municipality", "Koyilandy Municipality", "Feroke Municipality", "Ramanattukara Municipality", "Thamarassery Municipality", "Koduvally Municipality", "Mukkam Municipality", "Thiruvambady", "Kakkayam", "Koorachund", "Kuttiadi", "Nadapuram", "Omassery", "Panthalayani", "Payyoli", "Perambra", "Quilandy", "Thodannur", "Ulliyeri"],
+  "Wayanad": ["Kalpetta Municipality", "Mananthavady Municipality", "Sulthan Bathery Municipality", "Vythiri", "Meppadi", "Ambalavayal", "Edavaka", "Kalpetta", "Kaniyambetta", "Karapuzha", "Krishnagiri", "Kunnathidavaka", "Meenangadi", "Mullankolly", "Muttil", "Nenmeni", "Noolpuzha", "Padinjarethara", "Pozhuthana", "Pulpally"],
+  "Kannur": ["Kannur Corporation", "Thalassery Municipality", "Payyanur Municipality", "Mattannur Municipality", "Koothuparamba Municipality", "Anthoor Municipality", "Iritty Municipality", "Kuthuparamba Municipality", "Alakode", "Alakkode", "Aralam", "Ayyankunnu", "Chapparapadavu", "Cherukunnu", "Chirakkal", "Dharmadam", "Edakkad", "Eranholi", "Kadannappally", "Kadirur"],
+  "Kasaragod": ["Kasaragod Municipality", "Kanhangad Municipality", "Nileshwar Municipality", "Uppala Municipality", "Adoor", "Balal", "Bedadka", "Bellur", "Chemnad", "Cherkala", "Delampady", "Hosdurg", "Karadka", "Kasaragod", "Kumbdaje", "Madhur", "Manjeshwar", "Mogral Puthur", "Mulleria", "Panayal"]
+};
 import { formatDateToDDMMYYYY, formatDateForInput } from "@/utils/date-format";
 
 interface PersonalProfileSectionProps {
