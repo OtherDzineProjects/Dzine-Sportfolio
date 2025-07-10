@@ -1048,6 +1048,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Organization Discovery Routes (public access)
+  app.get("/api/organizations/all", authenticateToken, async (req, res) => {
+    try {
+      const organizations = await storage.getAllUserOrganizations();
+      res.json(organizations);
+    } catch (error: any) {
+      console.error("Error fetching all organizations:", error);
+      res.status(500).json({ message: "Failed to fetch organizations" });
+    }
+  });
+
+  app.get("/api/organizations/search", authenticateToken, async (req, res) => {
+    try {
+      const { q: searchTerm } = req.query;
+      if (!searchTerm || typeof searchTerm !== 'string') {
+        return res.status(400).json({ message: "Search term is required" });
+      }
+      const organizations = await storage.searchOrganizationsByName(searchTerm);
+      res.json(organizations);
+    } catch (error: any) {
+      console.error("Error searching organizations:", error);
+      res.status(500).json({ message: "Failed to search organizations" });
+    }
+  });
+
+  // Organization Tagging Routes
+  app.get("/api/organization-tags", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const tags = await storage.getOrganizationTags(user.id);
+      res.json(tags);
+    } catch (error: any) {
+      console.error("Error fetching organization tags:", error);
+      res.status(500).json({ message: "Failed to fetch organization tags" });
+    }
+  });
+
+  app.post("/api/organization-tags", authenticateToken, async (req: any, res) => {
+    try {
+      const user = req.user;
+      const tagData = {
+        ...req.body,
+        userId: user.id,
+        status: 'active',
+      };
+      
+      const tag = await storage.createOrganizationTag(tagData);
+      res.json(tag);
+    } catch (error: any) {
+      console.error("Error creating organization tag:", error);
+      res.status(500).json({ message: "Failed to create organization tag" });
+    }
+  });
+
+  // Organization Hierarchy Routes
+  app.get("/api/organization-hierarchy", authenticateToken, async (req, res) => {
+    try {
+      const { parentId, childId } = req.query;
+      const parentIdNum = parentId ? parseInt(parentId as string) : undefined;
+      const childIdNum = childId ? parseInt(childId as string) : undefined;
+      
+      const hierarchy = await storage.getOrganizationHierarchy(parentIdNum, childIdNum);
+      res.json(hierarchy);
+    } catch (error: any) {
+      console.error("Error fetching organization hierarchy:", error);
+      res.status(500).json({ message: "Failed to fetch organization hierarchy" });
+    }
+  });
+
+  app.get("/api/organizations/:id/children", authenticateToken, async (req, res) => {
+    try {
+      const parentId = parseInt(req.params.id);
+      const children = await storage.getOrganizationChildren(parentId);
+      res.json(children);
+    } catch (error: any) {
+      console.error("Error fetching organization children:", error);
+      res.status(500).json({ message: "Failed to fetch organization children" });
+    }
+  });
+
   // Comprehensive Sports & Facility Data Export
   app.get("/api/analytics/export", async (req: any, res) => {
     try {
