@@ -1232,6 +1232,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Export routes for organization sports and facility data
+  app.get("/api/admin/organizations/export", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const organizations = await storage.getOrganizations();
+      const exportData = [];
+
+      for (const org of organizations) {
+        // Get organization members and their sports interests
+        const members = await storage.getOrganizationMembers(org.id);
+        
+        const orgData = {
+          organizationId: org.id,
+          organizationName: org.name,
+          organizationType: org.type,
+          district: org.district,
+          city: org.city,
+          registrationNumber: org.registrationNumber,
+          status: org.status,
+          sportsOffered: org.sportsOffered || [],
+          facilitiesAvailable: org.facilitiesAvailable || [],
+          memberCount: members.length,
+          membersSportsInterests: members.map(member => ({
+            memberName: `${member.firstName} ${member.lastName}`,
+            memberRole: member.role,
+            sportsInterests: member.sportsInterests || [],
+            facilityPreferences: member.facilityPreferences || []
+          }))
+        };
+
+        exportData.push(orgData);
+      }
+
+      // Set headers for Excel download
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', 'attachment; filename=organizations_sports_facilities.xlsx');
+      
+      // For now, return JSON format (can be enhanced to actual Excel format)
+      res.json({
+        exportData,
+        summary: {
+          totalOrganizations: organizations.length,
+          totalMembers: exportData.reduce((sum, org) => sum + org.memberCount, 0),
+          allSportsOffered: [...new Set(exportData.flatMap(org => org.sportsOffered))],
+          allFacilitiesAvailable: [...new Set(exportData.flatMap(org => org.facilitiesAvailable))]
+        }
+      });
+    } catch (error: any) {
+      console.error("Export organizations error:", error);
+      res.status(500).json({ message: error.message || "Failed to export organizations data" });
+    }
+  });
+
+  // Get organization sports and facility statistics for events
+  app.get("/api/admin/events/:eventId/organization-stats", authenticateToken, requireAdmin, async (req, res) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
+      const event = await storage.getEvent(eventId);
+      
+      if (!event) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+
+      // Get all organizations and their sports/facility data
+      const organizations = await storage.getOrganizations();
+      const eventStats = {
+        eventName: event.name,
+        eventSport: event.sportId,
+        eligibleOrganizations: [],
+        sportsMatchingSummary: {},
+        facilityRequirements: {}
+      };
+
+      for (const org of organizations) {
+        const members = await storage.getOrganizationMembers(org.id);
+        const orgSports = org.sportsOffered || [];
+        const orgFacilities = org.facilitiesAvailable || [];
+        
+        // Check if organization offers the event's sport
+        const isEligible = orgSports.includes(event.sportId?.toString()) || 
+                          orgSports.includes("Multi-Sport") ||
+                          org.type === "multi_sport";
+
+        if (isEligible) {
+          eventStats.eligibleOrganizations.push({
+            id: org.id,
+            name: org.name,
+            type: org.type,
+            sportsOffered: orgSports,
+            facilitiesAvailable: orgFacilities,
+            memberCount: members.length,
+            contactEmail: org.email,
+            phone: org.phone
+          });
+        }
+      }
+
+      res.json(eventStats);
+    } catch (error: any) {
+      console.error("Get event organization stats error:", error);
+      res.status(500).json({ message: error.message || "Failed to get event organization statistics" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
