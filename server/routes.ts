@@ -467,6 +467,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/organizations", authenticateToken, async (req: any, res) => {
+    try {
+      const organizationData = {
+        ...req.body,
+        createdBy: req.user.id,
+        approvalStatus: 'pending'
+      };
+      
+      const organization = await storage.createOrganization(organizationData);
+      
+      // Create approval request for organization
+      await storage.createUserApproval({
+        userId: req.user.id,
+        requestType: 'organization_creation',
+        requestData: {
+          organizationId: organization.id,
+          organizationName: organization.name,
+          organizationType: organization.type
+        }
+      });
+
+      res.status(201).json(organization);
+    } catch (error: any) {
+      console.error("Create organization error:", error);
+      res.status(500).json({ message: error.message || "Failed to create organization" });
+    }
+  });
+
   // Certificates routes
   app.get("/api/certificates/my", authenticateToken, async (req: any, res) => {
     try {

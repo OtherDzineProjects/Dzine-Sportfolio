@@ -788,28 +788,10 @@ export default function UserDashboard() {
                 <CardTitle>My Organizations</CardTitle>
                 <CardDescription>Organizations you own and manage</CardDescription>
               </div>
-              <Dialog open={showOrganizationDialog} onOpenChange={setShowOrganizationDialog}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Organization
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Create New Organization</DialogTitle>
-                    <DialogDescription>
-                      Create a new sports organization, club, or facility
-                    </DialogDescription>
-                  </DialogHeader>
-                  <OrganizationFormEnhanced 
-                    onSuccess={() => {
-                      setShowOrganizationDialog(false);
-                      queryClient.invalidateQueries({ queryKey: ["/api/organizations/owned"] });
-                    }}
-                  />
-                </DialogContent>
-              </Dialog>
+              <Button onClick={() => window.location.href = "/create-organization"}>
+                <Plus className="h-4 w-4 mr-2" />
+                Create Organization
+              </Button>
             </CardHeader>
             <CardContent>
               {ownedOrgsLoading ? (
@@ -1112,6 +1094,16 @@ export default function UserDashboard() {
                 <div className="space-y-4">
                   <h3 className="font-semibold">User Management</h3>
                   <div className="space-y-2">
+                    {user.userType === 'superadmin' && (
+                      <Button 
+                        variant="outline" 
+                        className="w-full justify-start bg-purple-50 hover:bg-purple-100 border-purple-200"
+                        onClick={() => window.location.href = '/super-admin'}
+                      >
+                        <Shield className="h-4 w-4 mr-2 text-purple-600" />
+                        Super Admin Dashboard
+                      </Button>
+                    )}
                     <Button 
                       variant="outline" 
                       className="w-full justify-start"

@@ -18,6 +18,8 @@ import LiveScoring from "@/pages/live-scoring";
 import AthleteProfile from "@/pages/athlete-profile";
 import Facilities from "@/pages/facilities";
 import AdminDashboard from "@/pages/admin";
+import SuperAdminDashboard from "@/pages/super-admin-dashboard";
+import CreateOrganization from "@/pages/create-organization";
 import Analytics from "@/pages/analytics";
 import ComprehensiveSportsManagement from "@/pages/comprehensive-sports-management";
 import Events from "@/pages/events";
@@ -42,6 +44,8 @@ function Router() {
       <Route path="/athlete-profile" component={AthleteProfile} />
       <Route path="/facilities" component={Facilities} />
       <Route path="/admin" component={AdminDashboard} />
+      <Route path="/super-admin" component={SuperAdminDashboard} />
+      <Route path="/create-organization" component={CreateOrganization} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/comprehensive-sports" component={ComprehensiveSportsManagement} />
       <Route path="/events" component={Events} />
