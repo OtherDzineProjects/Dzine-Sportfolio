@@ -126,7 +126,7 @@ Sportfolio is a comprehensive sports management platform designed for the Indian
   - Created comprehensive organization creation page with 3-step wizard including member tagging system
   - Built Super Admin dashboard with user approval workflow and comprehensive user management
   - Added Super Admin credentials (superadmin@sportfolio.com / SportfolioAdmin123) with exclusive access
-  - Implemented sports interest popup for first-time users requiring minimum 3 sports selections
+  - Implemented sports interest popup for first-time users with flexible sports selection (no minimum requirement)
   - Enhanced home page with events display featuring subscription-based registration notices
   - Added organization creation API endpoints with approval workflow integration
   - Created dedicated routes for organization creation and Super Admin management

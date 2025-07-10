@@ -94,16 +94,16 @@ export default function SportsInterestPopup({ isOpen, onClose, isFirstTime = fal
   };
 
   const handleNextStep = () => {
-    if (step === 1 && selectedSports.length >= 3) {
+    if (step === 1 && selectedSports.length >= 1) {
       setStep(2);
     }
   };
 
   const handleSubmit = () => {
-    if (selectedSports.length < 3) {
+    if (selectedSports.length < 1) {
       toast({
         title: "Selection Required",
-        description: "Please select at least 3 sports interests to continue.",
+        description: "Please select at least 1 sport interest to continue.",
         variant: "destructive",
       });
       return;
@@ -127,7 +127,7 @@ export default function SportsInterestPopup({ isOpen, onClose, isFirstTime = fal
           </DialogTitle>
           <DialogDescription>
             {step === 1 
-              ? "Choose at least 3 sports you're interested in to get personalized event recommendations and connect with the right organizations."
+              ? "Choose the sports you're interested in to get personalized event recommendations and connect with the right organizations."
               : "Select the types of sports facilities you prefer or need access to for training and competitions."
             }
           </DialogDescription>
@@ -147,7 +147,7 @@ export default function SportsInterestPopup({ isOpen, onClose, isFirstTime = fal
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Kerala Sports Categories</h3>
               <Badge variant="outline" className="bg-blue-100 text-blue-800">
-                {selectedSports.length} selected (min. 3 required)
+                {selectedSports.length} selected
               </Badge>
             </div>
 
@@ -190,7 +190,7 @@ export default function SportsInterestPopup({ isOpen, onClose, isFirstTime = fal
               </div>
               <Button 
                 onClick={handleNextStep}
-                disabled={selectedSports.length < 3}
+                disabled={selectedSports.length < 1}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 Next: Facility Preferences →

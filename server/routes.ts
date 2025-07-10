@@ -634,8 +634,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { sportsInterests, facilityPreferences } = req.body;
       
-      if (!sportsInterests || sportsInterests.length < 3) {
-        return res.status(400).json({ message: "At least 3 sports interests are required" });
+      if (!sportsInterests || sportsInterests.length < 1) {
+        return res.status(400).json({ message: "At least 1 sports interest is required" });
       }
 
       const updatedUser = await storage.updateUser(req.user.id, {
