@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { 
@@ -26,6 +28,127 @@ import { OrganizationDetailView } from "@/components/organization-detail-view";
 import { calculateProfileCompletion, getCompletionColor, getCompletionBadgeVariant } from "@/utils/profile-completion";
 import { Progress } from "@/components/ui/progress";
 import ComprehensiveSportsSelector from "@/components/comprehensive-sports-selector";
+
+// Events Section Component
+function EventsSection() {
+  const { data: events, isLoading: eventsLoading } = useQuery({
+    queryKey: ["/api/events"],
+  });
+
+  if (eventsLoading) {
+    return (
+      <div className="flex justify-center py-8">
+        <div className="animate-spin w-6 h-6 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Featured Events */}
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+        <div className="flex items-center space-x-2 mb-2">
+          <Star className="h-5 w-5 text-yellow-500" />
+          <span className="font-medium">Featured Events</span>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Discover Kerala's premier sports events and competitions
+        </p>
+      </div>
+
+      {events && Array.isArray(events) && events.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {events.map((event: any) => (
+            <Card key={event.id} className="hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-l-4 border-l-blue-500">
+              <CardContent className="pt-6">
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{event.name}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{event.description}</p>
+                    </div>
+                    <Badge className={
+                      event.status === 'upcoming' ? 'bg-green-100 text-green-800' :
+                      event.status === 'ongoing' ? 'bg-blue-100 text-blue-800' :
+                      'bg-gray-100 text-gray-800'
+                    }>
+                      {event.status}
+                    </Badge>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-blue-600" />
+                      <span>Start: {new Date(event.startDate).toLocaleDateString('en-GB')}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-red-600" />
+                      <span>End: {new Date(event.endDate).toLocaleDateString('en-GB')}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4 text-green-600" />
+                      <span>Max: {event.maxParticipants || 'Unlimited'}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-orange-600" />
+                      <span>Reg: {new Date(event.registrationDeadline).toLocaleDateString('en-GB')}</span>
+                    </div>
+                  </div>
+
+                  {(event.entryFee && parseFloat(event.entryFee) > 0) && (
+                    <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Entry Fee:</span>
+                        <span className="text-lg font-bold text-green-700">₹{parseFloat(event.entryFee).toLocaleString('en-IN')}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {(event.prizePool && parseFloat(event.prizePool) > 0) && (
+                    <div className="bg-purple-50 p-3 rounded-lg border border-purple-200">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium">Prize Pool:</span>
+                        <span className="text-lg font-bold text-purple-700">₹{parseFloat(event.prizePool).toLocaleString('en-IN')}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center pt-3 border-t">
+                    <Badge variant="outline">{event.eventType}</Badge>
+                    <Button 
+                      size="sm" 
+                      disabled={event.status !== 'upcoming'}
+                      onClick={() => window.open(`/events`, '_blank')}
+                    >
+                      {event.status === 'upcoming' ? 'Register' : 'View Details'}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground">No events available at the moment.</p>
+          <p className="text-sm text-muted-foreground mt-2">Check back later for upcoming sports events!</p>
+        </div>
+      )}
+
+      <div className="flex justify-center pt-4">
+        <Button 
+          variant="outline" 
+          onClick={() => window.open('/events', '_blank')}
+          className="flex items-center space-x-2"
+        >
+          <ExternalLink className="h-4 w-4" />
+          <span>View All Events</span>
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 interface Organization {
   id: number;
@@ -238,8 +361,12 @@ export default function UserDashboard() {
   
   // Show questionnaire dialog if not completed
   useEffect(() => {
-    if (user && !user.sportsInterests?.length && !questionnaireCompleted) {
-      setShowQuestionnaireDialog(true);
+    if (user && (!user.sportsInterests?.length || !questionnaireCompleted)) {
+      // Show questionnaire after a short delay to allow UI to settle
+      const timer = setTimeout(() => {
+        setShowQuestionnaireDialog(true);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
   }, [user, questionnaireCompleted]);
 
@@ -430,10 +557,32 @@ export default function UserDashboard() {
         </div>
       </div>
 
+      {/* Sports & Facilities Questionnaire Prompt */}
+      {(!user.sportsInterests?.length || !questionnaireCompleted) && (
+        <Alert className="border-orange-200 bg-orange-50 mb-6">
+          <AlertCircle className="h-4 w-4 text-orange-600" />
+          <AlertDescription className="text-orange-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <strong>🏆 Complete Your Sports Profile:</strong> Tell us about your sports interests and facility needs to get personalized event recommendations and connect with the right organizations.
+              </div>
+              <Button 
+                size="sm" 
+                onClick={() => setShowQuestionnaireDialog(true)}
+                className="bg-orange-600 hover:bg-orange-700 text-white"
+              >
+                Complete Now
+              </Button>
+            </div>
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Main Tabs */}
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 h-auto">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 h-auto">
           <TabsTrigger value="profile" className="text-xs md:text-sm">Profile</TabsTrigger>
+          <TabsTrigger value="events" className="text-xs md:text-sm">Events</TabsTrigger>
           <TabsTrigger value="achievements" className="text-xs md:text-sm">Achievements</TabsTrigger>
           <TabsTrigger value="organizations" className="text-xs md:text-sm">Organizations</TabsTrigger>
           <TabsTrigger value="memberships" className="text-xs md:text-sm">Memberships</TabsTrigger>
@@ -489,6 +638,19 @@ export default function UserDashboard() {
             }}
             isLoading={updateGuardianProfileMutation.isPending}
           />
+        </TabsContent>
+
+        {/* Events Tab */}
+        <TabsContent value="events" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Available Events & Competitions</CardTitle>
+              <CardDescription>Discover and register for sports events, tournaments, and competitions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <EventsSection />
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Achievements Tab */}
@@ -878,17 +1040,73 @@ export default function UserDashboard() {
                 <span className="font-medium">Build Your Sports Journey</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Choose from Kerala's comprehensive sports categories. Each selection helps us personalize your experience!
+                Choose your sports interests and facility needs. This helps us show you relevant events and opportunities in Kerala!
               </p>
             </div>
             
-            <ComprehensiveSportsSelector
-              selectedSports={selectedSports}
-              onSportsChange={setSelectedSports}
-              maxSelections={999}
-              showCategoryDescriptions={true}
-              allowSearch={true}
-            />
+            {/* Sports Selection */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold flex items-center space-x-2">
+                <Trophy className="h-5 w-5 text-blue-600" />
+                <span>🏆 Your Sports Interests</span>
+              </h3>
+              <ComprehensiveSportsSelector
+                selectedSports={selectedSports}
+                onSportsChange={setSelectedSports}
+                maxSelections={999}
+                showCategoryDescriptions={true}
+                allowSearch={true}
+              />
+            </div>
+
+            {/* Facility Needs Section */}
+            <div className="space-y-4 pt-6 border-t">
+              <h3 className="text-lg font-semibold flex items-center space-x-2">
+                <Building className="h-5 w-5 text-green-600" />
+                <span>🏟️ Facility Availability & Needs</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card className="border-2 border-green-100">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Do you have access to sports facilities?</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="ownFacility" />
+                      <Label htmlFor="ownFacility" className="text-sm">I own/manage sports facilities</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="accessLocal" />
+                      <Label htmlFor="accessLocal" className="text-sm">I have access to local facilities</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="needFacilities" />
+                      <Label htmlFor="needFacilities" className="text-sm">I need facility access/booking</Label>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-2 border-blue-100">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">What type of events interest you?</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="competitions" />
+                      <Label htmlFor="competitions" className="text-sm">Competitions & Tournaments</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="training" />
+                      <Label htmlFor="training" className="text-sm">Training & Coaching</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="casual" />
+                      <Label htmlFor="casual" className="text-sm">Casual/Recreational Play</Label>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
 
             <div className="flex justify-end space-x-2 pt-4 border-t">
               <Button 
@@ -912,7 +1130,7 @@ export default function UserDashboard() {
                 ) : (
                   <>
                     <CheckCircle className="h-4 w-4" />
-                    <span>Continue ({selectedSports.length} selected)</span>
+                    <span>Complete Profile ({selectedSports.length} sports selected)</span>
                   </>
                 )}
               </Button>
