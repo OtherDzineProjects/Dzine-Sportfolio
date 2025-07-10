@@ -10,6 +10,8 @@ import DashboardModern from "@/pages/dashboard-modern";
 import UserDashboard from "@/pages/user-dashboard-clean";
 import Auth from "@/pages/auth";
 import AuthModern from "@/pages/auth-modern";
+import Login from "@/pages/login";
+import Signup from "@/pages/signup";
 import FacilityManagement from "@/pages/facility-management";
 import FixturesManagement from "@/pages/fixtures-management";
 import LiveScoring from "@/pages/live-scoring";
@@ -26,11 +28,14 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/landing" component={Landing} />
+      <Route path="/login" component={Login} />
+      <Route path="/signup" component={Signup} />
       <Route path="/auth" component={Auth} />
       <Route path="/auth-modern" component={AuthModern} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/dashboard-modern" component={DashboardModern} />
       <Route path="/user-dashboard" component={UserDashboard} />
+      <Route path="/user-dashboard-clean" component={UserDashboard} />
       <Route path="/facility-management" component={FacilityManagement} />
       <Route path="/fixtures-management" component={FixturesManagement} />
       <Route path="/live-scoring" component={LiveScoring} />

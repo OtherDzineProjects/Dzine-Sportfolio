@@ -67,6 +67,122 @@ const requireAdmin = async (req: any, res: any, next: any) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // New user signup route
+  app.post("/api/auth/signup", async (req, res) => {
+    try {
+      const { username, email, password, firstName, lastName, phone, dateOfBirth, userType, city, district, state, pincode } = req.body;
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "User already exists with this email" });
+      }
+
+      // Check if username already exists
+      const existingUsername = await storage.getUserByUsername(username);
+      if (existingUsername) {
+        return res.status(400).json({ message: "Username already taken" });
+      }
+
+      // Hash password
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      const user = await storage.createUser({
+        username,
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        phone,
+        dateOfBirth: new Date(dateOfBirth),
+        userType,
+        city,
+        district,
+        state,
+        pincode,
+        approvalStatus: 'pending',
+        isActive: false
+      });
+
+      // Create approval request
+      await storage.createUserApproval({
+        userId: user.id,
+        requestType: 'registration',
+        requestData: {
+          userType: user.userType,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          username: user.username
+        }
+      });
+
+      res.status(201).json({ 
+        message: "Account created successfully! Your registration is pending approval.",
+        userId: user.id 
+      });
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      res.status(500).json({ message: error.message || "Failed to create account" });
+    }
+  });
+
+  // User login route
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+
+      if (user.approvalStatus !== 'approved') {
+        return res.status(403).json({ 
+          message: "Your account is pending approval. Please wait for admin approval.",
+          status: user.approvalStatus 
+        });
+      }
+
+      if (!user.isActive) {
+        return res.status(403).json({ message: "Your account has been deactivated" });
+      }
+
+      // Update last login
+      await storage.updateUser(user.id, { lastLoginAt: new Date() });
+
+      // Generate JWT token
+      const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '7d' });
+      
+      const { password: _, ...userWithoutPassword } = user;
+      
+      res.json({ 
+        token, 
+        user: userWithoutPassword,
+        firstTimeLogin: !user.sportsInterests?.length || !user.completedQuestionnaire
+      });
+    } catch (error: any) {
+      console.error("Login error:", error);
+      res.status(500).json({ message: error.message || "Failed to login" });
+    }
+  });
+
+  // Get current authenticated user
+  app.get("/api/auth/user", authenticateToken, async (req: any, res) => {
+    try {
+      const { password, ...userWithoutPassword } = req.user;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Get user error:", error);
+      res.status(500).json({ message: "Failed to get user information" });
+    }
+  });
+
   // Authentication routes
   app.post("/api/auth/register", async (req, res) => {
     try {
@@ -482,6 +598,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ ...user, password: undefined });
     } catch (error: any) {
       res.status(400).json({ message: error.message });
+    }
+  });
+
+  // Sports interests update endpoint
+  app.put("/api/auth/sports-interests", authenticateToken, async (req: any, res) => {
+    try {
+      const { sportsInterests, facilityPreferences } = req.body;
+      
+      if (!sportsInterests || sportsInterests.length < 3) {
+        return res.status(400).json({ message: "At least 3 sports interests are required" });
+      }
+
+      const updatedUser = await storage.updateUser(req.user.id, {
+        sportsInterests,
+        facilityPreferences,
+        completedQuestionnaire: true
+      });
+
+      const { password, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Update sports interests error:", error);
+      res.status(500).json({ message: error.message || "Failed to update sports interests" });
     }
   });
 
