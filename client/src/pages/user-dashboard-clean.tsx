@@ -852,12 +852,11 @@ export default function UserDashboard() {
                               variant="outline"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectedOrganization(org);
-                                setShowOrgDetailDialog(true);
+                                navigate(`/organization/${org.id}`);
                               }}
                             >
                               <Eye className="h-3 w-3 mr-1" />
-                              View
+                              Dashboard
                             </Button>
                           </div>
                         </div>

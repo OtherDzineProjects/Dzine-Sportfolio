@@ -471,11 +471,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const organizationData = {
         ...req.body,
+        ownerId: req.user.id,
         createdBy: req.user.id,
-        approvalStatus: 'pending'
+        approvalStatus: 'pending',
+        status: 'active'
       };
       
-      const organization = await storage.createOrganization(organizationData);
+      const organization = await storage.createUserOrganization(organizationData);
       
       // Create approval request for organization
       await storage.createUserApproval({
@@ -492,6 +494,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Create organization error:", error);
       res.status(500).json({ message: error.message || "Failed to create organization" });
+    }
+  });
+
+  // Get organization members
+  app.get("/api/organizations/:id/members", authenticateToken, async (req: any, res) => {
+    try {
+      const orgId = parseInt(req.params.id);
+      const members = await storage.getOrganizationMembers(orgId);
+      res.json(members);
+    } catch (error: any) {
+      console.error("Get organization members error:", error);
+      res.status(500).json({ message: "Failed to fetch organization members" });
+    }
+  });
+
+  // Export organization data
+  app.get("/api/organizations/:id/export", authenticateToken, async (req: any, res) => {
+    try {
+      const orgId = parseInt(req.params.id);
+      const organization = await storage.getUserOrganization(orgId);
+      const members = await storage.getOrganizationMembers(orgId);
+      
+      if (!organization) {
+        return res.status(404).json({ message: "Organization not found" });
+      }
+
+      // Check if user has access to this organization
+      if (organization.ownerId !== req.user.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      res.json({
+        organization,
+        members,
+        exportDate: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error("Export organization error:", error);
+      res.status(500).json({ message: "Failed to export organization data" });
     }
   });
 
