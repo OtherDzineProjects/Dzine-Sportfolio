@@ -195,6 +195,12 @@ export interface IStorage {
     totalUsers: number;
     totalOrganizations: number;
   }>;
+  
+  // Export methods for comprehensive data
+  getAllUsersWithSports(): Promise<User[]>;
+  getAllOrganizationsWithDetails(): Promise<any[]>;
+  getAllEvents(): Promise<any[]>;
+  getAllAchievements(): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1150,6 +1156,63 @@ export class DatabaseStorage implements IStorage {
       totalUsers: allUsers.length,
       totalOrganizations: allOrganizations.length
     };
+  }
+
+  // Export methods for comprehensive Excel data
+  async getAllUsersWithSports(): Promise<User[]> {
+    return await db.select().from(users).orderBy(asc(users.createdAt));
+  }
+
+  async getAllOrganizationsWithDetails(): Promise<any[]> {
+    const orgs = await db.select().from(userOrganizations).orderBy(asc(userOrganizations.createdAt));
+    const orgsWithOwners = [];
+    
+    for (const org of orgs) {
+      const owner = await this.getUser(org.ownerId);
+      orgsWithOwners.push({
+        ...org,
+        ownerName: owner ? `${owner.firstName} ${owner.lastName}` : 'Unknown',
+        ownerEmail: owner?.email || 'Unknown'
+      });
+    }
+    
+    return orgsWithOwners;
+  }
+
+  async getAllEvents(): Promise<any[]> {
+    const eventsData = await db.select().from(events).orderBy(desc(events.createdAt));
+    const eventsWithDetails = [];
+    
+    for (const event of eventsData) {
+      const organizer = await this.getUser(event.organizerId);
+      const organization = event.organizationId ? await this.getUserOrganization(event.organizationId) : null;
+      const sport = event.sportId ? await db.select().from(sportsCategories).where(eq(sportsCategories.id, event.sportId)).then(res => res[0]) : null;
+      
+      eventsWithDetails.push({
+        ...event,
+        organizerName: organizer ? `${organizer.firstName} ${organizer.lastName}` : 'Unknown',
+        organizationName: organization?.name || 'Independent',
+        sportName: sport?.name || 'General',
+        location: `${organization?.city || 'TBD'}, ${organization?.state || 'Kerala'}`
+      });
+    }
+    
+    return eventsWithDetails;
+  }
+
+  async getAllAchievements(): Promise<any[]> {
+    const achievementsData = await db.select().from(sportsAchievements).orderBy(desc(sportsAchievements.createdAt));
+    const achievementsWithUsers = [];
+    
+    for (const achievement of achievementsData) {
+      const user = await this.getUser(achievement.userId);
+      achievementsWithUsers.push({
+        ...achievement,
+        userName: user ? `${user.firstName} ${user.lastName}` : 'Unknown User'
+      });
+    }
+    
+    return achievementsWithUsers;
   }
 }
 

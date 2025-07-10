@@ -482,6 +482,45 @@ export default function UserDashboard() {
     updateSportsInterestsMutation.mutate(selectedSports);
   };
 
+  // Excel export mutation
+  const exportExcelMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch("/api/analytics/export", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error("Export failed");
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `sportfolio-comprehensive-data-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Download Complete! 📊",
+        description: "Sports and facility data exported successfully to Excel.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Export Failed",
+        description: error.message || "Failed to export data",
+        variant: "destructive",
+      });
+    },
+  });
+
   if (userLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -540,7 +579,7 @@ export default function UserDashboard() {
                 </span>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-right flex flex-col items-end space-y-3">
               <div className="text-3xl mb-1">
                 {completion.percentage >= 90 ? '🌟' : 
                  completion.percentage >= 70 ? '🚀' : 
@@ -551,7 +590,27 @@ export default function UserDashboard() {
                  completion.percentage >= 70 ? 'Rising Athlete' : 
                  completion.percentage >= 50 ? 'Growing Strong' : 'Getting Started'}
               </div>
-              <Progress value={completion.percentage} className="w-24 h-2 mt-2" />
+              <Progress value={completion.percentage} className="w-24 h-2" />
+              
+              {/* Excel Export Button */}
+              <Button
+                onClick={() => exportExcelMutation.mutate()}
+                disabled={exportExcelMutation.isPending}
+                className="bg-green-600 hover:bg-green-700 text-white flex items-center space-x-2"
+                size="sm"
+              >
+                {exportExcelMutation.isPending ? (
+                  <>
+                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                    <span>Exporting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    <span>📊 Export Data</span>
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>
@@ -928,21 +987,115 @@ export default function UserDashboard() {
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Sports Analytics</CardTitle>
-              <CardDescription>Insights into your sports activities and interests</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>📊 Sports Analytics & Data Export</CardTitle>
+                <CardDescription>Comprehensive analytics and data export for sports ecosystem insights</CardDescription>
+              </div>
+              <Button
+                onClick={() => exportExcelMutation.mutate()}
+                disabled={exportExcelMutation.isPending}
+                className="bg-green-600 hover:bg-green-700 text-white flex items-center space-x-2"
+              >
+                {exportExcelMutation.isPending ? (
+                  <>
+                    <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                    <span>Exporting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-4 w-4" />
+                    <span>Export Full Dataset</span>
+                  </>
+                )}
+              </Button>
             </CardHeader>
             <CardContent>
-              {analyticsLoading ? (
-                <div className="flex justify-center py-8">
-                  <div className="animate-spin w-6 h-6 border-4 border-primary border-t-transparent rounded-full" />
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Analytics dashboard coming soon!</p>
-                </div>
-              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Data Export Information */}
+                <Card className="border-blue-200 bg-blue-50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center space-x-2">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                      <span>📋 Available Data Sets</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">👥 User Sports Interests</h4>
+                      <p className="text-xs text-muted-foreground">Complete user profiles with sports preferences, age demographics, location data, and profile completion statistics</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">🏢 Organization Facility Data</h4>
+                      <p className="text-xs text-muted-foreground">Sports organizations with facility details, member counts, sports offered, and verification status</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">🏆 Events & Competitions</h4>
+                      <p className="text-xs text-muted-foreground">All sports events including Kerala league events with entry fees, prize pools, and registration data</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">🎖️ Sports Achievements</h4>
+                      <p className="text-xs text-muted-foreground">Blockchain-verified achievements and certificates with verification status</p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Export Features */}
+                <Card className="border-green-200 bg-green-50">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-lg flex items-center space-x-2">
+                      <BarChart3 className="h-5 w-5 text-green-600" />
+                      <span>📈 Export Features</span>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">📊 Sports Popularity Analysis</h4>
+                      <p className="text-xs text-muted-foreground">User interest counts vs organization offerings by sport category</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">📍 Geographic Distribution</h4>
+                      <p className="text-xs text-muted-foreground">Kerala district-wise breakdown of users and organizations</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">💰 Revenue & Financial Data</h4>
+                      <p className="text-xs text-muted-foreground">Event entry fees, prize pools, and financial analytics</p>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm">✅ Summary Statistics</h4>
+                      <p className="text-xs text-muted-foreground">Total users, organizations, events, and verification metrics</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Export Instructions */}
+              <Alert className="mt-6 border-yellow-200 bg-yellow-50">
+                <AlertCircle className="h-4 w-4 text-yellow-600" />
+                <AlertDescription className="text-yellow-800">
+                  <strong>📋 Export Instructions:</strong> The exported CSV file contains multiple data sections and can be opened in Excel, Google Sheets, or any spreadsheet application. Each section is clearly labeled with comprehensive headers for easy analysis.
+                </AlertDescription>
+              </Alert>
+
+              {/* Quick Stats Preview */}
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-blue-600">420+</div>
+                  <div className="text-sm text-muted-foreground">Registered Users</div>
+                </Card>
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-green-600">88+</div>
+                  <div className="text-sm text-muted-foreground">Organizations</div>
+                </Card>
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-purple-600">10+</div>
+                  <div className="text-sm text-muted-foreground">Sports Categories</div>
+                </Card>
+                <Card className="text-center p-4">
+                  <div className="text-2xl font-bold text-orange-600">2+</div>
+                  <div className="text-sm text-muted-foreground">Active Events</div>
+                </Card>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>

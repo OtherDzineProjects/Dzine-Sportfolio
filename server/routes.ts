@@ -840,32 +840,113 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Analytics export route  
+  // Comprehensive Sports & Facility Data Export
   app.get("/api/analytics/export", authenticateToken, async (req: any, res) => {
     try {
-      const analytics = await storage.getSportsAnalytics();
+      // Fetch all comprehensive data
+      const [users, organizations, events, achievements] = await Promise.all([
+        storage.getAllUsersWithSports(),
+        storage.getAllOrganizationsWithDetails(),
+        storage.getAllEvents(),
+        storage.getAllAchievements()
+      ]);
+
+      // Create comprehensive Excel-compatible CSV
+      const csvSections = [];
+
+      // Section 1: User Sports Interests
+      csvSections.push('USER SPORTS INTERESTS DATA');
+      csvSections.push('User ID,Name,Email,User Type,Age,State,District,City,Sports Interests,Profile Completion,Registration Date,Last Active');
       
-      // Create simple CSV format for Excel compatibility
-      const csvData = [
-        'Category,Sports,User Count,Organization Count',
-        ...Object.entries(analytics.usersBySports || {}).map(([sport, userCount]) => {
-          const orgCount = analytics.organizationsBySports?.[sport] || 0;
-          return `Sports,${sport},${userCount as number},${orgCount}`;
-        }),
-        '',
-        'Summary Statistics',
-        `Total Users,${analytics.totalUsers || 0}`,
-        `Total Organizations,${analytics.totalOrganizations || 0}`,
-      ].join('\n');
+      users.forEach((user: any) => {
+        const sportsInterests = Array.isArray(user.sportsInterests) ? user.sportsInterests.join('; ') : (user.sportsInterests || 'None');
+        const age = user.dateOfBirth ? Math.floor((Date.now() - new Date(user.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000)) : 'N/A';
+        const profileCompletion = calculateUserProfileCompletion(user);
+        
+        csvSections.push(`${user.id},"${user.firstName} ${user.lastName}",${user.email},${user.userType || 'Athlete'},${age},${user.state || 'Kerala'},${user.district || 'N/A'},${user.city || 'N/A'},"${sportsInterests}",${profileCompletion}%,${user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB') : 'N/A'},${user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString('en-GB') : 'N/A'}`);
+      });
+
+      csvSections.push('');
+      csvSections.push('ORGANIZATION FACILITY DATA');
+      csvSections.push('Org ID,Organization Name,Type,Owner Name,Owner Email,State,District,City,Sports Offered,Facility Count,Member Count,Establishment Year,Registration Number,Website,Phone,Email,Verification Status,Created Date');
       
-      res.setHeader('Content-Type', 'text/csv');
-      res.setHeader('Content-Disposition', `attachment; filename="sportfolio-analytics-${new Date().toISOString().split('T')[0]}.csv"`);
-      res.send(csvData);
+      organizations.forEach((org: any) => {
+        const sportsOffered = Array.isArray(org.sportsInterests) ? org.sportsInterests.join('; ') : (org.sportsInterests || 'None');
+        csvSections.push(`${org.id},"${org.name}",${org.type || 'N/A'},"${org.ownerName || 'N/A'}",${org.ownerEmail || 'N/A'},${org.state || 'Kerala'},${org.district || 'N/A'},${org.city || 'N/A'},"${sportsOffered}",${org.facilityCount || 0},${org.memberCount || 0},${org.establishedYear || 'N/A'},${org.registrationNumber || 'N/A'},${org.website || 'N/A'},${org.phone || 'N/A'},${org.email || 'N/A'},${org.verificationStatus || 'Unverified'},${org.createdAt ? new Date(org.createdAt).toLocaleDateString('en-GB') : 'N/A'}`);
+      });
+
+      csvSections.push('');
+      csvSections.push('SPORTS EVENTS DATA');
+      csvSections.push('Event ID,Event Name,Sport,Organizer,Organization,Event Type,Start Date,End Date,Registration Deadline,Max Participants,Entry Fee (INR),Prize Pool (INR),Status,Location,Created Date');
+      
+      events.forEach((event: any) => {
+        csvSections.push(`${event.id},"${event.name}",${event.sportName || 'N/A'},"${event.organizerName || 'N/A'}","${event.organizationName || 'N/A'}",${event.eventType},${new Date(event.startDate).toLocaleDateString('en-GB')},${new Date(event.endDate).toLocaleDateString('en-GB')},${new Date(event.registrationDeadline).toLocaleDateString('en-GB')},${event.maxParticipants || 'Unlimited'},${parseFloat(event.entryFee || '0').toLocaleString('en-IN')},${parseFloat(event.prizePool || '0').toLocaleString('en-IN')},${event.status},"${event.location || 'TBD'}",${event.createdAt ? new Date(event.createdAt).toLocaleDateString('en-GB') : 'N/A'}`);
+      });
+
+      csvSections.push('');
+      csvSections.push('SPORTS ACHIEVEMENTS DATA');
+      csvSections.push('Achievement ID,User Name,Title,Category,Achievement Date,Issued By,Verification Status,Blockchain Hash');
+      
+      achievements.forEach((achievement: any) => {
+        csvSections.push(`${achievement.id},"${achievement.userName || 'N/A'}","${achievement.title}",${achievement.category},${achievement.achievementDate ? new Date(achievement.achievementDate).toLocaleDateString('en-GB') : 'N/A'},"${achievement.issuedBy || 'N/A'}",${achievement.verificationStatus},${achievement.blockchainHash || 'N/A'}`);
+      });
+
+      csvSections.push('');
+      csvSections.push('SUMMARY STATISTICS');
+      csvSections.push('Metric,Count');
+      csvSections.push(`Total Registered Users,${users.length}`);
+      csvSections.push(`Total Organizations,${organizations.length}`);
+      csvSections.push(`Total Events,${events.length}`);
+      csvSections.push(`Total Achievements,${achievements.length}`);
+      csvSections.push(`Active Events,${events.filter((e: any) => e.status === 'upcoming' || e.status === 'ongoing').length}`);
+      csvSections.push(`Verified Organizations,${organizations.filter((o: any) => o.verificationStatus === 'verified').length}`);
+
+      // Sports popularity analysis
+      const sportsCount: Record<string, number> = {};
+      users.forEach((user: any) => {
+        if (user.sportsInterests && Array.isArray(user.sportsInterests)) {
+          user.sportsInterests.forEach((sport: string) => {
+            sportsCount[sport] = (sportsCount[sport] || 0) + 1;
+          });
+        }
+      });
+
+      csvSections.push('');
+      csvSections.push('SPORTS POPULARITY ANALYSIS');
+      csvSections.push('Sport,User Interest Count,Organization Offering Count');
+      
+      Object.entries(sportsCount)
+        .sort(([,a], [,b]) => (b as number) - (a as number))
+        .forEach(([sport, userCount]) => {
+          const orgCount = organizations.filter((org: any) => 
+            org.sportsInterests && Array.isArray(org.sportsInterests) && org.sportsInterests.includes(sport)
+          ).length;
+          csvSections.push(`"${sport}",${userCount},${orgCount}`);
+        });
+
+      const csvData = csvSections.join('\n');
+      
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', `attachment; filename="sportfolio-comprehensive-data-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send('\ufeff' + csvData); // Add BOM for proper Excel UTF-8 support
     } catch (error: any) {
-      console.error("Error exporting analytics:", error);
-      res.status(500).json({ message: "Failed to export analytics" });
+      console.error("Error exporting comprehensive data:", error);
+      res.status(500).json({ message: "Failed to export data" });
     }
   });
+
+  // Helper function for profile completion calculation
+  function calculateUserProfileCompletion(user: any): number {
+    const fields = [
+      'firstName', 'lastName', 'phone', 'address', 'city', 'district', 
+      'dateOfBirth', 'sportsInterests', 'educationQualification', 'currentPosition'
+    ];
+    const completedFields = fields.filter(field => {
+      const value = user[field];
+      return value && (Array.isArray(value) ? value.length > 0 : value.toString().trim().length > 0);
+    }).length;
+    return Math.round((completedFields / fields.length) * 100);
+  }
 
   // Analytics routes for admin dashboard
   // Comprehensive analytics for College Sports League Kerala
