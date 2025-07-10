@@ -359,12 +359,13 @@ export default function UserDashboard() {
   // Check if questionnaire is completed
   const questionnaireCompleted = user?.completedQuestionnaire;
   
-  // Show questionnaire dialog if not completed
+  // Show questionnaire dialog if not completed (only once per session)
   useEffect(() => {
-    if (user && (!user.sportsInterests?.length || !questionnaireCompleted)) {
+    if (user && (!user.sportsInterests?.length || !questionnaireCompleted) && !sessionStorage.getItem('questionnaire_shown')) {
       // Show questionnaire after a short delay to allow UI to settle
       const timer = setTimeout(() => {
         setShowQuestionnaireDialog(true);
+        sessionStorage.setItem('questionnaire_shown', 'true');
       }, 1000);
       return () => clearTimeout(timer);
     }
@@ -467,7 +468,9 @@ export default function UserDashboard() {
         description: "Your sports interests have been updated successfully.",
       });
       setShowQuestionnaireDialog(false);
+      sessionStorage.setItem('questionnaire_completed', 'true');
       queryClient.invalidateQueries({ queryKey: ["/api/user/profile"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
     },
     onError: (error: any) => {
       toast({
@@ -1264,7 +1267,10 @@ export default function UserDashboard() {
             <div className="flex justify-end space-x-2 pt-4 border-t">
               <Button 
                 variant="outline" 
-                onClick={() => setShowQuestionnaireDialog(false)}
+                onClick={() => {
+                  setShowQuestionnaireDialog(false);
+                  sessionStorage.setItem('questionnaire_completed', 'true');
+                }}
                 className="flex items-center space-x-2"
               >
                 <Clock className="h-4 w-4" />
