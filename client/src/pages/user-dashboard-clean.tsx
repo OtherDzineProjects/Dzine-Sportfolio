@@ -1120,6 +1120,14 @@ export default function UserDashboard() {
                       <CheckCircle className="h-4 w-4 mr-2" />
                       User Approvals
                     </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start bg-green-50 hover:bg-green-100 border-green-200"
+                      onClick={() => window.location.href = '/event-organizer'}
+                    >
+                      <Calendar className="h-4 w-4 mr-2 text-green-600" />
+                      Event Organizer Dashboard
+                    </Button>
                   </div>
                 </div>
                 
