@@ -1,0 +1,80 @@
+USers can log in and access to the organisations registered with the Sportfolio platform with a name search and tag them if they want to be a member or to get the events notification or any notification up on the approval of the organisation admin.
+Similarly Users can get the events list as well as notifications of the event published with the interest of sports applied by the user. 
+In both the cases for tagging the organisation as well as for applying or participating the events; user will have to be subscribed.
+Like wise, Organisation created by the user has to be subscribe to create events.
+
+We shall have organisations created in advance under the user KSSC ( which shall be edited later with a user name or a designation name):
+1. Kerala State Sports Council and 14 District Sports Councils named under the Districts of Kerala. (Example - Trivandrum District Sports Council, Kollam District Sports Council, etc)
+2. Different State Sports Associations and 14 District Associations under the State Associations. (Example: Kerala State Taekwondo Association and 14 Ditrict Associations under the Kerala State Associations)
+3. Sports Kerala Foundation is another organisation
+Government Sports Organizations in Kerala
+Kerala State Sports Council (KSSC) – The apex body for sports development in Kerala.
+
+District Sports Councils – One in each district (e.g., Thiruvananthapuram District Sports Council, Ernakulam District Sports Council).
+
+Sports Kerala Foundation – A government initiative to promote sports and talent development.
+
+Kerala State Sports Authority (KSSA) – Works alongside KSSC for infrastructure and training.
+
+Kerala State Olympic Association (KSOA) – Affiliated with the Indian Olympic Association (IOA).
+
+Kerala State Athletics Association (KSAA) – Governs athletics in the state.
+
+Kerala State Football Association (KSFA) – Official body for football under AIFF.
+
+Kerala State Cricket Association (KSCA) – Oversees cricket (affiliated with BCCI).
+
+Kerala State Volleyball Association (KSVA) – Manages volleyball activities.
+
+Kerala State Basketball Association (KSBA) – Governs basketball in Kerala.
+
+Kerala State Badminton Association (KSBA) – Official badminton body.
+
+Kerala State Boxing Association (KSBA) – Regulates boxing events.
+
+Kerala State Taekwondo Association (KSTA) – Official taekwondo body (affiliated with WTF/GTF).
+
+Kerala State Karate Association (KSKA) – Manages karate events.
+
+Kerala State Judo Association (KSJA) – Oversees judo competitions.
+
+Kerala State Wrestling Association (KSWA) – Handles wrestling events.
+
+Kerala State Kabaddi Association (KSKA) – Official kabaddi body.
+
+Kerala State Hockey Association (KSHA) – Manages hockey development.
+
+Kerala State Table Tennis Association (KSTTA) – Oversees table tennis.
+
+District-Level Sports Associations (Examples)
+District Taekwondo Associations (e.g., Ernakulam District Taekwondo Association)
+
+District Football Associations (e.g., Kozhikode District Football Association)
+
+District Athletics Associations
+
+District Volleyball Associations
+
+District Badminton Associations
+
+Private & Semi-Private Sports Organizations
+Kerala Cricket Association (KCA) – Manages cricket leagues (private but recognized by BCCI).
+
+Kerala Premier League (KPL) – Private football league organizers.
+
+Kerala Blasters FC & Gokulam Kerala FC – Private football clubs with academies.
+
+Various Private Sports Academies (e.g., Sethu Madhavan Cricket Academy, Lakshya Sports Academy).
+
+Kerala Adventure Sports Society – Promotes adventure sports.
+
+Martial Arts & Combat Sports Federations (private bodies for MMA, Kickboxing, etc.).
+
+University & Educational Sports Bodies
+Kerala University Sports Council
+
+MG University Sports Council
+
+Calicut University Sports Council
+
+Kannur University Sports Council

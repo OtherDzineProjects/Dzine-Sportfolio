@@ -21,6 +21,8 @@ import {
   organizationMembers,
   sportsAchievements,
   sportsQuestionnaireResponses,
+  organizationTags,
+  organizationHierarchy,
   type User, 
   type InsertUser,
   type AthleteProfile,
@@ -57,7 +59,11 @@ import {
   type SportsAchievement,
   type InsertSportsAchievement,
   type SportsQuestionnaireResponse,
-  type InsertSportsQuestionnaireResponse
+  type InsertSportsQuestionnaireResponse,
+  type OrganizationTag,
+  type InsertOrganizationTag,
+  type OrganizationHierarchy,
+  type InsertOrganizationHierarchy
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte, lte, desc, asc } from "drizzle-orm";
@@ -201,6 +207,19 @@ export interface IStorage {
   getAllOrganizationsWithDetails(): Promise<any[]>;
   getAllEvents(): Promise<any[]>;
   getAllAchievements(): Promise<any[]>;
+
+  // Organization tagging system
+  getOrganizationTags(userId?: number, organizationId?: number): Promise<OrganizationTag[]>;
+  createOrganizationTag(tag: InsertOrganizationTag): Promise<OrganizationTag>;
+  updateOrganizationTag(id: number, updates: Partial<OrganizationTag>): Promise<OrganizationTag>;
+  searchOrganizationsByName(searchTerm: string): Promise<UserOrganization[]>;
+
+  // Organization hierarchy
+  getOrganizationHierarchy(parentId?: number, childId?: number): Promise<OrganizationHierarchy[]>;
+  createOrganizationHierarchy(hierarchy: InsertOrganizationHierarchy): Promise<OrganizationHierarchy>;
+  getOrganizationChildren(parentId: number): Promise<UserOrganization[]>;
+  getOrganizationParent(childId: number): Promise<UserOrganization | undefined>;
+  getAllUserOrganizations(): Promise<UserOrganization[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1213,6 +1232,106 @@ export class DatabaseStorage implements IStorage {
     }
     
     return achievementsWithUsers;
+  }
+
+  // Organization tagging system implementation
+  async getOrganizationTags(userId?: number, organizationId?: number): Promise<OrganizationTag[]> {
+    let query = db.select().from(organizationTags);
+    
+    if (userId && organizationId) {
+      query = query.where(and(eq(organizationTags.userId, userId), eq(organizationTags.organizationId, organizationId)));
+    } else if (userId) {
+      query = query.where(eq(organizationTags.userId, userId));
+    } else if (organizationId) {
+      query = query.where(eq(organizationTags.organizationId, organizationId));
+    }
+    
+    return await query.orderBy(desc(organizationTags.createdAt));
+  }
+
+  async createOrganizationTag(tag: InsertOrganizationTag): Promise<OrganizationTag> {
+    const [created] = await db
+      .insert(organizationTags)
+      .values(tag)
+      .returning();
+    return created;
+  }
+
+  async updateOrganizationTag(id: number, updates: Partial<OrganizationTag>): Promise<OrganizationTag> {
+    const [updated] = await db
+      .update(organizationTags)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(organizationTags.id, id))
+      .returning();
+    return updated;
+  }
+
+  async searchOrganizationsByName(searchTerm: string): Promise<UserOrganization[]> {
+    const { ilike } = await import("drizzle-orm");
+    return await db
+      .select()
+      .from(userOrganizations)
+      .where(ilike(userOrganizations.name, `%${searchTerm}%`))
+      .orderBy(asc(userOrganizations.name));
+  }
+
+  // Organization hierarchy implementation
+  async getOrganizationHierarchy(parentId?: number, childId?: number): Promise<OrganizationHierarchy[]> {
+    let query = db.select().from(organizationHierarchy);
+    
+    if (parentId && childId) {
+      query = query.where(and(eq(organizationHierarchy.parentOrganizationId, parentId), eq(organizationHierarchy.childOrganizationId, childId)));
+    } else if (parentId) {
+      query = query.where(eq(organizationHierarchy.parentOrganizationId, parentId));
+    } else if (childId) {
+      query = query.where(eq(organizationHierarchy.childOrganizationId, childId));
+    }
+    
+    return await query.orderBy(asc(organizationHierarchy.level));
+  }
+
+  async createOrganizationHierarchy(hierarchy: InsertOrganizationHierarchy): Promise<OrganizationHierarchy> {
+    const [created] = await db
+      .insert(organizationHierarchy)
+      .values(hierarchy)
+      .returning();
+    return created;
+  }
+
+  async getOrganizationChildren(parentId: number): Promise<UserOrganization[]> {
+    const hierarchies = await db
+      .select({ childId: organizationHierarchy.childOrganizationId })
+      .from(organizationHierarchy)
+      .where(eq(organizationHierarchy.parentOrganizationId, parentId));
+    
+    const childIds = hierarchies.map(h => h.childId);
+    if (childIds.length === 0) return [];
+    
+    const { inArray } = await import("drizzle-orm");
+    return await db
+      .select()
+      .from(userOrganizations)
+      .where(inArray(userOrganizations.id, childIds))
+      .orderBy(asc(userOrganizations.name));
+  }
+
+  async getOrganizationParent(childId: number): Promise<UserOrganization | undefined> {
+    const [hierarchy] = await db
+      .select({ parentId: organizationHierarchy.parentOrganizationId })
+      .from(organizationHierarchy)
+      .where(eq(organizationHierarchy.childOrganizationId, childId));
+    
+    if (!hierarchy) return undefined;
+    
+    return await this.getUserOrganization(hierarchy.parentId);
+  }
+
+  async getAllUserOrganizations(): Promise<UserOrganization[]> {
+    return await db
+      .select()
+      .from(userOrganizations)
+      .where(eq(userOrganizations.isActive, true))
+      .orderBy(asc(userOrganizations.name));
   }
 }
 

@@ -94,6 +94,9 @@ export default function Home() {
               <Button onClick={() => setLocation("/user-dashboard-clean")} variant="outline">
                 My Dashboard
               </Button>
+              <Button onClick={() => setLocation("/organizations")} variant="outline">
+                Organizations
+              </Button>
               <Button onClick={() => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");

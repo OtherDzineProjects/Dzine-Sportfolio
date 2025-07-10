@@ -511,7 +511,8 @@ export const userOrganizations = pgTable("user_organizations", {
   organizationType: text("organization_type").notNull(), // sports_club, academy, school, college, etc.
   // Kerala geo-location system
   state: text("state").default("Kerala"),
-  district: text("district"),
+  district: varchar("district", { length: 100 }),
+  city: text("city"), // Keep existing city field
   lsgd: text("lsgd"), // Local Self Government (Corporation/Municipality/Panchayat)
   lsgdType: text("lsgd_type"), // Corporation, Municipality, Panchayat
   address: text("address"),
@@ -526,6 +527,7 @@ export const userOrganizations = pgTable("user_organizations", {
   verificationComments: text("verification_comments"),
   // Enhanced sports interests and facilities
   sportsInterests: jsonb("sports_interests").$type<string[]>(),
+  availableFacilities: jsonb("available_facilities").$type<string[]>(), // Keep existing field
   facilityAvailability: jsonb("facility_availability").$type<{
     sport: string;
     hasVenue: boolean;
@@ -778,3 +780,33 @@ export type InsertSportsAchievement = z.infer<typeof insertSportsAchievementSche
 
 export type SportsQuestionnaireResponse = typeof sportsQuestionnaireResponses.$inferSelect;
 export type InsertSportsQuestionnaireResponse = z.infer<typeof insertSportsQuestionnaireResponseSchema>;
+
+// Organization tagging system for users to follow/tag organizations
+export const organizationTags = pgTable("organization_tags", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  tagType: text("tag_type").notNull(), // 'follow', 'member_request', 'notification_subscribe'
+  status: text("status").default("active"), // 'active', 'pending', 'approved', 'rejected'
+  requestedAt: timestamp("requested_at").defaultNow(),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: integer("approved_by").references(() => users.id),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Organization hierarchy for state -> district structure
+export const organizationHierarchy = pgTable("organization_hierarchy", {
+  id: serial("id").primaryKey(),
+  parentOrganizationId: integer("parent_organization_id").references(() => userOrganizations.id).notNull(),
+  childOrganizationId: integer("child_organization_id").references(() => userOrganizations.id).notNull(),
+  hierarchyType: text("hierarchy_type").notNull(), // 'state_district', 'association_branch', 'parent_subsidiary'
+  level: integer("level").default(1), // 1 = direct child, 2 = grandchild, etc.
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export type OrganizationTag = typeof organizationTags.$inferSelect;
+export type InsertOrganizationTag = typeof organizationTags.$inferInsert;
+export type OrganizationHierarchy = typeof organizationHierarchy.$inferSelect;
+export type InsertOrganizationHierarchy = typeof organizationHierarchy.$inferInsert;

@@ -2,6 +2,7 @@ import { storage } from "./storage";
 import { db } from "./db";
 import { sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
+import { seedKeralaOrganizations } from "./kerala-organizations-seed";
 
 export async function seedInitialData() {
   try {
@@ -560,8 +561,12 @@ Eligibility & Fees:
       console.log("Error creating organization and events:", error);
     }
 
+    // Seed Kerala organizations structure
+    await seedKeralaOrganizations();
+
     console.log("Seed data initialization complete!");
   } catch (error) {
     console.error("Error seeding initial data:", error);
+    throw error;
   }
 }

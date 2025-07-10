@@ -1374,6 +1374,142 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Organization tagging system routes
+  app.get("/api/organization-tags", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.query.userId ? parseInt(req.query.userId as string) : undefined;
+      const organizationId = req.query.organizationId ? parseInt(req.query.organizationId as string) : undefined;
+      
+      const tags = await storage.getOrganizationTags(userId, organizationId);
+      res.json(tags);
+    } catch (error) {
+      console.error("Error fetching organization tags:", error);
+      res.status(500).json({ message: "Failed to fetch organization tags" });
+    }
+  });
+
+  app.post("/api/organization-tags", authenticateToken, async (req: any, res) => {
+    try {
+      const { organizationId, tagType, notes } = req.body;
+      const userId = req.user?.id;
+
+      if (!userId || !organizationId || !tagType) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      const tag = await storage.createOrganizationTag({
+        userId,
+        organizationId,
+        tagType,
+        notes
+      });
+
+      res.status(201).json(tag);
+    } catch (error) {
+      console.error("Error creating organization tag:", error);
+      res.status(500).json({ message: "Failed to create organization tag" });
+    }
+  });
+
+  app.patch("/api/organization-tags/:id", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+
+      const tag = await storage.updateOrganizationTag(parseInt(id), updates);
+      res.json(tag);
+    } catch (error) {
+      console.error("Error updating organization tag:", error);
+      res.status(500).json({ message: "Failed to update organization tag" });
+    }
+  });
+
+  // Organization search functionality
+  app.get("/api/organizations/search", authenticateToken, async (req, res) => {
+    try {
+      const { q } = req.query;
+      
+      if (!q || typeof q !== 'string') {
+        return res.status(400).json({ message: "Search query is required" });
+      }
+
+      const organizations = await storage.searchOrganizationsByName(q);
+      res.json(organizations);
+    } catch (error) {
+      console.error("Error searching organizations:", error);
+      res.status(500).json({ message: "Failed to search organizations" });
+    }
+  });
+
+  // Organization hierarchy routes
+  app.get("/api/organization-hierarchy", authenticateToken, async (req, res) => {
+    try {
+      const parentId = req.query.parentId ? parseInt(req.query.parentId as string) : undefined;
+      const childId = req.query.childId ? parseInt(req.query.childId as string) : undefined;
+      
+      const hierarchy = await storage.getOrganizationHierarchy(parentId, childId);
+      res.json(hierarchy);
+    } catch (error) {
+      console.error("Error fetching organization hierarchy:", error);
+      res.status(500).json({ message: "Failed to fetch organization hierarchy" });
+    }
+  });
+
+  app.post("/api/organization-hierarchy", authenticateToken, async (req, res) => {
+    try {
+      const { parentOrganizationId, childOrganizationId, hierarchyType, level } = req.body;
+
+      if (!parentOrganizationId || !childOrganizationId || !hierarchyType) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+
+      const hierarchy = await storage.createOrganizationHierarchy({
+        parentOrganizationId,
+        childOrganizationId,
+        hierarchyType,
+        level
+      });
+
+      res.status(201).json(hierarchy);
+    } catch (error) {
+      console.error("Error creating organization hierarchy:", error);
+      res.status(500).json({ message: "Failed to create organization hierarchy" });
+    }
+  });
+
+  app.get("/api/organizations/:id/children", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const children = await storage.getOrganizationChildren(parseInt(id));
+      res.json(children);
+    } catch (error) {
+      console.error("Error fetching organization children:", error);
+      res.status(500).json({ message: "Failed to fetch organization children" });
+    }
+  });
+
+  app.get("/api/organizations/:id/parent", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const parent = await storage.getOrganizationParent(parseInt(id));
+      res.json(parent || null);
+    } catch (error) {
+      console.error("Error fetching organization parent:", error);
+      res.status(500).json({ message: "Failed to fetch organization parent" });
+    }
+  });
+
+  // Get all organizations (for organization hierarchy and discovery)
+  app.get("/api/organizations/all", authenticateToken, async (req, res) => {
+    try {
+      const organizations = await storage.getAllUserOrganizations();
+      res.json(organizations);
+    } catch (error) {
+      console.error("Error fetching all organizations:", error);
+      res.status(500).json({ message: "Failed to fetch all organizations" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
