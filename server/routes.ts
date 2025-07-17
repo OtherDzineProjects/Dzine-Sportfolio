@@ -1590,6 +1590,231 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ========================================
+  // ASSOCIATION MANAGEMENT SYSTEM - API ENDPOINTS
+  // ========================================
+
+  // Tournament Management
+  app.get("/api/tournaments", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user?.id;
+      
+      // Mock tournament data for testing
+      const mockTournaments = [
+        {
+          id: 1,
+          name: "Kerala District Football Championship 2025",
+          description: "Annual district-level football tournament",
+          status: "registration_open",
+          startDate: "2025-08-15",
+          endDate: "2025-08-30",
+          venue: "District Sports Complex, Thiruvananthapuram",
+          maxTeams: 16,
+          registeredTeams: 8,
+          tournamentType: "district",
+          format: "knockout"
+        },
+        {
+          id: 2,
+          name: "State Basketball League",
+          description: "Premier basketball competition across Kerala",
+          status: "ongoing",
+          startDate: "2025-07-01",
+          endDate: "2025-07-20",
+          venue: "Various venues across Kerala",
+          maxTeams: 12,
+          registeredTeams: 12,
+          tournamentType: "state",
+          format: "league"
+        }
+      ];
+      
+      res.json(mockTournaments);
+    } catch (error) {
+      console.error("Error fetching tournaments:", error);
+      res.status(500).json({ message: "Failed to fetch tournaments" });
+    }
+  });
+
+  // Fixtures & Live Scoring
+  app.get("/api/fixtures/live", authenticateToken, async (req, res) => {
+    try {
+      const mockFixtures = [
+        {
+          id: 1,
+          matchNumber: 1,
+          round: "Quarter Final",
+          homeTeam: "Thiruvananthapuram FC",
+          awayTeam: "Kochi Warriors",
+          scheduledDate: "2025-07-11T15:00:00Z",
+          venue: "Sports Authority Stadium",
+          status: "live",
+          homeScore: 2,
+          awayScore: 1,
+          minute: 78
+        },
+        {
+          id: 2,
+          matchNumber: 2,
+          round: "Quarter Final",
+          homeTeam: "Calicut United",
+          awayTeam: "Malappuram Eagles",
+          scheduledDate: "2025-07-11T18:00:00Z",
+          venue: "District Stadium",
+          status: "scheduled"
+        },
+        {
+          id: 3,
+          matchNumber: 3,
+          round: "Semi Final",
+          homeTeam: "Kannur Knights",
+          awayTeam: "Kollam Titans",
+          scheduledDate: "2025-07-12T16:00:00Z",
+          venue: "Regional Sports Complex",
+          status: "scheduled"
+        }
+      ];
+      
+      res.json(mockFixtures);
+    } catch (error) {
+      console.error("Error fetching fixtures:", error);
+      res.status(500).json({ message: "Failed to fetch fixtures" });
+    }
+  });
+
+  // Player Evaluation System
+  app.get("/api/player-evaluations", authenticateToken, async (req, res) => {
+    try {
+      const mockEvaluations = [
+        {
+          id: 1,
+          playerName: "Arjun Krishnan",
+          evaluatorName: "Coach Ravi Kumar",
+          evaluationDate: "2025-07-08",
+          overallRating: 8.5,
+          currentLevel: "district",
+          potential: "professional",
+          recommendForSelection: true
+        },
+        {
+          id: 2,
+          playerName: "Sneha Menon",
+          evaluatorName: "Technical Director Maya",
+          evaluationDate: "2025-07-07",
+          overallRating: 7.8,
+          currentLevel: "state",
+          potential: "semi_professional",
+          recommendForSelection: true
+        },
+        {
+          id: 3,
+          playerName: "Rahul Nair",
+          evaluatorName: "Scout Pradeep",
+          evaluationDate: "2025-07-06",
+          overallRating: 6.2,
+          currentLevel: "district",
+          potential: "amateur",
+          recommendForSelection: false
+        }
+      ];
+      
+      res.json(mockEvaluations);
+    } catch (error) {
+      console.error("Error fetching player evaluations:", error);
+      res.status(500).json({ message: "Failed to fetch player evaluations" });
+    }
+  });
+
+  // Scouting Reports & State Selection
+  app.get("/api/scouting-reports", authenticateToken, async (req, res) => {
+    try {
+      const mockScoutingReports = [
+        {
+          id: 1,
+          playerName: "Aditya Varma",
+          scoutName: "Regional Scout Suresh",
+          reportDate: "2025-07-09",
+          sport: "Football",
+          summary: "Exceptional technical skills, strong leadership qualities. Recommended for state team trials."
+        },
+        {
+          id: 2,
+          playerName: "Priya Lakshmi",
+          scoutName: "State Scout Lakshmi",
+          reportDate: "2025-07-08",
+          sport: "Basketball",
+          summary: "Outstanding shooting accuracy, needs improvement in defensive play. Good potential for development."
+        },
+        {
+          id: 3,
+          playerName: "Vishnu Dev",
+          scoutName: "District Scout Raj",
+          reportDate: "2025-07-07",
+          sport: "Cricket",
+          summary: "Solid all-rounder with batting and bowling skills. Shows consistency in performance."
+        }
+      ];
+      
+      res.json(mockScoutingReports);
+    } catch (error) {
+      console.error("Error fetching scouting reports:", error);
+      res.status(500).json({ message: "Failed to fetch scouting reports" });
+    }
+  });
+
+  // POST endpoints for creating new records
+  app.post("/api/tournaments", authenticateToken, async (req, res) => {
+    try {
+      // Mock creation - would normally insert into database
+      const newTournament = {
+        id: Date.now(),
+        ...req.body,
+        status: "upcoming",
+        createdBy: req.user?.id
+      };
+      
+      res.status(201).json(newTournament);
+    } catch (error) {
+      console.error("Error creating tournament:", error);
+      res.status(500).json({ message: "Failed to create tournament" });
+    }
+  });
+
+  app.post("/api/player-evaluations", authenticateToken, async (req, res) => {
+    try {
+      // Mock creation - would normally insert into database
+      const newEvaluation = {
+        id: Date.now(),
+        ...req.body,
+        evaluatorId: req.user?.id,
+        evaluationDate: new Date().toISOString()
+      };
+      
+      res.status(201).json(newEvaluation);
+    } catch (error) {
+      console.error("Error creating player evaluation:", error);
+      res.status(500).json({ message: "Failed to create player evaluation" });
+    }
+  });
+
+  app.post("/api/fixtures/:id/score", authenticateToken, async (req, res) => {
+    try {
+      const fixtureId = parseInt(req.params.id);
+      const newScore = {
+        id: Date.now(),
+        fixtureId,
+        ...req.body,
+        recordedBy: req.user?.id,
+        timestamp: new Date().toISOString()
+      };
+      
+      res.status(201).json(newScore);
+    } catch (error) {
+      console.error("Error recording live score:", error);
+      res.status(500).json({ message: "Failed to record live score" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -23,6 +23,7 @@ import EventOrganizerDashboard from "@/pages/event-organizer-dashboard";
 import CreateOrganization from "@/pages/create-organization";
 import OrganizationDashboard from "@/pages/organization-dashboard";
 import OrganizationsDiscovery from "@/pages/organizations-discovery";
+import AssociationManagement from "@/pages/association-management";
 import Analytics from "@/pages/analytics";
 import ComprehensiveSportsManagement from "@/pages/comprehensive-sports-management";
 import Events from "@/pages/events";
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/organization/:id" component={OrganizationDashboard} />
       <Route path="/organization" component={OrganizationDashboard} />
       <Route path="/organizations" component={OrganizationsDiscovery} />
+      <Route path="/association-management" component={AssociationManagement} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/comprehensive-sports" component={ComprehensiveSportsManagement} />
       <Route path="/events" component={Events} />

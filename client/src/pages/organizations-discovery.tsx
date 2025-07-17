@@ -72,10 +72,20 @@ export default function OrganizationsDiscovery() {
     refetchOnWindowFocus: false,
   });
 
-  // Search organizations
+  // Search organizations with debouncing
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   const { data: searchResults = [], isLoading: searchLoading } = useQuery({
-    queryKey: ["/api/organizations/search", searchQuery],
-    enabled: searchQuery.length > 2,
+    queryKey: ["/api/organizations/search", debouncedSearchQuery],
+    enabled: debouncedSearchQuery.length > 2,
     refetchOnWindowFocus: false,
   });
 
@@ -142,7 +152,7 @@ export default function OrganizationsDiscovery() {
 
   // Get display data for organizations
   const getDisplayData = () => {
-    if (searchQuery.length > 2) {
+    if (debouncedSearchQuery.length > 2) {
       return { searchResults, isSearching: true };
     }
     return { searchResults: organizations, isSearching: false };

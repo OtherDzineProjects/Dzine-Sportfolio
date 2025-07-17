@@ -97,6 +97,9 @@ export default function Home() {
               <Button onClick={() => setLocation("/organizations")} variant="outline">
                 Organizations
               </Button>
+              <Button onClick={() => setLocation("/association-management")} variant="outline">
+                Association Management
+              </Button>
               <Button onClick={() => {
                 localStorage.removeItem("token");
                 localStorage.removeItem("user");

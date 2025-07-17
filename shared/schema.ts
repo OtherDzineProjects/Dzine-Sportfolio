@@ -810,3 +810,328 @@ export type OrganizationTag = typeof organizationTags.$inferSelect;
 export type InsertOrganizationTag = typeof organizationTags.$inferInsert;
 export type OrganizationHierarchy = typeof organizationHierarchy.$inferSelect;
 export type InsertOrganizationHierarchy = typeof organizationHierarchy.$inferInsert;
+
+// ============================================================================
+// ASSOCIATION MANAGEMENT SYSTEM - TOURNAMENTS, SCORING & PLAYER EVALUATION
+// ============================================================================
+
+// Tournaments managed by associations
+export const tournaments = pgTable("tournaments", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  sportId: integer("sport_id").references(() => sportsCategories.id).notNull(),
+  tournamentType: text("tournament_type").notNull(), // "district", "state", "inter_district", "league"
+  format: text("format").notNull(), // "knockout", "round_robin", "league", "hybrid"
+  ageCategory: text("age_category"), // "U-12", "U-15", "U-18", "U-21", "Senior"
+  gender: text("gender"), // "male", "female", "mixed"
+  maxTeams: integer("max_teams"),
+  maxPlayersPerTeam: integer("max_players_per_team"),
+  registrationFee: decimal("registration_fee", { precision: 10, scale: 2 }).default("0"),
+  prizeMoney: decimal("prize_money", { precision: 10, scale: 2 }).default("0"),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  registrationDeadline: timestamp("registration_deadline").notNull(),
+  venue: text("venue"),
+  rules: jsonb("rules").default({}),
+  status: text("status").default("upcoming"), // "upcoming", "registration_open", "ongoing", "completed", "cancelled"
+  isPublic: boolean("is_public").default(true),
+  requiresApproval: boolean("requires_approval").default(true),
+  certificateTemplate: text("certificate_template"),
+  createdBy: integer("created_by").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Tournament registrations for teams/clubs
+export const tournamentRegistrations = pgTable("tournament_registrations", {
+  id: serial("id").primaryKey(),
+  tournamentId: integer("tournament_id").references(() => tournaments.id).notNull(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  teamName: text("team_name").notNull(),
+  coachId: integer("coach_id").references(() => users.id),
+  managerContact: text("manager_contact"),
+  registrationDate: timestamp("registration_date").defaultNow(),
+  status: text("status").default("pending"), // "pending", "approved", "rejected", "withdrawn"
+  approvedBy: integer("approved_by").references(() => users.id),
+  approvedAt: timestamp("approved_at"),
+  rejectionReason: text("rejection_reason"),
+  paymentStatus: text("payment_status").default("pending"), // "pending", "paid", "refunded"
+  paymentReference: text("payment_reference"),
+  documents: jsonb("documents").default([]),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Players registered for tournaments
+export const tournamentPlayers = pgTable("tournament_players", {
+  id: serial("id").primaryKey(),
+  registrationId: integer("registration_id").references(() => tournamentRegistrations.id).notNull(),
+  playerId: integer("player_id").references(() => users.id).notNull(),
+  playerName: text("player_name").notNull(),
+  dateOfBirth: date("date_of_birth").notNull(),
+  position: text("position"), // player position/role in the sport
+  jerseyNumber: integer("jersey_number"),
+  isPlaying: boolean("is_playing").default(true), // true for main team, false for substitutes
+  isCaptain: boolean("is_captain").default(false),
+  medicalClearance: boolean("medical_clearance").default(false),
+  documents: jsonb("documents").default([]), // ID proof, medical certificate, etc.
+  emergencyContact: text("emergency_contact"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Fixtures/Match Schedule
+export const fixtures = pgTable("fixtures", {
+  id: serial("id").primaryKey(),
+  tournamentId: integer("tournament_id").references(() => tournaments.id).notNull(),
+  matchNumber: integer("match_number").notNull(),
+  round: text("round").notNull(), // "Round 1", "Quarter Final", "Semi Final", "Final"
+  homeTeamId: integer("home_team_id").references(() => tournamentRegistrations.id).notNull(),
+  awayTeamId: integer("away_team_id").references(() => tournamentRegistrations.id).notNull(),
+  scheduledDate: timestamp("scheduled_date").notNull(),
+  venue: text("venue"),
+  field: text("field"), // specific field/court within venue
+  refereeId: integer("referee_id").references(() => users.id),
+  umpire1Id: integer("umpire1_id").references(() => users.id),
+  umpire2Id: integer("umpire2_id").references(() => users.id),
+  status: text("status").default("scheduled"), // "scheduled", "live", "completed", "postponed", "cancelled"
+  homeTeamScore: integer("home_team_score"),
+  awayTeamScore: integer("away_team_score"),
+  winnerTeamId: integer("winner_team_id").references(() => tournamentRegistrations.id),
+  matchResult: text("match_result"), // "home_win", "away_win", "draw", "walkover", "forfeit"
+  startTime: timestamp("start_time"),
+  endTime: timestamp("end_time"),
+  notes: text("notes"),
+  weatherConditions: text("weather_conditions"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Live scoring system
+export const liveScores = pgTable("live_scores", {
+  id: serial("id").primaryKey(),
+  fixtureId: integer("fixture_id").references(() => fixtures.id).notNull(),
+  eventType: text("event_type").notNull(), // "goal", "point", "foul", "substitution", "timeout", "period_end"
+  playerId: integer("player_id").references(() => tournamentPlayers.id),
+  teamId: integer("team_id").references(() => tournamentRegistrations.id).notNull(),
+  minute: integer("minute"), // game minute when event occurred
+  period: integer("period"), // half, quarter, set number
+  score: jsonb("score").default({}), // current score snapshot
+  description: text("description"),
+  recordedBy: integer("recorded_by").references(() => users.id).notNull(),
+  timestamp: timestamp("timestamp").defaultNow(),
+  isVerified: boolean("is_verified").default(false),
+  verifiedBy: integer("verified_by").references(() => users.id)
+});
+
+// Player performance tracking
+export const playerPerformances = pgTable("player_performances", {
+  id: serial("id").primaryKey(),
+  fixtureId: integer("fixture_id").references(() => fixtures.id).notNull(),
+  playerId: integer("player_id").references(() => tournamentPlayers.id).notNull(),
+  minutesPlayed: integer("minutes_played"),
+  goals: integer("goals").default(0),
+  assists: integer("assists").default(0),
+  saves: integer("saves").default(0), // for goalkeepers
+  fouls: integer("fouls").default(0),
+  yellowCards: integer("yellow_cards").default(0),
+  redCards: integer("red_cards").default(0),
+  substitutedIn: integer("substituted_in"), // minute
+  substitutedOut: integer("substituted_out"), // minute
+  performanceRating: decimal("performance_rating", { precision: 3, scale: 1 }), // 1.0 to 10.0
+  distanceCovered: decimal("distance_covered", { precision: 5, scale: 2 }), // in km
+  passAccuracy: decimal("pass_accuracy", { precision: 5, scale: 2 }), // percentage
+  shots: integer("shots").default(0),
+  shotsOnTarget: integer("shots_on_target").default(0),
+  tackles: integer("tackles").default(0),
+  successfulTackles: integer("successful_tackles").default(0),
+  customStats: jsonb("custom_stats").default({}), // sport-specific statistics
+  coachRating: decimal("coach_rating", { precision: 3, scale: 1 }),
+  coachNotes: text("coach_notes"),
+  medicalNotes: text("medical_notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Player evaluation and scouting
+export const playerEvaluations = pgTable("player_evaluations", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").references(() => users.id).notNull(),
+  evaluatorId: integer("evaluator_id").references(() => users.id).notNull(),
+  evaluatorRole: text("evaluator_role").notNull(), // "coach", "scout", "selector", "technical_director"
+  tournamentId: integer("tournament_id").references(() => tournaments.id),
+  fixtureId: integer("fixture_id").references(() => fixtures.id),
+  evaluationDate: timestamp("evaluation_date").defaultNow(),
+  
+  // Technical Skills (1-10 scale)
+  ballControl: decimal("ball_control", { precision: 3, scale: 1 }),
+  passing: decimal("passing", { precision: 3, scale: 1 }),
+  shooting: decimal("shooting", { precision: 3, scale: 1 }),
+  dribbling: decimal("dribbling", { precision: 3, scale: 1 }),
+  defending: decimal("defending", { precision: 3, scale: 1 }),
+  heading: decimal("heading", { precision: 3, scale: 1 }),
+  
+  // Physical Attributes
+  speed: decimal("speed", { precision: 3, scale: 1 }),
+  agility: decimal("agility", { precision: 3, scale: 1 }),
+  strength: decimal("strength", { precision: 3, scale: 1 }),
+  endurance: decimal("endurance", { precision: 3, scale: 1 }),
+  jumping: decimal("jumping", { precision: 3, scale: 1 }),
+  balance: decimal("balance", { precision: 3, scale: 1 }),
+  
+  // Mental & Tactical
+  gameAwareness: decimal("game_awareness", { precision: 3, scale: 1 }),
+  decisionMaking: decimal("decision_making", { precision: 3, scale: 1 }),
+  communication: decimal("communication", { precision: 3, scale: 1 }),
+  leadership: decimal("leadership", { precision: 3, scale: 1 }),
+  temperament: decimal("temperament", { precision: 3, scale: 1 }),
+  workEthic: decimal("work_ethic", { precision: 3, scale: 1 }),
+  
+  // Overall Ratings
+  currentLevel: text("current_level"), // "district", "state", "national", "international"
+  potential: text("potential"), // "amateur", "semi_professional", "professional", "elite"
+  overallRating: decimal("overall_rating", { precision: 3, scale: 1 }),
+  
+  // Recommendations
+  strengths: jsonb("strengths").$type<string[]>(),
+  weaknesses: jsonb("weaknesses").$type<string[]>(),
+  improvements: jsonb("improvements").$type<string[]>(),
+  nextSteps: text("next_steps"),
+  scoutingNotes: text("scouting_notes"),
+  recommendForSelection: boolean("recommend_for_selection").default(false),
+  selectionLevel: text("selection_level"), // "district_team", "state_team", "training_camp"
+  
+  isConfidential: boolean("is_confidential").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Talent scouting and state team selection
+export const talentScouts = pgTable("talent_scouts", {
+  id: serial("id").primaryKey(),
+  scoutId: integer("scout_id").references(() => users.id).notNull(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  scoutLevel: text("scout_level").notNull(), // "district", "state", "national"
+  sports: jsonb("sports").$type<string[]>(),
+  territories: jsonb("territories").$type<string[]>(), // districts/regions covered
+  licenseNumber: text("license_number"),
+  certificationLevel: text("certification_level"),
+  isActive: boolean("is_active").default(true),
+  appointedBy: integer("appointed_by").references(() => users.id),
+  appointmentDate: timestamp("appointment_date").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// State team selections and trials
+export const stateSelections = pgTable("state_selections", {
+  id: serial("id").primaryKey(),
+  selectionCampaign: text("selection_campaign").notNull(), // e.g., "Kerala State Team 2025"
+  sportId: integer("sport_id").references(() => sportsCategories.id).notNull(),
+  ageCategory: text("age_category").notNull(),
+  gender: text("gender").notNull(),
+  playerId: integer("player_id").references(() => users.id).notNull(),
+  selectionStatus: text("selection_status").default("nominated"), // "nominated", "trial_invited", "selected", "reserve", "rejected"
+  nominatedBy: integer("nominated_by").references(() => users.id).notNull(),
+  trialDate: timestamp("trial_date"),
+  trialVenue: text("trial_venue"),
+  selectionCommittee: jsonb("selection_committee").$type<number[]>(),
+  trialPerformance: jsonb("trial_performance").default({}),
+  finalRanking: integer("final_ranking"),
+  selectionNotes: text("selection_notes"),
+  notificationSent: boolean("notification_sent").default(false),
+  acceptanceStatus: text("acceptance_status"), // "pending", "accepted", "declined"
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Government schemes and scholarships
+export const scholarships = pgTable("scholarships", {
+  id: serial("id").primaryKey(),
+  schemeName: text("scheme_name").notNull(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  schemeType: text("scheme_type").notNull(), // "kerala_sports_council", "district_council", "private", "central_government"
+  amount: decimal("amount", { precision: 10, scale: 2 }),
+  duration: integer("duration"), // in months
+  eligibilityCriteria: jsonb("eligibility_criteria").default({}),
+  requiredDocuments: jsonb("required_documents").$type<string[]>(),
+  applicationDeadline: timestamp("application_deadline"),
+  selectionProcess: text("selection_process"),
+  maxRecipients: integer("max_recipients"),
+  isActive: boolean("is_active").default(true),
+  description: text("description"),
+  contactInfo: jsonb("contact_info").default({}),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Scholarship applications
+export const scholarshipApplications = pgTable("scholarship_applications", {
+  id: serial("id").primaryKey(),
+  scholarshipId: integer("scholarship_id").references(() => scholarships.id).notNull(),
+  applicantId: integer("applicant_id").references(() => users.id).notNull(),
+  applicationDate: timestamp("application_date").defaultNow(),
+  status: text("status").default("submitted"), // "submitted", "under_review", "approved", "rejected", "waitlisted"
+  documents: jsonb("documents").default([]),
+  personalStatement: text("personal_statement"),
+  achievements: jsonb("achievements").default([]),
+  recommendations: jsonb("recommendations").default([]),
+  financialNeed: text("financial_need"),
+  reviewedBy: integer("reviewed_by").references(() => users.id),
+  reviewDate: timestamp("review_date"),
+  reviewNotes: text("review_notes"),
+  awardAmount: decimal("award_amount", { precision: 10, scale: 2 }),
+  disbursementSchedule: jsonb("disbursement_schedule").default([]),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Create insert schemas for new tables
+export const insertTournamentSchema = createInsertSchema(tournaments);
+export const insertTournamentRegistrationSchema = createInsertSchema(tournamentRegistrations);
+export const insertTournamentPlayerSchema = createInsertSchema(tournamentPlayers);
+export const insertFixtureSchema = createInsertSchema(fixtures);
+export const insertLiveScoreSchema = createInsertSchema(liveScores);
+export const insertPlayerPerformanceSchema = createInsertSchema(playerPerformances);
+export const insertPlayerEvaluationSchema = createInsertSchema(playerEvaluations);
+export const insertTalentScoutSchema = createInsertSchema(talentScouts);
+export const insertStateSelectionSchema = createInsertSchema(stateSelections);
+export const insertScholarshipSchema = createInsertSchema(scholarships);
+export const insertScholarshipApplicationSchema = createInsertSchema(scholarshipApplications);
+
+// Export types for new tables
+export type Tournament = typeof tournaments.$inferSelect;
+export type InsertTournament = z.infer<typeof insertTournamentSchema>;
+
+export type TournamentRegistration = typeof tournamentRegistrations.$inferSelect;
+export type InsertTournamentRegistration = z.infer<typeof insertTournamentRegistrationSchema>;
+
+export type TournamentPlayer = typeof tournamentPlayers.$inferSelect;
+export type InsertTournamentPlayer = z.infer<typeof insertTournamentPlayerSchema>;
+
+export type Fixture = typeof fixtures.$inferSelect;
+export type InsertFixture = z.infer<typeof insertFixtureSchema>;
+
+export type LiveScore = typeof liveScores.$inferSelect;
+export type InsertLiveScore = z.infer<typeof insertLiveScoreSchema>;
+
+export type PlayerPerformance = typeof playerPerformances.$inferSelect;
+export type InsertPlayerPerformance = z.infer<typeof insertPlayerPerformanceSchema>;
+
+export type PlayerEvaluation = typeof playerEvaluations.$inferSelect;
+export type InsertPlayerEvaluation = z.infer<typeof insertPlayerEvaluationSchema>;
+
+export type TalentScout = typeof talentScouts.$inferSelect;
+export type InsertTalentScout = z.infer<typeof insertTalentScoutSchema>;
+
+export type StateSelection = typeof stateSelections.$inferSelect;
+export type InsertStateSelection = z.infer<typeof insertStateSelectionSchema>;
+
+export type Scholarship = typeof scholarships.$inferSelect;
+export type InsertScholarship = z.infer<typeof insertScholarshipSchema>;
+
+export type ScholarshipApplication = typeof scholarshipApplications.$inferSelect;
+export type InsertScholarshipApplication = z.infer<typeof insertScholarshipApplicationSchema>;
