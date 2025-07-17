@@ -1,0 +1,227 @@
+SPORTFOLIO CONFIGURATION MODULES To be there 
+
+A. Registration Management System 
+B. Verification Management System 
+C. Event Management System 
+D. Notification Management System 
+E. System Configurations 
+F. Reports 
+G. Facility Management System 
+H. Review Management System
+I. Fund Management System 
+J. News Feed Management System 
+K. Menu Security 
+L. DDFS 
+M. Certificate Management System
+N. Additional Reports 
+
+Modules Under
+
+A. Registration Management System
+1. User Registration 
+1.A Create User
+1.B Edit User
+1.C Delete User
+1.D Search User
+1.D.1 By Name
+1.D.2 By Location
+1.D.3 By Service
+1.D.4 By Skill
+1.E Select User
+1.E.1 By Name
+1.E.2 By Location
+1.E.3 By Service
+1.E.4 By Skill
+1.F User Role - Creation, Edit and Delete
+1.G User Service - Creation, Edit and Delete
+1.H User Organization - Creation, Edit and Delete
+1.I User Skill - Creation, Edit and Delete
+1.J User Verification Documents - Uploading and Downloading
+1.K User Awards - Creation, Edit and Delete
+1.L User Documents (Academic, Skills, etc) - Creation, Edit and Delete
+1.M User References - Creation, Edit and Delete
+1.N OTP Verification Integration - Mail And Number
+
+2.Organization Registration 
+2.A Create Organization
+2.B Edit Organization
+2.C Delete Organization
+2.D Search Organization
+2.D.1 By Name
+2.D.2 By Location
+2.D.3 By Service
+2.E Select Organization
+2.E.1 By Name
+2.E.2 By Location
+2.E.3 By Service
+2.F Organization User - Creation, Edit and Delete
+2.G Organization User Role - Creation, Edit and Delete
+2.H Organization Department - Creation, Edit and Delete
+2.I Organization Department User - Creation, Edit and Delete
+2.J Organization Department User Role - Creation, Edit and Delete
+2.K Organization Services - Creation, Edit and Delete
+2.L Organization Department Services - Creation, Edit and Delete
+2.M Organization Achievements - Creation, Edit and Delete
+2.N Organization Department Achievements - Creation, Edit and Delete
+2.O Organization Awards - Creation, Edit and Delete
+2.P Organization Department Awards - Creation, Edit and Delete
+2.Q Organization Documents - Upload and Download
+2.R Organization Department Documents - Upload and Download
+2.S Organization Verification Documents - Upload and Download
+2.T Organization Department Verification Documents - Upload and Download
+2.U Organization Image - Upload and Download
+2.V Organization Department Image - Upload and Download
+2.W OTP Verification Integration - Mail And Number
+PHASE 2
+2.X Organization Meeting - Creation, Edit and Delete (YWB)
+2.Y Organization Meeting Detail - Creation, Edit and Delete (YWB)
+2.Z Organization Department Meeting - Creation, Edit and Delete (YWB)
+2.A.A Organization Department Meeting Detail - Creation, Edit and Delete (YWB)
+
+B. Verification Management System 
+3.A Create Verification
+3.B Edit Verification
+3.C Delete Verification
+3.D Search Verification
+3.D.1 By Service
+3.E Select Verification
+3.E.1 By Service
+3.F Verification Organization By Service - Create, Edit and Delete
+3.G Verification Organization By Service Detail - Create, Edit and Delete
+3.H Verification Organization Department By Service - Create, Edit and Delete
+3.I Verification Organization Department By Service Detail - Create, Edit and Delete
+3.J Verification Organization By Service Per Executive - Create, Edit and Delete
+
+C. Event Management System 
+4.A Create Event
+4.B Edit Event
+4.C Delete Event
+4.D Search Event
+4.D.1 By Name
+4.D.2 By Location
+4.D.3 By Type
+4.E Select Event
+4.E.1 By Name
+4.E.2 By Location
+4.E.3 By Type
+4.F Event Detail (Like Multiple Activities) - Create, Edit and Delete
+4.G Event Venue - Create, Edit and Delete
+4.H Event Facility - Create, Edit and Delete
+4.I Event Venue User - Create, Edit and Delete
+4.J Event Facility User - Create, Edit and Delete
+
+D. Notification Management System 
+5.A Notification Template
+5.B Notification - Create, Edit and Delete
+5.C Notification Detail - Create, Edit and Delete
+5.D Notification Send
+5.D.1 By Email
+5.D.2 By SMS
+
+E. System Configurations 
+6.A Role - Create, Edit and Delete
+6.B Service - Create, Edit and Delete
+6.C Skill - Create, Edit and Delete
+6.D Document Type - Create, Edit and Delete
+6.E Event Type - Create, Edit and Delete
+6.F Notification Type - Create, Edit and Delete
+6.G Image Type - Create, Edit and Delete
+6.H Verification Type - Create, Edit and Delete
+6.I Organization Type - Create, Edit and Delete
+6.J Award Type - Create, Edit and Delete
+6.K Award - Create, Edit and Delete
+6.L Award Service - Create, Edit and Delete
+6.M Award Skill- Create, Edit and Delete
+6.N Review Type - Create, Edit and Delete
+6.O Review Questions Creation By Role - Create, Edit and Delete
+6.P Fund Type - Create, Edit and Delete
+6.Q Fund Allocated To Type - Create, Edit and Delete
+6.R  Certificate Type - Create, Edit and Delete
+
+F. Reports 
+7.A User Reports
+7.A.1 By location
+7.A.2 User Count by location
+7.A.3 User Skill by location
+7.B Organisation Reports
+7.B.1 By location
+7.B.2 Count by location
+7.B.3 Skill by location
+7.C Verification Summary Reports
+7.C.1 Skill verified by location
+7.C.2 Skill verified count by location
+7.C.3 Pending verification by location
+7.D Event Reports
+7.D.1 By location
+7.D.2 Count by location
+7.D.3 By user
+7.D.4 Count by user
+7.D.5 By Organization
+7.D.6 Count by Organization
+
+G. Facility Management System 
+8.A Create Facility
+8.B Edit Facility
+8.C Delete Facility
+8.D Search Facility
+8.D.1 By Name
+8.D.2 By Location
+8.D.3 By Type
+8.E Select Facility
+8.E.1 By Name
+8.E.2 By Location
+8.E.3 By Type
+8.F Facility Organization - Create, Edit and Delete
+8.G Facility User Mapping - Create, Edit and Delete
+8.H Facility Achievement - Create, Edit and Delete
+8.I Facility Awards - Create, Edit and Delete
+8.J Facility Documents - Upload and Download
+8.K Facility Verification Documents - Upload and Download
+PHASE 3
+8.L Facility Booking Management System 
+
+H. Review Management System 
+9.A Event wise Review - Create, Edit and Delete
+9.B Volunteer Review
+9.B.1 Against Event - Create, Edit and Delete
+9.B.2 Against Organization - Create, Edit and Delete
+9.B.3 Against Department - Create, Edit and Delete
+9.C Organization Review Against Event- Create, Edit and Delete
+9.D User Review
+9.D.1 Against Event - Create, Edit and Delete
+9.D.2 Against Organization - Create, Edit and Delete
+9.D.3 Against Department - Create, Edit and Delete
+9.E Verification Panel Member Review
+9.E.1 By Govt Organizations - Create, Edit and Delete
+9.F Verification Executive Review - Create, Edit and Delete.
+9.G Event Review - Create, Edit and Delete
+
+I. Fund Management System 
+10.A Fund Allocated Detail
+10.A.1 To Organization - Create, Edit and Delete
+10.A.2 To Organization Department - Create, Edit and Delete
+10.B Fund Allocation - Create, Edit and Delete
+10.C Fund Allocation Detail - Create, Edit and Delete
+
+J. News Feed Management System 
+11.A Post Create
+11.A.1 By Location - Create, Edit and Delete
+11.A.2 By Organisation - Create, Edit and Delete
+11.A.3 By Skill - Create, Edit and Delete
+11.A.4 By Service - Create, Edit and Delete
+
+K. Menu Security 
+12.A Menu Creation - Create, Edit and Delete
+12.B Menu Role Mapping - Create, Edit and Delete
+
+L. DDFS 
+
+M. Certificate Management System
+      13.1 Certificate By User - Create, Edit and Delete
+      M.1 Certificate By Organization - Create, Edit and Delete
+      M.1 Certificate By Organization Department - Create, Edit and Delete
+      M.1 Certificate By Facility - Create, Edit and Delete
+      M.1 Certificate By Event - Create, Edit and Delete
+      M.1 Certificate By Service - Create, Edit and Delete
+      M.1 Certificate By Skill - Create, Edit and Delete
+      M.1 Certificate By Type (Generic) - Create, Edit and Delete

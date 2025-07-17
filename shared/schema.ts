@@ -1135,3 +1135,658 @@ export type InsertScholarship = z.infer<typeof insertScholarshipSchema>;
 
 export type ScholarshipApplication = typeof scholarshipApplications.$inferSelect;
 export type InsertScholarshipApplication = z.infer<typeof insertScholarshipApplicationSchema>;
+
+// ============================================================================
+// COMPREHENSIVE SPORTFOLIO CONFIGURATION MODULES
+// 13 Major Systems: Registration, Verification, Events, Notifications, etc.
+// ============================================================================
+
+// A. REGISTRATION MANAGEMENT SYSTEM - Enhanced User & Organization Management
+
+// User Skills and Services
+export const userSkills = pgTable("user_skills", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  skillName: text("skill_name").notNull(),
+  skillLevel: text("skill_level"), // "beginner", "intermediate", "advanced", "expert"
+  yearsOfExperience: integer("years_of_experience"),
+  certificationLevel: text("certification_level"),
+  verificationStatus: text("verification_status").default("unverified"), // "unverified", "pending", "verified", "rejected"
+  verifiedBy: integer("verified_by").references(() => users.id),
+  verificationDate: timestamp("verification_date"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const userServices = pgTable("user_services", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  serviceName: text("service_name").notNull(),
+  serviceCategory: text("service_category"), // "coaching", "training", "consulting", "officiating"
+  serviceDescription: text("service_description"),
+  serviceRate: decimal("service_rate", { precision: 10, scale: 2 }),
+  rateType: text("rate_type"), // "hourly", "daily", "monthly", "per_session"
+  availability: jsonb("availability").default({}), // schedule availability
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const userAwards = pgTable("user_awards", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  awardName: text("award_name").notNull(),
+  awardType: text("award_type"), // "medal", "trophy", "certificate", "recognition"
+  awardLevel: text("award_level"), // "local", "district", "state", "national", "international"
+  awardingBody: text("awarding_body"),
+  awardDate: date("award_date"),
+  description: text("description"),
+  verificationStatus: text("verification_status").default("unverified"),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  documents: jsonb("documents").default([]),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const userDocuments = pgTable("user_documents", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  documentType: text("document_type").notNull(), // "academic", "skill", "verification", "medical"
+  documentName: text("document_name").notNull(),
+  documentUrl: text("document_url"),
+  documentNumber: text("document_number"),
+  issuingAuthority: text("issuing_authority"),
+  issueDate: date("issue_date"),
+  expiryDate: date("expiry_date"),
+  verificationStatus: text("verification_status").default("pending"),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const userReferences = pgTable("user_references", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  referenceName: text("reference_name").notNull(),
+  referencePosition: text("reference_position"),
+  referenceOrganization: text("reference_organization"),
+  referenceContact: text("reference_contact"),
+  referenceEmail: text("reference_email"),
+  relationshipType: text("relationship_type"), // "coach", "colleague", "supervisor", "mentor"
+  yearsKnown: integer("years_known"),
+  recommendationLetter: text("recommendation_letter"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Organization Departments and Enhanced Management
+export const organizationDepartments = pgTable("organization_departments", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  departmentName: text("department_name").notNull(),
+  departmentCode: text("department_code"),
+  departmentHead: integer("department_head").references(() => users.id),
+  description: text("description"),
+  budget: decimal("budget", { precision: 15, scale: 2 }),
+  establishedDate: date("established_date"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const organizationDepartmentUsers = pgTable("organization_department_users", {
+  id: serial("id").primaryKey(),
+  departmentId: integer("department_id").references(() => organizationDepartments.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  roleId: integer("role_id").references(() => roles.id),
+  position: text("position"),
+  joinDate: date("join_date").defaultNow(),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const organizationServices = pgTable("organization_services", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  serviceName: text("service_name").notNull(),
+  serviceCategory: text("service_category"),
+  serviceDescription: text("service_description"),
+  serviceRate: decimal("service_rate", { precision: 10, scale: 2 }),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const organizationAchievements = pgTable("organization_achievements", {
+  id: serial("id").primaryKey(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id).notNull(),
+  achievementTitle: text("achievement_title").notNull(),
+  achievementType: text("achievement_type"),
+  achievementLevel: text("achievement_level"),
+  achievementDate: date("achievement_date"),
+  description: text("description"),
+  recognizedBy: text("recognized_by"),
+  documents: jsonb("documents").default([]),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// B. VERIFICATION MANAGEMENT SYSTEM
+export const verificationTypes = pgTable("verification_types", {
+  id: serial("id").primaryKey(),
+  verificationName: text("verification_name").notNull(),
+  verificationCategory: text("verification_category"),
+  description: text("description"),
+  requiredDocuments: jsonb("required_documents").$type<string[]>(),
+  verificationProcess: text("verification_process"),
+  validityPeriod: integer("validity_period"), // in months
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const verificationRequests = pgTable("verification_requests", {
+  id: serial("id").primaryKey(),
+  requesterId: integer("requester_id").references(() => users.id).notNull(),
+  verificationTypeId: integer("verification_type_id").references(() => verificationTypes.id).notNull(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id),
+  requestDate: timestamp("request_date").defaultNow(),
+  status: text("status").default("pending"), // "pending", "in_review", "approved", "rejected", "expired"
+  assignedExecutive: integer("assigned_executive").references(() => users.id),
+  submittedDocuments: jsonb("submitted_documents").default([]),
+  reviewNotes: text("review_notes"),
+  approvalDate: timestamp("approval_date"),
+  expiryDate: timestamp("expiry_date"),
+  rejectionReason: text("rejection_reason"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// C. EVENT MANAGEMENT SYSTEM - Enhanced
+export const eventVenues = pgTable("event_venues", {
+  id: serial("id").primaryKey(),
+  venueName: text("venue_name").notNull(),
+  venueType: text("venue_type"), // "stadium", "ground", "hall", "complex"
+  address: text("address"),
+  city: text("city"),
+  district: text("district"),
+  state: text("state"),
+  pincode: text("pincode"),
+  capacity: integer("capacity"),
+  facilities: jsonb("facilities").$type<string[]>(),
+  contactPerson: text("contact_person"),
+  contactNumber: text("contact_number"),
+  venueManager: integer("venue_manager").references(() => users.id),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const eventActivities = pgTable("event_activities", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id).notNull(),
+  activityName: text("activity_name").notNull(),
+  activityType: text("activity_type"),
+  startTime: timestamp("start_time"),
+  endTime: timestamp("end_time"),
+  venueId: integer("venue_id").references(() => eventVenues.id),
+  maxParticipants: integer("max_participants"),
+  registrationFee: decimal("registration_fee", { precision: 10, scale: 2 }),
+  description: text("description"),
+  requirements: jsonb("requirements").default([]),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// D. NOTIFICATION MANAGEMENT SYSTEM
+export const notificationTemplates = pgTable("notification_templates", {
+  id: serial("id").primaryKey(),
+  templateName: text("template_name").notNull(),
+  templateType: text("template_type"), // "email", "sms", "push"
+  subject: text("subject"),
+  content: text("content").notNull(),
+  variables: jsonb("variables").$type<string[]>(), // dynamic variables like {userName}, {eventName}
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  senderId: integer("sender_id").references(() => users.id).notNull(),
+  recipientId: integer("recipient_id").references(() => users.id).notNull(),
+  templateId: integer("template_id").references(() => notificationTemplates.id),
+  notificationType: text("notification_type"), // "email", "sms", "push", "in_app"
+  subject: text("subject"),
+  content: text("content").notNull(),
+  status: text("status").default("pending"), // "pending", "sent", "delivered", "failed", "read"
+  sentAt: timestamp("sent_at"),
+  deliveredAt: timestamp("delivered_at"),
+  readAt: timestamp("read_at"),
+  errorMessage: text("error_message"),
+  priority: text("priority").default("normal"), // "low", "normal", "high", "urgent"
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// E. SYSTEM CONFIGURATIONS - Extended
+export const documentTypes = pgTable("document_types", {
+  id: serial("id").primaryKey(),
+  typeName: text("type_name").notNull(),
+  category: text("category"), // "personal", "academic", "professional", "verification"
+  description: text("description"),
+  requiredFields: jsonb("required_fields").$type<string[]>(),
+  validityPeriod: integer("validity_period"), // in months
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const imageTypes = pgTable("image_types", {
+  id: serial("id").primaryKey(),
+  typeName: text("type_name").notNull(),
+  category: text("category"), // "profile", "document", "venue", "event"
+  maxSize: integer("max_size"), // in KB
+  allowedFormats: jsonb("allowed_formats").$type<string[]>(),
+  dimensions: text("dimensions"), // "width x height"
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const awardTypes = pgTable("award_types", {
+  id: serial("id").primaryKey(),
+  awardName: text("award_name").notNull(),
+  awardCategory: text("award_category"), // "achievement", "participation", "excellence"
+  awardLevel: text("award_level"), // "local", "district", "state", "national", "international"
+  awardingBody: text("awarding_body"),
+  criteria: text("criteria"),
+  monetaryValue: decimal("monetary_value", { precision: 10, scale: 2 }),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// F. FACILITY MANAGEMENT SYSTEM - Enhanced
+export const facilityTypes = pgTable("facility_types", {
+  id: serial("id").primaryKey(),
+  typeName: text("type_name").notNull(),
+  category: text("category"), // "indoor", "outdoor", "aquatic", "specialized"
+  description: text("description"),
+  standardEquipment: jsonb("standard_equipment").$type<string[]>(),
+  capacityRange: text("capacity_range"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Note: facilityBookings table already exists in the schema above
+
+// G. REVIEW MANAGEMENT SYSTEM
+export const reviewTypes = pgTable("review_types", {
+  id: serial("id").primaryKey(),
+  reviewName: text("review_name").notNull(),
+  reviewCategory: text("review_category"), // "event", "organization", "user", "facility"
+  description: text("description"),
+  ratingScale: integer("rating_scale").default(5), // 1-5, 1-10, etc.
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const reviewQuestions = pgTable("review_questions", {
+  id: serial("id").primaryKey(),
+  reviewTypeId: integer("review_type_id").references(() => reviewTypes.id).notNull(),
+  questionText: text("question_text").notNull(),
+  questionType: text("question_type"), // "rating", "text", "multiple_choice", "yes_no"
+  options: jsonb("options").$type<string[]>(), // for multiple choice questions
+  isRequired: boolean("is_required").default(false),
+  order: integer("order"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  reviewerId: integer("reviewer_id").references(() => users.id).notNull(),
+  reviewTypeId: integer("review_type_id").references(() => reviewTypes.id).notNull(),
+  entityId: integer("entity_id").notNull(), // ID of event, organization, user, or facility being reviewed
+  entityType: text("entity_type").notNull(), // "event", "organization", "user", "facility"
+  overallRating: decimal("overall_rating", { precision: 3, scale: 2 }),
+  reviewContent: text("review_content"),
+  responses: jsonb("responses").default({}), // answers to review questions
+  isPublic: boolean("is_public").default(true),
+  isVerified: boolean("is_verified").default(false),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// H. FUND MANAGEMENT SYSTEM
+export const fundTypes = pgTable("fund_types", {
+  id: serial("id").primaryKey(),
+  fundName: text("fund_name").notNull(),
+  fundCategory: text("fund_category"), // "government", "private", "sponsorship", "grant"
+  description: text("description"),
+  eligibilityCriteria: text("eligibility_criteria"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const fundAllocations = pgTable("fund_allocations", {
+  id: serial("id").primaryKey(),
+  fundTypeId: integer("fund_type_id").references(() => fundTypes.id).notNull(),
+  allocatedTo: text("allocated_to"), // "organization", "department", "event", "individual"
+  entityId: integer("entity_id").notNull(), // ID of the entity receiving funds
+  allocatedAmount: decimal("allocated_amount", { precision: 15, scale: 2 }).notNull(),
+  allocatedBy: integer("allocated_by").references(() => users.id).notNull(),
+  allocationDate: date("allocation_date").defaultNow(),
+  purpose: text("purpose"),
+  utilizationDeadline: date("utilization_deadline"),
+  status: text("status").default("allocated"), // "allocated", "utilized", "returned", "expired"
+  utilizationReport: text("utilization_report"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// I. NEWS FEED MANAGEMENT SYSTEM
+export const newsPosts = pgTable("news_posts", {
+  id: serial("id").primaryKey(),
+  authorId: integer("author_id").references(() => users.id).notNull(),
+  organizationId: integer("organization_id").references(() => userOrganizations.id),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  postType: text("post_type"), // "news", "announcement", "update", "achievement"
+  targetAudience: text("target_audience"), // "all", "location", "organization", "skill", "service"
+  targetCriteria: jsonb("target_criteria").default({}), // filtering criteria
+  images: jsonb("images").$type<string[]>(),
+  tags: jsonb("tags").$type<string[]>(),
+  isPublished: boolean("is_published").default(false),
+  publishDate: timestamp("publish_date"),
+  isPinned: boolean("is_pinned").default(false),
+  viewCount: integer("view_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// J. MENU SECURITY SYSTEM
+export const menus = pgTable("menus", {
+  id: serial("id").primaryKey(),
+  menuName: text("menu_name").notNull(),
+  menuPath: text("menu_path"),
+  parentMenuId: integer("parent_menu_id").references(() => menus.id),
+  icon: text("icon"),
+  order: integer("order"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const menuRoleMappings = pgTable("menu_role_mappings", {
+  id: serial("id").primaryKey(),
+  menuId: integer("menu_id").references(() => menus.id).notNull(),
+  roleId: integer("role_id").references(() => roles.id).notNull(),
+  canView: boolean("can_view").default(true),
+  canEdit: boolean("can_edit").default(false),
+  canDelete: boolean("can_delete").default(false),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// K. CERTIFICATE MANAGEMENT SYSTEM
+export const certificateTypes = pgTable("certificate_types", {
+  id: serial("id").primaryKey(),
+  certificateName: text("certificate_name").notNull(),
+  certificateCategory: text("certificate_category"), // "achievement", "participation", "completion", "qualification"
+  template: text("template"), // certificate template design
+  requiredFields: jsonb("required_fields").$type<string[]>(),
+  validityPeriod: integer("validity_period"), // in months, null for lifetime
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Note: certificates table already exists in the schema above
+
+// ============================================================================
+// INSERT SCHEMAS FOR COMPREHENSIVE MODULES
+// ============================================================================
+
+// A. Registration Management System Insert Schemas
+export const insertUserSkillSchema = createInsertSchema(userSkills).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertUserServiceSchema = createInsertSchema(userServices).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertUserAwardSchema = createInsertSchema(userAwards).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertUserDocumentSchema = createInsertSchema(userDocuments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertUserReferenceSchema = createInsertSchema(userReferences).omit({
+  id: true,
+  createdAt: true
+});
+export const insertOrganizationDepartmentSchema = createInsertSchema(organizationDepartments).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertOrganizationDepartmentUserSchema = createInsertSchema(organizationDepartmentUsers).omit({
+  id: true,
+  createdAt: true
+});
+export const insertOrganizationServiceSchema = createInsertSchema(organizationServices).omit({
+  id: true,
+  createdAt: true
+});
+export const insertOrganizationAchievementSchema = createInsertSchema(organizationAchievements).omit({
+  id: true,
+  createdAt: true
+});
+
+// B. Verification Management System Insert Schemas
+export const insertVerificationTypeSchema = createInsertSchema(verificationTypes).omit({
+  id: true,
+  createdAt: true
+});
+export const insertVerificationRequestSchema = createInsertSchema(verificationRequests).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+// C. Event Management System Insert Schemas
+export const insertEventVenueSchema = createInsertSchema(eventVenues).omit({
+  id: true,
+  createdAt: true
+});
+export const insertEventActivitySchema = createInsertSchema(eventActivities).omit({
+  id: true,
+  createdAt: true
+});
+
+// D. Notification Management System Insert Schemas
+export const insertNotificationTemplateSchema = createInsertSchema(notificationTemplates).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertNotificationSchema = createInsertSchema(notifications).omit({
+  id: true,
+  createdAt: true
+});
+
+// E. System Configurations Insert Schemas
+export const insertDocumentTypeSchema = createInsertSchema(documentTypes).omit({
+  id: true,
+  createdAt: true
+});
+export const insertImageTypeSchema = createInsertSchema(imageTypes).omit({
+  id: true,
+  createdAt: true
+});
+export const insertAwardTypeSchema = createInsertSchema(awardTypes).omit({
+  id: true,
+  createdAt: true
+});
+
+// F. Facility Management System Insert Schemas
+export const insertFacilityTypeSchema = createInsertSchema(facilityTypes).omit({
+  id: true,
+  createdAt: true
+});
+// Note: insertFacilityBookingSchema already exists in the schema above
+
+// G. Review Management System Insert Schemas
+export const insertReviewTypeSchema = createInsertSchema(reviewTypes).omit({
+  id: true,
+  createdAt: true
+});
+export const insertReviewQuestionSchema = createInsertSchema(reviewQuestions).omit({
+  id: true,
+  createdAt: true
+});
+export const insertReviewSchema = createInsertSchema(reviews).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+// H. Fund Management System Insert Schemas
+export const insertFundTypeSchema = createInsertSchema(fundTypes).omit({
+  id: true,
+  createdAt: true
+});
+export const insertFundAllocationSchema = createInsertSchema(fundAllocations).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+// I. News Feed Management System Insert Schemas
+export const insertNewsPostSchema = createInsertSchema(newsPosts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+
+// J. Menu Security System Insert Schemas
+export const insertMenuSchema = createInsertSchema(menus).omit({
+  id: true,
+  createdAt: true
+});
+export const insertMenuRoleMappingSchema = createInsertSchema(menuRoleMappings).omit({
+  id: true,
+  createdAt: true
+});
+
+// K. Certificate Management System Insert Schemas
+export const insertCertificateTypeSchema = createInsertSchema(certificateTypes).omit({
+  id: true,
+  createdAt: true
+});
+// Note: insertCertificateSchema already exists in the schema above
+
+// ============================================================================
+// EXPORT TYPES FOR COMPREHENSIVE MODULES
+// ============================================================================
+
+// A. Registration Management System Types
+export type UserSkill = typeof userSkills.$inferSelect;
+export type InsertUserSkill = z.infer<typeof insertUserSkillSchema>;
+
+export type UserService = typeof userServices.$inferSelect;
+export type InsertUserService = z.infer<typeof insertUserServiceSchema>;
+
+export type UserAward = typeof userAwards.$inferSelect;
+export type InsertUserAward = z.infer<typeof insertUserAwardSchema>;
+
+export type UserDocument = typeof userDocuments.$inferSelect;
+export type InsertUserDocument = z.infer<typeof insertUserDocumentSchema>;
+
+export type UserReference = typeof userReferences.$inferSelect;
+export type InsertUserReference = z.infer<typeof insertUserReferenceSchema>;
+
+export type OrganizationDepartment = typeof organizationDepartments.$inferSelect;
+export type InsertOrganizationDepartment = z.infer<typeof insertOrganizationDepartmentSchema>;
+
+export type OrganizationDepartmentUser = typeof organizationDepartmentUsers.$inferSelect;
+export type InsertOrganizationDepartmentUser = z.infer<typeof insertOrganizationDepartmentUserSchema>;
+
+export type OrganizationService = typeof organizationServices.$inferSelect;
+export type InsertOrganizationService = z.infer<typeof insertOrganizationServiceSchema>;
+
+export type OrganizationAchievement = typeof organizationAchievements.$inferSelect;
+export type InsertOrganizationAchievement = z.infer<typeof insertOrganizationAchievementSchema>;
+
+// B. Verification Management System Types
+export type VerificationType = typeof verificationTypes.$inferSelect;
+export type InsertVerificationType = z.infer<typeof insertVerificationTypeSchema>;
+
+export type VerificationRequest = typeof verificationRequests.$inferSelect;
+export type InsertVerificationRequest = z.infer<typeof insertVerificationRequestSchema>;
+
+// C. Event Management System Types
+export type EventVenue = typeof eventVenues.$inferSelect;
+export type InsertEventVenue = z.infer<typeof insertEventVenueSchema>;
+
+export type EventActivity = typeof eventActivities.$inferSelect;
+export type InsertEventActivity = z.infer<typeof insertEventActivitySchema>;
+
+// D. Notification Management System Types
+export type NotificationTemplate = typeof notificationTemplates.$inferSelect;
+export type InsertNotificationTemplate = z.infer<typeof insertNotificationTemplateSchema>;
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = z.infer<typeof insertNotificationSchema>;
+
+// E. System Configurations Types
+export type DocumentType = typeof documentTypes.$inferSelect;
+export type InsertDocumentType = z.infer<typeof insertDocumentTypeSchema>;
+
+export type ImageType = typeof imageTypes.$inferSelect;
+export type InsertImageType = z.infer<typeof insertImageTypeSchema>;
+
+export type AwardType = typeof awardTypes.$inferSelect;
+export type InsertAwardType = z.infer<typeof insertAwardTypeSchema>;
+
+// F. Facility Management System Types
+export type FacilityType = typeof facilityTypes.$inferSelect;
+export type InsertFacilityType = z.infer<typeof insertFacilityTypeSchema>;
+
+// Note: FacilityBooking and InsertFacilityBooking types already exist above
+
+// G. Review Management System Types
+export type ReviewType = typeof reviewTypes.$inferSelect;
+export type InsertReviewType = z.infer<typeof insertReviewTypeSchema>;
+
+export type ReviewQuestion = typeof reviewQuestions.$inferSelect;
+export type InsertReviewQuestion = z.infer<typeof insertReviewQuestionSchema>;
+
+export type Review = typeof reviews.$inferSelect;
+export type InsertReview = z.infer<typeof insertReviewSchema>;
+
+// H. Fund Management System Types
+export type FundType = typeof fundTypes.$inferSelect;
+export type InsertFundType = z.infer<typeof insertFundTypeSchema>;
+
+export type FundAllocation = typeof fundAllocations.$inferSelect;
+export type InsertFundAllocation = z.infer<typeof insertFundAllocationSchema>;
+
+// I. News Feed Management System Types
+export type NewsPost = typeof newsPosts.$inferSelect;
+export type InsertNewsPost = z.infer<typeof insertNewsPostSchema>;
+
+// J. Menu Security System Types
+export type Menu = typeof menus.$inferSelect;
+export type InsertMenu = z.infer<typeof insertMenuSchema>;
+
+export type MenuRoleMapping = typeof menuRoleMappings.$inferSelect;
+export type InsertMenuRoleMapping = z.infer<typeof insertMenuRoleMappingSchema>;
+
+// K. Certificate Management System Types
+export type CertificateType = typeof certificateTypes.$inferSelect;
+export type InsertCertificateType = z.infer<typeof insertCertificateTypeSchema>;
+
+// Note: Certificate and InsertCertificate types already exist above
+
