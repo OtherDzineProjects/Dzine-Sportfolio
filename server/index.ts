@@ -62,6 +62,14 @@ app.use((req, res, next) => {
 
   // Initialize seed data for approval system
   await seedInitialData();
+  
+  // Add scoring system demo data
+  try {
+    const { seedScoringData } = await import("./scoring-seed");
+    await seedScoringData();
+  } catch (error) {
+    console.log("Scoring data already exists or failed to seed:", error);
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;

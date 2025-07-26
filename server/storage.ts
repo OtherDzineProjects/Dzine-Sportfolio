@@ -63,7 +63,38 @@ import {
   type OrganizationTag,
   type InsertOrganizationTag,
   type OrganizationHierarchy,
-  type InsertOrganizationHierarchy
+  type InsertOrganizationHierarchy,
+  // Scoring system imports
+  teams,
+  teamMembers,
+  teamMatches,
+  matchEvents,
+  playerMatchStats,
+  teamMatchStats,
+  standings,
+  playerSeasonStats,
+  teamSeasonStats,
+  matchCommentary,
+  type Team,
+  type InsertTeam,
+  type TeamMember,
+  type InsertTeamMember,
+  type TeamMatch,
+  type InsertTeamMatch,
+  type MatchEvent,
+  type InsertMatchEvent,
+  type PlayerMatchStats,
+  type InsertPlayerMatchStats,
+  type TeamMatchStats,
+  type InsertTeamMatchStats,
+  type Standings,
+  type InsertStandings,
+  type PlayerSeasonStats,
+  type InsertPlayerSeasonStats,
+  type TeamSeasonStats,
+  type InsertTeamSeasonStats,
+  type MatchCommentary,
+  type InsertMatchCommentary
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, gte, lte, desc, asc } from "drizzle-orm";
@@ -220,6 +251,61 @@ export interface IStorage {
   getOrganizationChildren(parentId: number): Promise<UserOrganization[]>;
   getOrganizationParent(childId: number): Promise<UserOrganization | undefined>;
   getAllUserOrganizations(): Promise<UserOrganization[]>;
+  
+  // Sports Scoring System - Teams
+  createTeam(team: InsertTeam): Promise<Team>;
+  getTeams(): Promise<Team[]>;
+  getTeam(id: number): Promise<Team | undefined>;
+  getTeamsBySport(sportCategoryId: number): Promise<Team[]>;
+  getTeamsByOrganization(organizationId: number): Promise<Team[]>;
+  updateTeam(id: number, updates: Partial<Team>): Promise<Team>;
+  
+  // Team Members
+  addTeamMember(member: InsertTeamMember): Promise<TeamMember>;
+  getTeamMembers(teamId: number): Promise<TeamMember[]>;
+  getUserTeams(userId: number): Promise<TeamMember[]>;
+  updateTeamMember(id: number, updates: Partial<TeamMember>): Promise<TeamMember>;
+  removeTeamMember(id: number): Promise<void>;
+  
+  // Team Matches
+  createTeamMatch(match: InsertTeamMatch): Promise<TeamMatch>;
+  getTeamMatches(teamId?: number, eventId?: number): Promise<TeamMatch[]>;
+  getTeamMatch(id: number): Promise<TeamMatch | undefined>;
+  updateTeamMatch(id: number, updates: Partial<TeamMatch>): Promise<TeamMatch>;
+  getLiveMatches(): Promise<TeamMatch[]>;
+  
+  // Match Events
+  addMatchEvent(event: InsertMatchEvent): Promise<MatchEvent>;
+  getMatchEvents(matchId: number): Promise<MatchEvent[]>;
+  updateMatchEvent(id: number, updates: Partial<MatchEvent>): Promise<MatchEvent>;
+  deleteMatchEvent(id: number): Promise<void>;
+  
+  // Match Statistics
+  createPlayerMatchStats(stats: InsertPlayerMatchStats): Promise<PlayerMatchStats>;
+  getPlayerMatchStats(matchId: number, playerId?: number): Promise<PlayerMatchStats[]>;
+  updatePlayerMatchStats(id: number, updates: Partial<PlayerMatchStats>): Promise<PlayerMatchStats>;
+  
+  createTeamMatchStats(stats: InsertTeamMatchStats): Promise<TeamMatchStats>;
+  getTeamMatchStats(matchId: number, teamId?: number): Promise<TeamMatchStats[]>;
+  updateTeamMatchStats(id: number, updates: Partial<TeamMatchStats>): Promise<TeamMatchStats>;
+  
+  // Standings
+  createStandings(standings: InsertStandings): Promise<Standings>;
+  getStandings(eventId: number, groupName?: string): Promise<Standings[]>;
+  updateStandings(id: number, updates: Partial<Standings>): Promise<Standings>;
+  
+  // Season Statistics
+  getPlayerSeasonStats(playerId: number, season?: string): Promise<PlayerSeasonStats[]>;
+  createPlayerSeasonStats(stats: InsertPlayerSeasonStats): Promise<PlayerSeasonStats>;
+  updatePlayerSeasonStats(playerId: number, teamId: number, season: string, updates: Partial<PlayerSeasonStats>): Promise<PlayerSeasonStats>;
+  
+  getTeamSeasonStats(teamId: number, season?: string): Promise<TeamSeasonStats[]>;
+  createTeamSeasonStats(stats: InsertTeamSeasonStats): Promise<TeamSeasonStats>;
+  updateTeamSeasonStats(teamId: number, season: string, updates: Partial<TeamSeasonStats>): Promise<TeamSeasonStats>;
+  
+  // Match Commentary
+  addMatchCommentary(commentary: InsertMatchCommentary): Promise<MatchCommentary>;
+  getMatchCommentary(matchId: number): Promise<MatchCommentary[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1332,6 +1418,306 @@ export class DatabaseStorage implements IStorage {
       .from(userOrganizations)
       .where(eq(userOrganizations.isActive, true))
       .orderBy(asc(userOrganizations.name));
+  }
+
+  // ============================================================================
+  // SPORTS SCORING SYSTEM IMPLEMENTATION
+  // ============================================================================
+
+  // Teams
+  async createTeam(team: InsertTeam): Promise<Team> {
+    const [newTeam] = await db
+      .insert(teams)
+      .values(team)
+      .returning();
+    return newTeam;
+  }
+
+  async getTeams(): Promise<Team[]> {
+    return await db.select().from(teams);
+  }
+
+  async getTeam(id: number): Promise<Team | undefined> {
+    const [team] = await db.select().from(teams).where(eq(teams.id, id));
+    return team;
+  }
+
+  async getTeamsBySport(sportCategoryId: number): Promise<Team[]> {
+    return await db.select().from(teams).where(eq(teams.sportCategoryId, sportCategoryId));
+  }
+
+  async getTeamsByOrganization(organizationId: number): Promise<Team[]> {
+    return await db.select().from(teams).where(eq(teams.organizationId, organizationId));
+  }
+
+  async updateTeam(id: number, updates: Partial<Team>): Promise<Team> {
+    const [team] = await db
+      .update(teams)
+      .set(updates)
+      .where(eq(teams.id, id))
+      .returning();
+    return team;
+  }
+
+  // Team Members
+  async addTeamMember(member: InsertTeamMember): Promise<TeamMember> {
+    const [newMember] = await db
+      .insert(teamMembers)
+      .values(member)
+      .returning();
+    return newMember;
+  }
+
+  async getTeamMembers(teamId: number): Promise<TeamMember[]> {
+    return await db.select().from(teamMembers).where(eq(teamMembers.teamId, teamId));
+  }
+
+  async getUserTeams(userId: number): Promise<TeamMember[]> {
+    return await db.select().from(teamMembers).where(eq(teamMembers.userId, userId));
+  }
+
+  async updateTeamMember(id: number, updates: Partial<TeamMember>): Promise<TeamMember> {
+    const [member] = await db
+      .update(teamMembers)
+      .set(updates)
+      .where(eq(teamMembers.id, id))
+      .returning();
+    return member;
+  }
+
+  async removeTeamMember(id: number): Promise<void> {
+    await db.delete(teamMembers).where(eq(teamMembers.id, id));
+  }
+
+  // Team Matches
+  async createTeamMatch(match: InsertTeamMatch): Promise<TeamMatch> {
+    const [newMatch] = await db
+      .insert(teamMatches)
+      .values(match)
+      .returning();
+    return newMatch;
+  }
+
+  async getTeamMatches(teamId?: number, eventId?: number): Promise<TeamMatch[]> {
+    const { or } = await import("drizzle-orm");
+    let query = db.select().from(teamMatches);
+    
+    if (teamId) {
+      query = query.where(
+        or(
+          eq(teamMatches.homeTeamId, teamId),
+          eq(teamMatches.awayTeamId, teamId)
+        )
+      );
+    }
+    
+    if (eventId) {
+      query = query.where(eq(teamMatches.eventId, eventId));
+    }
+    
+    return await query;
+  }
+
+  async getTeamMatch(id: number): Promise<TeamMatch | undefined> {
+    const [match] = await db.select().from(teamMatches).where(eq(teamMatches.id, id));
+    return match;
+  }
+
+  async updateTeamMatch(id: number, updates: Partial<TeamMatch>): Promise<TeamMatch> {
+    const [match] = await db
+      .update(teamMatches)
+      .set(updates)
+      .where(eq(teamMatches.id, id))
+      .returning();
+    return match;
+  }
+
+  async getLiveMatches(): Promise<TeamMatch[]> {
+    return await db.select().from(teamMatches).where(eq(teamMatches.status, 'live'));
+  }
+
+  // Match Events
+  async addMatchEvent(event: InsertMatchEvent): Promise<MatchEvent> {
+    const [newEvent] = await db
+      .insert(matchEvents)
+      .values(event)
+      .returning();
+    return newEvent;
+  }
+
+  async getMatchEvents(matchId: number): Promise<MatchEvent[]> {
+    return await db.select().from(matchEvents).where(eq(matchEvents.matchId, matchId));
+  }
+
+  async updateMatchEvent(id: number, updates: Partial<MatchEvent>): Promise<MatchEvent> {
+    const [event] = await db
+      .update(matchEvents)
+      .set(updates)
+      .where(eq(matchEvents.id, id))
+      .returning();
+    return event;
+  }
+
+  async deleteMatchEvent(id: number): Promise<void> {
+    await db.delete(matchEvents).where(eq(matchEvents.id, id));
+  }
+
+  // Match Statistics
+  async createPlayerMatchStats(stats: InsertPlayerMatchStats): Promise<PlayerMatchStats> {
+    const [newStats] = await db
+      .insert(playerMatchStats)
+      .values(stats)
+      .returning();
+    return newStats;
+  }
+
+  async getPlayerMatchStats(matchId: number, playerId?: number): Promise<PlayerMatchStats[]> {
+    let query = db.select().from(playerMatchStats).where(eq(playerMatchStats.matchId, matchId));
+    
+    if (playerId) {
+      query = query.where(eq(playerMatchStats.playerId, playerId));
+    }
+    
+    return await query;
+  }
+
+  async updatePlayerMatchStats(id: number, updates: Partial<PlayerMatchStats>): Promise<PlayerMatchStats> {
+    const [stats] = await db
+      .update(playerMatchStats)
+      .set(updates)
+      .where(eq(playerMatchStats.id, id))
+      .returning();
+    return stats;
+  }
+
+  async createTeamMatchStats(stats: InsertTeamMatchStats): Promise<TeamMatchStats> {
+    const [newStats] = await db
+      .insert(teamMatchStats)
+      .values(stats)
+      .returning();
+    return newStats;
+  }
+
+  async getTeamMatchStats(matchId: number, teamId?: number): Promise<TeamMatchStats[]> {
+    let query = db.select().from(teamMatchStats).where(eq(teamMatchStats.matchId, matchId));
+    
+    if (teamId) {
+      query = query.where(eq(teamMatchStats.teamId, teamId));
+    }
+    
+    return await query;
+  }
+
+  async updateTeamMatchStats(id: number, updates: Partial<TeamMatchStats>): Promise<TeamMatchStats> {
+    const [stats] = await db
+      .update(teamMatchStats)
+      .set(updates)
+      .where(eq(teamMatchStats.id, id))
+      .returning();
+    return stats;
+  }
+
+  // Standings
+  async createStandings(standingsData: InsertStandings): Promise<Standings> {
+    const [newStandings] = await db
+      .insert(standings)
+      .values(standingsData)
+      .returning();
+    return newStandings;
+  }
+
+  async getStandings(eventId: number, groupName?: string): Promise<Standings[]> {
+    let query = db.select().from(standings).where(eq(standings.eventId, eventId));
+    
+    if (groupName) {
+      query = query.where(eq(standings.groupName, groupName));
+    }
+    
+    return await query.orderBy(desc(standings.points), desc(standings.goalDifference));
+  }
+
+  async updateStandings(id: number, updates: Partial<Standings>): Promise<Standings> {
+    const [standing] = await db
+      .update(standings)
+      .set(updates)
+      .where(eq(standings.id, id))
+      .returning();
+    return standing;
+  }
+
+  // Season Statistics
+  async getPlayerSeasonStats(playerId: number, season?: string): Promise<PlayerSeasonStats[]> {
+    let query = db.select().from(playerSeasonStats).where(eq(playerSeasonStats.playerId, playerId));
+    
+    if (season) {
+      query = query.where(eq(playerSeasonStats.season, season));
+    }
+    
+    return await query;
+  }
+
+  async createPlayerSeasonStats(stats: InsertPlayerSeasonStats): Promise<PlayerSeasonStats> {
+    const [newStats] = await db
+      .insert(playerSeasonStats)
+      .values(stats)
+      .returning();
+    return newStats;
+  }
+
+  async updatePlayerSeasonStats(playerId: number, teamId: number, season: string, updates: Partial<PlayerSeasonStats>): Promise<PlayerSeasonStats> {
+    const [stats] = await db
+      .update(playerSeasonStats)
+      .set(updates)
+      .where(and(
+        eq(playerSeasonStats.playerId, playerId),
+        eq(playerSeasonStats.teamId, teamId),
+        eq(playerSeasonStats.season, season)
+      ))
+      .returning();
+    return stats;
+  }
+
+  async getTeamSeasonStats(teamId: number, season?: string): Promise<TeamSeasonStats[]> {
+    let query = db.select().from(teamSeasonStats).where(eq(teamSeasonStats.teamId, teamId));
+    
+    if (season) {
+      query = query.where(eq(teamSeasonStats.season, season));
+    }
+    
+    return await query;
+  }
+
+  async createTeamSeasonStats(stats: InsertTeamSeasonStats): Promise<TeamSeasonStats> {
+    const [newStats] = await db
+      .insert(teamSeasonStats)
+      .values(stats)
+      .returning();
+    return newStats;
+  }
+
+  async updateTeamSeasonStats(teamId: number, season: string, updates: Partial<TeamSeasonStats>): Promise<TeamSeasonStats> {
+    const [stats] = await db
+      .update(teamSeasonStats)
+      .set(updates)
+      .where(and(
+        eq(teamSeasonStats.teamId, teamId),
+        eq(teamSeasonStats.season, season)
+      ))
+      .returning();
+    return stats;
+  }
+
+  // Match Commentary
+  async addMatchCommentary(commentary: InsertMatchCommentary): Promise<MatchCommentary> {
+    const [newCommentary] = await db
+      .insert(matchCommentary)
+      .values(commentary)
+      .returning();
+    return newCommentary;
+  }
+
+  async getMatchCommentary(matchId: number): Promise<MatchCommentary[]> {
+    return await db.select().from(matchCommentary).where(eq(matchCommentary.matchId, matchId));
   }
 }
 

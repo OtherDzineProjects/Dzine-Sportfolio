@@ -3,7 +3,25 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { insertUserSchema, insertAthleteProfileSchema, insertFacilityBookingSchema, insertEventSchema, insertUserApprovalSchema, insertRoleSchema, insertPermissionSchema } from "@shared/schema";
+import { 
+  insertUserSchema, 
+  insertAthleteProfileSchema, 
+  insertFacilityBookingSchema, 
+  insertEventSchema, 
+  insertUserApprovalSchema, 
+  insertRoleSchema, 
+  insertPermissionSchema,
+  insertTeamSchema,
+  insertTeamMemberSchema,
+  insertTeamMatchSchema,
+  insertMatchEventSchema,
+  insertPlayerMatchStatsSchema,
+  insertTeamMatchStatsSchema,
+  insertStandingsSchema,
+  insertPlayerSeasonStatsSchema,
+  insertTeamSeasonStatsSchema,
+  insertMatchCommentarySchema
+} from "@shared/schema";
 import { z } from "zod";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
@@ -1812,6 +1830,205 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error recording live score:", error);
       res.status(500).json({ message: "Failed to record live score" });
+    }
+  });
+
+  // ============================================================================
+  // SPORTS SCORING SYSTEM API ROUTES
+  // ============================================================================
+
+  // Teams Management
+  app.post("/api/teams", authenticateToken, async (req, res) => {
+    try {
+      const teamData = insertTeamSchema.parse(req.body);
+      const team = await storage.createTeam(teamData);
+      res.json(team);
+    } catch (error: any) {
+      res.status(400).json({ message: "Failed to create team", error: error.message });
+    }
+  });
+
+  app.get("/api/teams", async (req, res) => {
+    try {
+      const { sportId, organizationId } = req.query;
+      let teams;
+      
+      if (sportId) {
+        teams = await storage.getTeamsBySport(Number(sportId));
+      } else if (organizationId) {
+        teams = await storage.getTeamsByOrganization(Number(organizationId));
+      } else {
+        teams = await storage.getTeams();
+      }
+      
+      res.json(teams);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch teams", error: error.message });
+    }
+  });
+
+  app.get("/api/teams/:id", async (req, res) => {
+    try {
+      const team = await storage.getTeam(Number(req.params.id));
+      if (!team) {
+        return res.status(404).json({ message: "Team not found" });
+      }
+      res.json(team);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch team", error: error.message });
+    }
+  });
+
+  app.put("/api/teams/:id", authenticateToken, async (req, res) => {
+    try {
+      const updates = req.body;
+      const team = await storage.updateTeam(Number(req.params.id), updates);
+      res.json(team);
+    } catch (error: any) {
+      res.status(400).json({ message: "Failed to update team", error: error.message });
+    }
+  });
+
+  // Team Members Management
+  app.post("/api/teams/:teamId/members", authenticateToken, async (req, res) => {
+    try {
+      const memberData = insertTeamMemberSchema.parse({
+        ...req.body,
+        teamId: Number(req.params.teamId)
+      });
+      const member = await storage.addTeamMember(memberData);
+      res.json(member);
+    } catch (error: any) {
+      res.status(400).json({ message: "Failed to add team member", error: error.message });
+    }
+  });
+
+  app.get("/api/teams/:teamId/members", async (req, res) => {
+    try {
+      const members = await storage.getTeamMembers(Number(req.params.teamId));
+      res.json(members);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch team members", error: error.message });
+    }
+  });
+
+  // Team Matches Management
+  app.post("/api/matches", authenticateToken, async (req, res) => {
+    try {
+      const matchData = insertTeamMatchSchema.parse(req.body);
+      const match = await storage.createTeamMatch(matchData);
+      res.json(match);
+    } catch (error: any) {
+      res.status(400).json({ message: "Failed to create match", error: error.message });
+    }
+  });
+
+  app.get("/api/matches", async (req, res) => {
+    try {
+      const { teamId, eventId } = req.query;
+      const matches = await storage.getTeamMatches(
+        teamId ? Number(teamId) : undefined,
+        eventId ? Number(eventId) : undefined
+      );
+      res.json(matches);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch matches", error: error.message });
+    }
+  });
+
+  app.get("/api/matches/live", async (req, res) => {
+    try {
+      const liveMatches = await storage.getLiveMatches();
+      res.json(liveMatches);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch live matches", error: error.message });
+    }
+  });
+
+  app.get("/api/matches/:id", async (req, res) => {
+    try {
+      const match = await storage.getTeamMatch(Number(req.params.id));
+      if (!match) {
+        return res.status(404).json({ message: "Match not found" });
+      }
+      res.json(match);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch match", error: error.message });
+    }
+  });
+
+  app.put("/api/matches/:id", authenticateToken, async (req, res) => {
+    try {
+      const updates = req.body;
+      const match = await storage.updateTeamMatch(Number(req.params.id), updates);
+      res.json(match);
+    } catch (error: any) {
+      res.status(400).json({ message: "Failed to update match", error: error.message });
+    }
+  });
+
+  // Match Events for Live Scoring
+  app.post("/api/matches/:matchId/events", authenticateToken, async (req, res) => {
+    try {
+      const eventData = insertMatchEventSchema.parse({
+        ...req.body,
+        matchId: Number(req.params.matchId),
+        createdBy: (req as any).user.id
+      });
+      const event = await storage.addMatchEvent(eventData);
+      res.json(event);
+    } catch (error: any) {
+      res.status(400).json({ message: "Failed to add match event", error: error.message });
+    }
+  });
+
+  app.get("/api/matches/:matchId/events", async (req, res) => {
+    try {
+      const events = await storage.getMatchEvents(Number(req.params.matchId));
+      res.json(events);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch match events", error: error.message });
+    }
+  });
+
+  // Statistics endpoints
+  app.get("/api/players/:playerId/season-stats", async (req, res) => {
+    try {
+      const { season } = req.query;
+      const stats = await storage.getPlayerSeasonStats(
+        Number(req.params.playerId),
+        season as string
+      );
+      res.json(stats);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch player season stats", error: error.message });
+    }
+  });
+
+  app.get("/api/teams/:teamId/season-stats", async (req, res) => {
+    try {
+      const { season } = req.query;
+      const stats = await storage.getTeamSeasonStats(
+        Number(req.params.teamId),
+        season as string
+      );
+      res.json(stats);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch team season stats", error: error.message });
+    }
+  });
+
+  // Standings
+  app.get("/api/events/:eventId/standings", async (req, res) => {
+    try {
+      const { groupName } = req.query;
+      const standings = await storage.getStandings(
+        Number(req.params.eventId),
+        groupName as string
+      );
+      res.json(standings);
+    } catch (error: any) {
+      res.status(500).json({ message: "Failed to fetch standings", error: error.message });
     }
   });
 

@@ -1538,6 +1538,269 @@ export const certificateTypes = pgTable("certificate_types", {
 // Note: certificates table already exists in the schema above
 
 // ============================================================================
+// L. SPORTS SCORING SYSTEM - Enhanced Team & Statistics Management
+// ============================================================================
+
+// Team Management
+export const teams = pgTable("teams", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  shortName: text("short_name"), // abbreviation like "CSK", "MI"
+  organizationId: integer("organization_id").references(() => userOrganizations.id),
+  sportCategoryId: integer("sport_category_id").references(() => sportsCategories.id).notNull(),
+  teamType: text("team_type").default("club"), // "club", "institutional", "district", "state", "national"
+  homeVenue: text("home_venue"),
+  foundedYear: integer("founded_year"),
+  logo: text("logo"),
+  primaryColor: text("primary_color"),
+  secondaryColor: text("secondary_color"),
+  description: text("description"),
+  coachId: integer("coach_id").references(() => users.id),
+  captainId: integer("captain_id").references(() => users.id),
+  viceCaptainId: integer("vice_captain_id").references(() => users.id),
+  managerId: integer("manager_id").references(() => users.id),
+  status: text("status").default("active"), // "active", "inactive", "disbanded"
+  isVerified: boolean("is_verified").default(false),
+  verifiedBy: integer("verified_by").references(() => users.id),
+  verificationDate: timestamp("verification_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Team Members/Roster
+export const teamMembers = pgTable("team_members", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  position: text("position"), // goalkeeper, defender, midfielder, forward, etc.
+  jerseyNumber: integer("jersey_number"),
+  joinDate: timestamp("join_date").defaultNow(),
+  leaveDate: timestamp("leave_date"),
+  isActive: boolean("is_active").default(true),
+  isStarter: boolean("is_starter").default(false),
+  memberType: text("member_type").default("player"), // "player", "coach", "manager", "support_staff"
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Enhanced Match System for Team Sports
+export const teamMatches = pgTable("team_matches", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id),
+  tournamentId: integer("tournament_id"), // for tournament structures
+  homeTeamId: integer("home_team_id").references(() => teams.id).notNull(),
+  awayTeamId: integer("away_team_id").references(() => teams.id).notNull(),
+  facilityId: integer("facility_id").references(() => facilities.id),
+  matchType: text("match_type").default("regular"), // "regular", "playoff", "final", "friendly"
+  round: text("round"), // "group_stage", "round_16", "quarter_final", "semi_final", "final"
+  matchNumber: integer("match_number"),
+  scheduledTime: timestamp("scheduled_time").notNull(),
+  actualStartTime: timestamp("actual_start_time"),
+  actualEndTime: timestamp("actual_end_time"),
+  status: text("status").default("scheduled"), // "scheduled", "live", "completed", "cancelled", "postponed"
+  winnerTeamId: integer("winner_team_id").references(() => teams.id),
+  homeScore: integer("home_score").default(0),
+  awayScore: integer("away_score").default(0),
+  extraTimeScore: jsonb("extra_time_score"), // for sports with overtime
+  penaltyScore: jsonb("penalty_score"), // for penalty shootouts
+  matchDetails: jsonb("match_details").default({}), // sport-specific details
+  weather: text("weather"),
+  attendance: integer("attendance"),
+  refereeId: integer("referee_id").references(() => users.id),
+  assistantReferee1Id: integer("assistant_referee1_id").references(() => users.id),
+  assistantReferee2Id: integer("assistant_referee2_id").references(() => users.id),
+  notes: text("notes"),
+  liveStreamUrl: text("live_stream_url"),
+  highlightsUrl: text("highlights_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Live Match Events (Goals, Cards, Substitutions, etc.)
+export const matchEvents = pgTable("match_events", {
+  id: serial("id").primaryKey(),
+  matchId: integer("match_id").references(() => teamMatches.id).notNull(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  playerId: integer("player_id").references(() => users.id),
+  eventType: text("event_type").notNull(), // "goal", "card", "substitution", "timeout", "injury", "penalty"
+  eventSubtype: text("event_subtype"), // "yellow_card", "red_card", "field_goal", "free_throw", etc.
+  minute: integer("minute"),
+  period: text("period"), // "first_half", "second_half", "overtime", "set1", "set2", etc.
+  description: text("description"),
+  points: integer("points").default(0), // points awarded for this event
+  assistedBy: integer("assisted_by").references(() => users.id),
+  replacedPlayerId: integer("replaced_player_id").references(() => users.id), // for substitutions
+  coordinates: jsonb("coordinates"), // field position for location-based events
+  videoTimestamp: integer("video_timestamp"), // seconds from match start
+  isReversed: boolean("is_reversed").default(false), // if event was reversed/cancelled
+  reversedAt: timestamp("reversed_at"),
+  reversedBy: integer("reversed_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  createdBy: integer("created_by").references(() => users.id).notNull()
+});
+
+// Player Statistics per Match
+export const playerMatchStats = pgTable("player_match_stats", {
+  id: serial("id").primaryKey(),
+  matchId: integer("match_id").references(() => teamMatches.id).notNull(),
+  playerId: integer("player_id").references(() => users.id).notNull(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  minutesPlayed: integer("minutes_played").default(0),
+  isStarter: boolean("is_starter").default(false),
+  position: text("position"),
+  jerseyNumber: integer("jersey_number"),
+  // General Stats
+  goals: integer("goals").default(0),
+  assists: integer("assists").default(0),
+  points: integer("points").default(0),
+  // Sport-specific stats (stored as JSON for flexibility)
+  sportSpecificStats: jsonb("sport_specific_stats").default({}),
+  // Performance metrics
+  rating: decimal("rating", { precision: 3, scale: 1 }), // out of 10
+  passAccuracy: decimal("pass_accuracy", { precision: 5, scale: 2 }), // percentage
+  // Disciplinary
+  yellowCards: integer("yellow_cards").default(0),
+  redCards: integer("red_cards").default(0),
+  fouls: integer("fouls").default(0),
+  // Timestamps
+  timeIn: timestamp("time_in"),
+  timeOut: timestamp("time_out"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Team Statistics per Match
+export const teamMatchStats = pgTable("team_match_stats", {
+  id: serial("id").primaryKey(),
+  matchId: integer("match_id").references(() => teamMatches.id).notNull(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  isHome: boolean("is_home").notNull(),
+  finalScore: integer("final_score").default(0),
+  possession: decimal("possession", { precision: 5, scale: 2 }), // percentage
+  shots: integer("shots").default(0),
+  shotsOnTarget: integer("shots_on_target").default(0),
+  corners: integer("corners").default(0),
+  fouls: integer("fouls").default(0),
+  yellowCards: integer("yellow_cards").default(0),
+  redCards: integer("red_cards").default(0),
+  offside: integer("offside").default(0),
+  // Sport-specific team stats
+  sportSpecificStats: jsonb("sport_specific_stats").default({}),
+  formationUsed: text("formation_used"),
+  tacticalApproach: text("tactical_approach"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Season/Tournament Standings
+export const standings = pgTable("standings", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id).notNull(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  groupName: text("group_name"), // for group stage tournaments
+  position: integer("position"),
+  matchesPlayed: integer("matches_played").default(0),
+  wins: integer("wins").default(0),
+  draws: integer("draws").default(0),
+  losses: integer("losses").default(0),
+  goalsFor: integer("goals_for").default(0),
+  goalsAgainst: integer("goals_against").default(0),
+  goalDifference: integer("goal_difference").default(0),
+  points: integer("points").default(0),
+  // Additional stats
+  homeWins: integer("home_wins").default(0),
+  homeDraws: integer("home_draws").default(0),
+  homeLosses: integer("home_losses").default(0),
+  awayWins: integer("away_wins").default(0),
+  awayDraws: integer("away_draws").default(0),
+  awayLosses: integer("away_losses").default(0),
+  form: text("form"), // last 5 matches: "WWLDW"
+  streak: text("streak"), // current streak: "3W", "2L", etc.
+  // Sport-specific standings data
+  sportSpecificStats: jsonb("sport_specific_stats").default({}),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Player Season Statistics
+export const playerSeasonStats = pgTable("player_season_stats", {
+  id: serial("id").primaryKey(),
+  playerId: integer("player_id").references(() => users.id).notNull(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  eventId: integer("event_id").references(() => events.id), // season/tournament
+  sportCategoryId: integer("sport_category_id").references(() => sportsCategories.id).notNull(),
+  season: text("season").notNull(), // "2024-25", "2025"
+  // Appearances
+  matchesPlayed: integer("matches_played").default(0),
+  minutesPlayed: integer("minutes_played").default(0),
+  starts: integer("starts").default(0),
+  substitutions: integer("substitutions").default(0),
+  // Performance
+  goals: integer("goals").default(0),
+  assists: integer("assists").default(0),
+  points: integer("points").default(0),
+  averageRating: decimal("average_rating", { precision: 3, scale: 1 }),
+  // Disciplinary
+  yellowCards: integer("yellow_cards").default(0),
+  redCards: integer("red_cards").default(0),
+  // Sport-specific seasonal stats
+  sportSpecificStats: jsonb("sport_specific_stats").default({}),
+  // Records and achievements
+  personalBests: jsonb("personal_bests").default({}),
+  seasonAwards: jsonb("season_awards").default([]),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Team Season Statistics
+export const teamSeasonStats = pgTable("team_season_stats", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").references(() => teams.id).notNull(),
+  eventId: integer("event_id").references(() => events.id),
+  sportCategoryId: integer("sport_category_id").references(() => sportsCategories.id).notNull(),
+  season: text("season").notNull(),
+  // Match record
+  matchesPlayed: integer("matches_played").default(0),
+  wins: integer("wins").default(0),
+  draws: integer("draws").default(0),
+  losses: integer("losses").default(0),
+  goalsFor: integer("goals_for").default(0),
+  goalsAgainst: integer("goals_against").default(0),
+  // Performance metrics
+  averagePossession: decimal("average_possession", { precision: 5, scale: 2 }),
+  averageRating: decimal("average_rating", { precision: 3, scale: 1 }),
+  cleanSheets: integer("clean_sheets").default(0),
+  biggestWin: text("biggest_win"),
+  biggestDefeat: text("biggest_defeat"),
+  longestWinStreak: integer("longest_win_streak").default(0),
+  longestUnbeatenStreak: integer("longest_unbeaten_streak").default(0),
+  // Rankings and achievements
+  finalPosition: integer("final_position"),
+  highestPosition: integer("highest_position"),
+  trophiesWon: jsonb("trophies_won").default([]),
+  // Sport-specific team seasonal stats
+  sportSpecificStats: jsonb("sport_specific_stats").default({}),
+  lastUpdated: timestamp("last_updated").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Live Match Commentary/Timeline
+export const matchCommentary = pgTable("match_commentary", {
+  id: serial("id").primaryKey(),
+  matchId: integer("match_id").references(() => teamMatches.id).notNull(),
+  minute: integer("minute"),
+  period: text("period"),
+  commentaryText: text("commentary_text").notNull(),
+  commentaryType: text("commentary_type").default("general"), // "general", "goal", "card", "substitution", "highlight"
+  playerId: integer("player_id").references(() => users.id),
+  teamId: integer("team_id").references(() => teams.id),
+  isAutomated: boolean("is_automated").default(false), // if generated from match events
+  language: text("language").default("en"),
+  createdAt: timestamp("created_at").defaultNow(),
+  createdBy: integer("created_by").references(() => users.id).notNull()
+});
+
+// ============================================================================
 // INSERT SCHEMAS FOR COMPREHENSIVE MODULES
 // ============================================================================
 
@@ -1687,6 +1950,55 @@ export const insertCertificateTypeSchema = createInsertSchema(certificateTypes).
 });
 // Note: insertCertificateSchema already exists in the schema above
 
+// L. Sports Scoring System Insert Schemas
+export const insertTeamSchema = createInsertSchema(teams).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertTeamMemberSchema = createInsertSchema(teamMembers).omit({
+  id: true,
+  createdAt: true
+});
+export const insertTeamMatchSchema = createInsertSchema(teamMatches).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertMatchEventSchema = createInsertSchema(matchEvents).omit({
+  id: true,
+  createdAt: true
+});
+export const insertPlayerMatchStatsSchema = createInsertSchema(playerMatchStats).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertTeamMatchStatsSchema = createInsertSchema(teamMatchStats).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true
+});
+export const insertStandingsSchema = createInsertSchema(standings).omit({
+  id: true,
+  createdAt: true,
+  lastUpdated: true
+});
+export const insertPlayerSeasonStatsSchema = createInsertSchema(playerSeasonStats).omit({
+  id: true,
+  createdAt: true,
+  lastUpdated: true
+});
+export const insertTeamSeasonStatsSchema = createInsertSchema(teamSeasonStats).omit({
+  id: true,
+  createdAt: true,
+  lastUpdated: true
+});
+export const insertMatchCommentarySchema = createInsertSchema(matchCommentary).omit({
+  id: true,
+  createdAt: true
+});
+
 // ============================================================================
 // EXPORT TYPES FOR COMPREHENSIVE MODULES
 // ============================================================================
@@ -1789,4 +2101,35 @@ export type CertificateType = typeof certificateTypes.$inferSelect;
 export type InsertCertificateType = z.infer<typeof insertCertificateTypeSchema>;
 
 // Note: Certificate and InsertCertificate types already exist above
+
+// L. Sports Scoring System Types
+export type Team = typeof teams.$inferSelect;
+export type InsertTeam = z.infer<typeof insertTeamSchema>;
+
+export type TeamMember = typeof teamMembers.$inferSelect;
+export type InsertTeamMember = z.infer<typeof insertTeamMemberSchema>;
+
+export type TeamMatch = typeof teamMatches.$inferSelect;
+export type InsertTeamMatch = z.infer<typeof insertTeamMatchSchema>;
+
+export type MatchEvent = typeof matchEvents.$inferSelect;
+export type InsertMatchEvent = z.infer<typeof insertMatchEventSchema>;
+
+export type PlayerMatchStats = typeof playerMatchStats.$inferSelect;
+export type InsertPlayerMatchStats = z.infer<typeof insertPlayerMatchStatsSchema>;
+
+export type TeamMatchStats = typeof teamMatchStats.$inferSelect;
+export type InsertTeamMatchStats = z.infer<typeof insertTeamMatchStatsSchema>;
+
+export type Standings = typeof standings.$inferSelect;
+export type InsertStandings = z.infer<typeof insertStandingsSchema>;
+
+export type PlayerSeasonStats = typeof playerSeasonStats.$inferSelect;
+export type InsertPlayerSeasonStats = z.infer<typeof insertPlayerSeasonStatsSchema>;
+
+export type TeamSeasonStats = typeof teamSeasonStats.$inferSelect;
+export type InsertTeamSeasonStats = z.infer<typeof insertTeamSeasonStatsSchema>;
+
+export type MatchCommentary = typeof matchCommentary.$inferSelect;
+export type InsertMatchCommentary = z.infer<typeof insertMatchCommentarySchema>;
 

@@ -15,6 +15,7 @@ import Signup from "@/pages/signup";
 import FacilityManagement from "@/pages/facility-management";
 import FixturesManagement from "@/pages/fixtures-management";
 import LiveScoring from "@/pages/live-scoring";
+import TeamsManagement from "@/pages/teams-management";
 import AthleteProfile from "@/pages/athlete-profile";
 import Facilities from "@/pages/facilities";
 import AdminDashboard from "@/pages/admin";
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/facility-management" component={FacilityManagement} />
       <Route path="/fixtures-management" component={FixturesManagement} />
       <Route path="/live-scoring" component={LiveScoring} />
+      <Route path="/teams-management" component={TeamsManagement} />
       <Route path="/athlete-profile" component={AthleteProfile} />
       <Route path="/facilities" component={Facilities} />
       <Route path="/admin" component={AdminDashboard} />

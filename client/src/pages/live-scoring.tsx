@@ -1,656 +1,448 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { authService } from "@/lib/auth";
-import { apiRequest } from "@/lib/queryClient";
-import { 
-  Timer, 
-  Play, 
-  Pause, 
-  Trophy, 
-  TrendingUp,
-  ArrowLeft,
-  Plus,
-  Minus,
-  RotateCcw,
-  CheckCircle,
-  Clock,
-  Users,
-  Award
-} from "lucide-react";
+import { Clock, Play, Pause, Square, Goal, UserPlus, UserMinus, AlertCircle } from "lucide-react";
 
-interface MatchScore {
-  player1Score: number;
-  player2Score: number;
-  sets?: number[][];
-  games?: number[];
-  currentSet?: number;
-  isComplete: boolean;
+interface Team {
+  id: number;
+  name: string;
+  logo?: string;
+  organizationId: number;
+  sportCategoryId: number;
+}
+
+interface TeamMatch {
+  id: number;
+  homeTeamId: number;
+  awayTeamId: number;
+  eventId: number;
+  scheduledDateTime: string;
+  status: string;
+  homeScore: number;
+  awayScore: number;
+  duration: number;
+  venue?: string;
+}
+
+interface MatchEvent {
+  id: number;
+  matchId: number;
+  eventType: string;
+  eventTime: number;
+  playerId?: number;
+  teamId: number;
+  description: string;
+  createdBy: number;
+  createdAt: string;
 }
 
 export default function LiveScoring() {
-  const [, setLocation] = useLocation();
+  const [selectedMatch, setSelectedMatch] = useState<TeamMatch | null>(null);
+  const [newEvent, setNewEvent] = useState({
+    eventType: '',
+    eventTime: 0,
+    playerId: '',
+    teamId: '',
+    description: ''
+  });
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState("matches");
-  const [selectedMatch, setSelectedMatch] = useState<number | null>(null);
-  const [isLive, setIsLive] = useState(false);
-  const [matchTimer, setMatchTimer] = useState(0);
-  const [score, setScore] = useState<MatchScore>({
-    player1Score: 0,
-    player2Score: 0,
-    sets: [],
-    currentSet: 1,
-    isComplete: false
-  });
 
-  useEffect(() => {
-    if (!authService.hasToolAccess("scoring")) {
-      toast({
-        title: "Access Denied",
-        description: "You need a Pro or Enterprise subscription to access this tool.",
-        variant: "destructive",
-      });
-      setLocation("/dashboard");
-      return;
-    }
-  }, [setLocation, toast]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isLive) {
-      interval = setInterval(() => {
-        setMatchTimer(prev => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isLive]);
-
-  const { data: events } = useQuery({
-    queryKey: ["/api/events"],
-  });
-
-  const { data: matches } = useQuery({
-    queryKey: ["/api/events", selectedMatch, "matches"],
-    enabled: !!selectedMatch,
-  });
-
-  const { data: liveMatches } = useQuery({
+  // Fetch live matches
+  const { data: liveMatches = [], isLoading: matchesLoading } = useQuery({
     queryKey: ["/api/matches/live"],
-    refetchInterval: isLive ? 5000 : false,
+    refetchInterval: 5000, // Refresh every 5 seconds
   });
 
-  const updateScoreMutation = useMutation({
-    mutationFn: (data: { matchId: number; score: any; winnerId?: number }) => 
-      apiRequest("POST", `/api/matches/${data.matchId}/score`, {
-        score: data.score,
-        winnerId: data.winnerId
-      }),
+  // Fetch teams
+  const { data: teams = [] } = useQuery<Team[]>({
+    queryKey: ["/api/teams"],
+  });
+
+  // Fetch match events for selected match
+  const { data: matchEvents = [] } = useQuery<MatchEvent[]>({
+    queryKey: ["/api/matches", selectedMatch?.id, "events"],
+    enabled: !!selectedMatch,
+    refetchInterval: 2000, // Refresh every 2 seconds
+  });
+
+  // Add match event mutation
+  const addEventMutation = useMutation({
+    mutationFn: async (eventData: any) => {
+      return apiRequest("POST", `/api/matches/${selectedMatch?.id}/events`, eventData);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/events", selectedMatch, "matches"] });
       toast({
-        title: "Score updated",
-        description: "Match score has been updated successfully.",
+        title: "Success",
+        description: "Match event added successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/matches", selectedMatch?.id, "events"] });
+      setNewEvent({
+        eventType: '',
+        eventTime: 0,
+        playerId: '',
+        teamId: '',
+        description: ''
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add match event",
+        variant: "destructive",
       });
     },
   });
 
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
-    
-    if (hours > 0) {
-      return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const updateScore = (player: 'player1' | 'player2', increment: number) => {
-    setScore(prev => ({
-      ...prev,
-      [player === 'player1' ? 'player1Score' : 'player2Score']: 
-        Math.max(0, prev[player === 'player1' ? 'player1Score' : 'player2Score'] + increment)
-    }));
-  };
-
-  const resetScore = () => {
-    setScore({
-      player1Score: 0,
-      player2Score: 0,
-      sets: [],
-      currentSet: 1,
-      isComplete: false
-    });
-    setMatchTimer(0);
-  };
-
-  const endSet = () => {
-    const newSets = [...(score.sets || [])];
-    newSets.push([score.player1Score, score.player2Score]);
-    
-    setScore(prev => ({
-      ...prev,
-      sets: newSets,
-      player1Score: 0,
-      player2Score: 0,
-      currentSet: (prev.currentSet || 1) + 1
-    }));
-  };
-
-  const completeMatch = (winnerId?: number) => {
-    const finalScore = {
-      ...score,
-      isComplete: true,
-      winner: winnerId,
-      duration: matchTimer,
-      completedAt: new Date().toISOString()
-    };
-
-    if (selectedMatch) {
-      updateScoreMutation.mutate({
-        matchId: selectedMatch,
-        score: finalScore,
-        winnerId
+  // Update match score mutation
+  const updateMatchMutation = useMutation({
+    mutationFn: async ({ matchId, updates }: { matchId: number; updates: any }) => {
+      return apiRequest("PUT", `/api/matches/${matchId}`, updates);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Match updated successfully",
       });
+      queryClient.invalidateQueries({ queryKey: ["/api/matches/live"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update match",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleAddEvent = () => {
+    if (!selectedMatch || !newEvent.eventType || !newEvent.teamId) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
     }
 
-    setScore(prev => ({ ...prev, isComplete: true }));
-    setIsLive(false);
-    
-    toast({
-      title: "Match completed",
-      description: "Match has been marked as complete and results have been saved.",
+    addEventMutation.mutate({
+      eventType: newEvent.eventType,
+      eventTime: newEvent.eventTime,
+      playerId: newEvent.playerId ? Number(newEvent.playerId) : undefined,
+      teamId: Number(newEvent.teamId),
+      description: newEvent.description
     });
   };
 
-  const getCurrentMatches = () => {
-    if (!events) return [];
+  const handleUpdateMatchStatus = (status: string) => {
+    if (!selectedMatch) return;
     
-    const currentMatches = [];
-    for (const event of events) {
-      if (event.status === 'ongoing') {
-        currentMatches.push({
-          eventId: event.id,
-          eventName: event.name,
-          sport: event.sportId,
-          status: 'live'
-        });
-      }
-    }
-    return currentMatches;
+    updateMatchMutation.mutate({
+      matchId: selectedMatch.id,
+      updates: { status }
+    });
   };
+
+  const handleUpdateScore = (type: 'home' | 'away', increment: boolean) => {
+    if (!selectedMatch) return;
+    
+    const currentScore = type === 'home' ? selectedMatch.homeScore : selectedMatch.awayScore;
+    const newScore = increment ? currentScore + 1 : Math.max(0, currentScore - 1);
+    
+    const updates = type === 'home' 
+      ? { homeScore: newScore }
+      : { awayScore: newScore };
+    
+    updateMatchMutation.mutate({
+      matchId: selectedMatch.id,
+      updates
+    });
+  };
+
+  const getTeamName = (teamId: number) => {
+    const team = teams.find(t => t.id === teamId);
+    return team?.name || `Team ${teamId}`;
+  };
+
+  const getEventIcon = (eventType: string) => {
+    switch (eventType) {
+      case 'goal': return <Goal className="w-4 h-4 text-green-600" />;
+      case 'substitution': return <UserPlus className="w-4 h-4 text-blue-600" />;
+      case 'red_card': return <Square className="w-4 h-4 text-red-600" />;
+      case 'yellow_card': return <Square className="w-4 h-4 text-yellow-600" />;
+      default: return <AlertCircle className="w-4 h-4 text-gray-600" />;
+    }
+  };
+
+  if (matchesLoading) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => setLocation("/dashboard")}>
-                <ArrowLeft size={20} />
-              </Button>
-              <div className="flex items-center space-x-2">
-                <Timer className="text-red-600" size={24} />
-                <h1 className="font-poppins font-bold text-xl text-gray-900">
-                  Live Scoring
-                </h1>
-                {isLive && (
-                  <Badge variant="secondary" className="bg-red-100 text-red-800 animate-pulse">
-                    <div className="w-2 h-2 bg-red-500 rounded-full mr-2"></div>
-                    LIVE
-                  </Badge>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              {isLive && (
-                <div className="text-sm font-mono bg-gray-100 px-3 py-1 rounded">
-                  {formatTime(matchTimer)}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex items-center gap-2">
+        <Clock className="w-6 h-6 text-primary" />
+        <h1 className="text-3xl font-bold">Live Scoring System</h1>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Live Match Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Live Matches</p>
-                  <p className="text-2xl font-bold text-red-600">
-                    {getCurrentMatches().length}
-                  </p>
-                </div>
-                <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Match Duration</p>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {formatTime(matchTimer)}
-                  </p>
-                </div>
-                <Clock className="text-blue-600" size={24} />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Current Set</p>
-                  <p className="text-2xl font-bold text-green-600">
-                    {score.currentSet || 1}
-                  </p>
-                </div>
-                <Trophy className="text-green-600" size={24} />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">Total Events</p>
-                  <p className="text-2xl font-bold text-purple-600">
-                    {events?.length || 0}
-                  </p>
-                </div>
-                <Award className="text-purple-600" size={24} />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="matches">Live Matches</TabsTrigger>
-            <TabsTrigger value="scorer">Score Board</TabsTrigger>
-            <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
-            <TabsTrigger value="results">Results</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="matches" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Active Matches</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {getCurrentMatches().length > 0 ? (
-                  <div className="space-y-4">
-                    {getCurrentMatches().map((match, index) => (
-                      <div key={index} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <h3 className="font-semibold">{match.eventName}</h3>
-                            <p className="text-gray-600">Sport ID: {match.sport}</p>
-                            <div className="flex items-center mt-2">
-                              <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                              <span className="text-green-600 text-sm font-medium">Live Now</span>
-                            </div>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button 
-                              size="sm"
-                              onClick={() => {
-                                setSelectedMatch(match.eventId);
-                                setActiveTab("scorer");
-                              }}
-                            >
-                              Score Match
-                            </Button>
-                          </div>
-                        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Live Matches List */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle>Live Matches</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {liveMatches.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">
+                No live matches currently
+              </p>
+            ) : (
+              liveMatches.map((match: TeamMatch) => (
+                <div
+                  key={match.id}
+                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                    selectedMatch?.id === match.id 
+                      ? 'bg-primary/10 border-primary' 
+                      : 'hover:bg-muted/50'
+                  }`}
+                  onClick={() => setSelectedMatch(match)}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="space-y-1">
+                      <div className="font-medium">
+                        {getTeamName(match.homeTeamId)} vs {getTeamName(match.awayTeamId)}
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Timer className="mx-auto text-gray-400 mb-4" size={48} />
-                    <p className="text-gray-500">No live matches at the moment</p>
-                    <p className="text-sm text-gray-400">
-                      Start scoring when matches begin
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="scorer" className="space-y-6">
-            <div className="grid lg:grid-cols-2 gap-6">
-              {/* Score Control Panel */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    Live Score Board
-                    <div className="flex space-x-2">
-                      <Button
-                        size="sm"
-                        variant={isLive ? "secondary" : "default"}
-                        onClick={() => setIsLive(!isLive)}
-                      >
-                        {isLive ? <Pause size={16} /> : <Play size={16} />}
-                        {isLive ? "Pause" : "Start"}
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={resetScore}>
-                        <RotateCcw size={16} />
-                        Reset
-                      </Button>
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Current Score Display */}
-                  <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-6">
-                    <div className="grid grid-cols-2 gap-4 text-center">
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Player 1</h3>
-                        <div className="text-4xl font-bold text-blue-600 mb-4">
-                          {score.player1Score}
-                        </div>
-                        <div className="flex justify-center space-x-2">
-                          <Button 
-                            size="sm" 
-                            onClick={() => updateScore('player1', 1)}
-                            className="bg-blue-600 hover:bg-blue-700"
-                          >
-                            <Plus size={16} />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => updateScore('player1', -1)}
-                          >
-                            <Minus size={16} />
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <h3 className="font-semibold text-lg mb-2">Player 2</h3>
-                        <div className="text-4xl font-bold text-green-600 mb-4">
-                          {score.player2Score}
-                        </div>
-                        <div className="flex justify-center space-x-2">
-                          <Button 
-                            size="sm" 
-                            onClick={() => updateScore('player2', 1)}
-                            className="bg-green-600 hover:bg-green-700"
-                          >
-                            <Plus size={16} />
-                          </Button>
-                          <Button 
-                            size="sm" 
-                            variant="outline"
-                            onClick={() => updateScore('player2', -1)}
-                          >
-                            <Minus size={16} />
-                          </Button>
-                        </div>
+                      <div className="text-2xl font-bold">
+                        {match.homeScore} - {match.awayScore}
                       </div>
                     </div>
-                    
-                    <div className="text-center mt-4">
-                      <Badge variant="outline" className="text-lg px-4 py-1">
-                        Set {score.currentSet || 1}
-                      </Badge>
-                    </div>
+                    <Badge variant={match.status === 'live' ? 'default' : 'secondary'}>
+                      {match.status}
+                    </Badge>
                   </div>
-
-                  {/* Set History */}
-                  {score.sets && score.sets.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold mb-3">Previous Sets</h4>
-                      <div className="space-y-2">
-                        {score.sets.map((set, index) => (
-                          <div key={index} className="flex justify-between items-center p-2 bg-gray-50 rounded">
-                            <span className="text-sm">Set {index + 1}</span>
-                            <span className="font-medium">{set[0]} - {set[1]}</span>
-                          </div>
-                        ))}
-                      </div>
+                  {match.venue && (
+                    <div className="text-sm text-muted-foreground mt-2">
+                      📍 {match.venue}
                     </div>
                   )}
+                </div>
+              ))
+            )}
+          </CardContent>
+        </Card>
 
-                  {/* Match Controls */}
-                  <div className="flex space-x-2">
-                    <Button 
-                      onClick={endSet}
-                      disabled={!isLive}
-                      className="flex-1"
-                    >
-                      End Set
-                    </Button>
-                    <Button 
-                      onClick={() => completeMatch()}
-                      disabled={!isLive}
-                      variant="secondary"
-                      className="flex-1"
-                    >
-                      <CheckCircle size={16} className="mr-1" />
-                      Complete Match
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Match Information */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Match Information</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-3">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Status:</span>
-                      <Badge variant={isLive ? "default" : "secondary"}>
-                        {isLive ? "Live" : "Not Started"}
-                      </Badge>
-                    </div>
-                    
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Duration:</span>
-                      <span className="font-mono">{formatTime(matchTimer)}</span>
-                    </div>
-                    
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Current Set:</span>
-                      <span className="font-semibold">{score.currentSet || 1}</span>
-                    </div>
-                    
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Sets Completed:</span>
-                      <span className="font-semibold">{score.sets?.length || 0}</span>
-                    </div>
-                  </div>
-
-                  {/* Live Updates Status */}
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full mr-2 animate-pulse"></div>
-                      <span className="text-yellow-800 text-sm font-medium">
-                        Live updates enabled
-                      </span>
-                    </div>
-                    <p className="text-yellow-700 text-sm mt-1">
-                      Scores are being broadcast in real-time to all viewers
-                    </p>
-                  </div>
-
-                  {/* Quick Actions */}
-                  <div className="space-y-2">
-                    <h4 className="font-semibold">Quick Actions</h4>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button size="sm" variant="outline">
-                        Timeout
+        {/* Match Control Panel */}
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>
+              {selectedMatch 
+                ? `${getTeamName(selectedMatch.homeTeamId)} vs ${getTeamName(selectedMatch.awayTeamId)}`
+                : "Select a Match"
+              }
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {selectedMatch ? (
+              <div className="space-y-6">
+                {/* Score Control */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center space-y-2">
+                    <h3 className="font-medium">{getTeamName(selectedMatch.homeTeamId)}</h3>
+                    <div className="text-4xl font-bold">{selectedMatch.homeScore}</div>
+                    <div className="flex gap-2 justify-center">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleUpdateScore('home', false)}
+                      >
+                        -1
                       </Button>
-                      <Button size="sm" variant="outline">
-                        Injury Break
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        Technical Issue
-                      </Button>
-                      <Button size="sm" variant="outline">
-                        Weather Delay
+                      <Button 
+                        size="sm"
+                        onClick={() => handleUpdateScore('home', true)}
+                      >
+                        +1
                       </Button>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="leaderboard" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Live Leaderboard</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Tournament/Event Leaderboard */}
-                  <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg p-6">
-                    <h3 className="font-semibold text-lg mb-4 text-center">Current Tournament Standings</h3>
-                    
-                    <div className="space-y-3">
-                      {[1, 2, 3, 4, 5].map((position) => (
-                        <div key={position} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
-                          <div className="flex items-center space-x-4">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                              position === 1 ? 'bg-yellow-500' :
-                              position === 2 ? 'bg-gray-400' :
-                              position === 3 ? 'bg-orange-600' : 'bg-gray-300'
-                            }`}>
-                              {position}
-                            </div>
-                            <div>
-                              <p className="font-medium">Participant {position}</p>
-                              <p className="text-sm text-gray-600">
-                                {position <= 3 ? 'Advancing to finals' : 'Eliminated'}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-semibold">
-                              {Math.floor(Math.random() * 50) + 50} pts
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              {Math.floor(Math.random() * 5) + 1} matches
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Real-time Updates */}
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="font-semibold mb-3 flex items-center">
-                      <TrendingUp className="mr-2 text-blue-600" size={20} />
-                      Recent Score Updates
-                    </h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between items-center">
-                        <span>Player A defeats Player B</span>
-                        <Badge variant="outline">2 min ago</Badge>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span>Match 3 completed</span>
-                        <Badge variant="outline">5 min ago</Badge>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span>New leader in Group A</span>
-                        <Badge variant="outline">8 min ago</Badge>
-                      </div>
+                  
+                  <div className="text-center space-y-2">
+                    <h3 className="font-medium">{getTeamName(selectedMatch.awayTeamId)}</h3>
+                    <div className="text-4xl font-bold">{selectedMatch.awayScore}</div>
+                    <div className="flex gap-2 justify-center">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleUpdateScore('away', false)}
+                      >
+                        -1
+                      </Button>
+                      <Button 
+                        size="sm"
+                        onClick={() => handleUpdateScore('away', true)}
+                      >
+                        +1
+                      </Button>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          <TabsContent value="results" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Match Results</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {matches && matches.length > 0 ? (
-                  <div className="space-y-4">
-                    {matches
-                      .filter((match: any) => match.status === 'completed')
-                      .map((match: any) => (
-                        <div key={match.id} className="border rounded-lg p-4">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-semibold">
-                                {match.round} - Match #{match.matchNumber}
-                              </h3>
-                              <p className="text-gray-600">
-                                Participant {match.participant1Id} vs Participant {match.participant2Id}
-                              </p>
-                              {match.score && (
-                                <div className="mt-2">
-                                  <p className="text-sm font-medium">
-                                    Final Score: {JSON.stringify(match.score)}
-                                  </p>
-                                </div>
-                              )}
-                              {match.actualStartTime && match.actualEndTime && (
-                                <p className="text-sm text-gray-500 mt-1">
-                                  Duration: {Math.round((new Date(match.actualEndTime).getTime() - new Date(match.actualStartTime).getTime()) / (1000 * 60))} minutes
-                                </p>
-                              )}
+                {/* Match Control Buttons */}
+                <div className="flex gap-2 justify-center">
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleUpdateMatchStatus('live')}
+                    disabled={selectedMatch.status === 'live'}
+                  >
+                    <Play className="w-4 h-4 mr-2" />
+                    Start
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleUpdateMatchStatus('paused')}
+                    disabled={selectedMatch.status !== 'live'}
+                  >
+                    <Pause className="w-4 h-4 mr-2" />
+                    Pause
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => handleUpdateMatchStatus('finished')}
+                  >
+                    <Square className="w-4 h-4 mr-2" />
+                    End
+                  </Button>
+                </div>
+
+                {/* Add Event Form */}
+                <div className="border-t pt-6">
+                  <h3 className="font-medium mb-4">Add Match Event</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="eventType">Event Type</Label>
+                      <Select value={newEvent.eventType} onValueChange={(value) => setNewEvent({...newEvent, eventType: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select event type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="goal">Goal</SelectItem>
+                          <SelectItem value="yellow_card">Yellow Card</SelectItem>
+                          <SelectItem value="red_card">Red Card</SelectItem>
+                          <SelectItem value="substitution">Substitution</SelectItem>
+                          <SelectItem value="penalty">Penalty</SelectItem>
+                          <SelectItem value="free_kick">Free Kick</SelectItem>
+                          <SelectItem value="corner">Corner</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="team">Team</Label>
+                      <Select value={newEvent.teamId} onValueChange={(value) => setNewEvent({...newEvent, teamId: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={selectedMatch.homeTeamId.toString()}>
+                            {getTeamName(selectedMatch.homeTeamId)}
+                          </SelectItem>
+                          <SelectItem value={selectedMatch.awayTeamId.toString()}>
+                            {getTeamName(selectedMatch.awayTeamId)}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="eventTime">Time (minutes)</Label>
+                      <Input
+                        id="eventTime"
+                        type="number"
+                        min="0"
+                        value={newEvent.eventTime}
+                        onChange={(e) => setNewEvent({...newEvent, eventTime: Number(e.target.value)})}
+                        placeholder="Match time"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <Input
+                        id="description"
+                        value={newEvent.description}
+                        onChange={(e) => setNewEvent({...newEvent, description: e.target.value})}
+                        placeholder="Event description"
+                      />
+                    </div>
+                  </div>
+
+                  <Button 
+                    onClick={handleAddEvent}
+                    disabled={addEventMutation.isPending}
+                    className="mt-4"
+                  >
+                    {addEventMutation.isPending ? "Adding..." : "Add Event"}
+                  </Button>
+                </div>
+
+                {/* Match Events Timeline */}
+                <div className="border-t pt-6">
+                  <h3 className="font-medium mb-4">Match Events</h3>
+                  <div className="space-y-2 max-h-64 overflow-y-auto">
+                    {matchEvents.length === 0 ? (
+                      <p className="text-muted-foreground text-center py-4">
+                        No events recorded yet
+                      </p>
+                    ) : (
+                      matchEvents.map((event: MatchEvent) => (
+                        <div key={event.id} className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                          {getEventIcon(event.eventType)}
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">{event.eventTime}'</Badge>
+                              <span className="font-medium capitalize">
+                                {event.eventType.replace('_', ' ')}
+                              </span>
+                              <span className="text-sm text-muted-foreground">
+                                - {getTeamName(event.teamId)}
+                              </span>
                             </div>
-                            <div className="text-right">
-                              <Badge variant="default" className="mb-2">
-                                Completed
-                              </Badge>
-                              {match.winnerId && (
-                                <p className="text-sm text-green-600 font-medium">
-                                  Winner: Participant {match.winnerId}
-                                </p>
-                              )}
-                            </div>
+                            {event.description && (
+                              <div className="text-sm text-muted-foreground mt-1">
+                                {event.description}
+                              </div>
+                            )}
                           </div>
                         </div>
-                      ))}
+                      ))
+                    )}
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Trophy className="mx-auto text-gray-400 mb-4" size={48} />
-                    <p className="text-gray-500">No completed matches yet</p>
-                    <p className="text-sm text-gray-400">
-                      Results will appear here as matches are completed
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Select a live match to start scoring
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
