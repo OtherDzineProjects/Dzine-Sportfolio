@@ -321,6 +321,7 @@ export class DatabaseStorage implements IStorage {
         phone: users.phone,
         userType: users.userType,
         approvalStatus: users.approvalStatus,
+        roleId: users.roleId,
         profileImageUrl: users.profileImageUrl,
         isActive: users.isActive,
         createdAt: users.createdAt,

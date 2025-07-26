@@ -75,10 +75,13 @@ const requireAdmin = async (req: any, res: any, next: any) => {
   }
   
   const user = await storage.getUser(req.user.id);
+  console.log('Admin check - User:', user?.email, 'Role ID:', user?.roleId);
+  
   const role = user?.roleId ? await storage.getRole(user.roleId) : null;
+  console.log('Admin check - Role:', role?.name, 'Level:', role?.level);
   
   if (!role || role.level < 3) { // Admin level 3 or higher
-    return res.status(403).json({ message: "Admin access required" });
+    return res.status(403).json({ message: "Admin access required", userRole: role?.name, userLevel: role?.level });
   }
   
   next();
