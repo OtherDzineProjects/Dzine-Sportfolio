@@ -568,6 +568,19 @@ export default function UserDashboard() {
             <div className="flex-1">
               <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 🎯 Welcome, {user.firstName} {user.lastName}!
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('auth_token');
+                    window.location.href = '/login';
+                  }}
+                  className="ml-4"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
               </h1>
               <div className="flex items-center space-x-2 text-muted-foreground">
                 <Badge className="bg-blue-100 text-blue-800">{user.userType || 'Athlete'}</Badge>

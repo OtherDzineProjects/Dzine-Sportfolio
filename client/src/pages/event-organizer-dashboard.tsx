@@ -159,13 +159,26 @@ export default function EventOrganizerDashboard() {
                     View organization data, sports interests, and facility availability for events
                   </p>
                 </div>
-                <Button 
-                  onClick={handleExportData}
-                  className="bg-white text-purple-600 hover:bg-purple-50"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export All Data
-                </Button>
+                <div className="flex items-center space-x-4">
+                  <Button 
+                    onClick={handleExportData}
+                    className="bg-white text-purple-600 hover:bg-purple-50"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Export All Data
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      localStorage.removeItem('auth_token');
+                      window.location.href = '/login';
+                    }}
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>

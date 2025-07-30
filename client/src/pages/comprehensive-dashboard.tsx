@@ -178,10 +178,11 @@ export default function ComprehensiveDashboard({ userType = 'user', userId }: Da
                 </Button>
               </Link>
               <Button
-                variant="outline"
+                variant="destructive"
                 size="sm"
                 onClick={() => {
                   localStorage.removeItem('token');
+                  localStorage.removeItem('auth_token');
                   window.location.href = '/login';
                 }}
               >

@@ -686,6 +686,8 @@ export default function UserDashboard() {
                 className="flex-shrink-0"
               >
                 <User className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Logout</span>
+              </Button>
                 <span className="hidden md:inline">Export Data</span>
                 <span className="md:hidden">Export</span>
               </Button>

@@ -236,6 +236,18 @@ export default function AdminDashboard() {
               </div>
             </div>
           </Card>
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={() => {
+              localStorage.removeItem('token');
+              localStorage.removeItem('auth_token');
+              window.location.href = '/login';
+            }}
+          >
+            <UserX className="w-4 h-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </div>
 

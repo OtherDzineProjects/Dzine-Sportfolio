@@ -193,7 +193,20 @@ export default function SuperAdminDashboard() {
                     Welcome, {currentUser.firstName}! Manage user approvals and system administration.
                   </p>
                 </div>
-                <Shield className="h-16 w-16 opacity-20" />
+                <div className="flex items-center space-x-4">
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      localStorage.removeItem('auth_token');
+                      window.location.href = '/login';
+                    }}
+                  >
+                    <UserX className="w-4 h-4 mr-2" />
+                    Logout
+                  </Button>
+                  <Shield className="h-16 w-16 opacity-20" />
+                </div>
               </div>
             </CardContent>
           </Card>
