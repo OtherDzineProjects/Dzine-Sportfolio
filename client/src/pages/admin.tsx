@@ -270,8 +270,8 @@ export default function AdminDashboard() {
         <TabsContent value="approvals" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Pending User Approvals</CardTitle>
-              <CardDescription>Review and approve or reject user registration requests</CardDescription>
+              <CardTitle>Pending Approvals</CardTitle>
+              <CardDescription>Review and approve or reject user registrations and organization creation requests</CardDescription>
             </CardHeader>
             <CardContent>
               {!approvals || approvals.length === 0 ? (
@@ -282,22 +282,40 @@ export default function AdminDashboard() {
               ) : (
                 <div className="space-y-4">
                   {approvals.map((approval: UserApproval) => (
-                    <div key={approval.id} className="border rounded-lg p-4 space-y-3">
+                    <div key={approval.id} className={`border rounded-lg p-4 space-y-3 ${approval.requestType === 'organization_creation' ? 'border-orange-300 bg-orange-50' : ''}`}>
                       <div className="flex items-center justify-between">
                         <div>
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
-                            {approval.requestData?.firstName} {approval.requestData?.lastName}
-                          </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">{approval.requestData?.email}</p>
+                          {approval.requestType === 'organization_creation' ? (
+                            <>
+                              <h3 className="font-semibold text-gray-900 dark:text-white">
+                                🏢 {approval.requestData?.organizationName}
+                              </h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">Organization Creation Request</p>
+                            </>
+                          ) : (
+                            <>
+                              <h3 className="font-semibold text-gray-900 dark:text-white">
+                                {approval.requestData?.firstName} {approval.requestData?.lastName}
+                              </h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">{approval.requestData?.email}</p>
+                            </>
+                          )}
                         </div>
                         <div className="flex items-center space-x-2">
-                          {getUserTypeBadge(approval.requestData?.userType)}
+                          {approval.requestType === 'organization_creation' ? (
+                            <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100">Organization</Badge>
+                          ) : (
+                            getUserTypeBadge(approval.requestData?.userType)
+                          )}
                           {getStatusBadge(approval.status)}
                         </div>
                       </div>
                       <div className="text-sm text-gray-600 dark:text-gray-300">
-                        <p><strong>Request Type:</strong> {approval.requestType}</p>
+                        <p><strong>Request Type:</strong> {approval.requestType.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}</p>
                         <p><strong>Submitted:</strong> {new Date(approval.createdAt).toLocaleDateString()}</p>
+                        {approval.requestType === 'organization_creation' && (
+                          <p><strong>Organization ID:</strong> {approval.requestData?.organizationId}</p>
+                        )}
                       </div>
                       {approval.status === 'pending' && (
                         <div className="flex space-x-2">

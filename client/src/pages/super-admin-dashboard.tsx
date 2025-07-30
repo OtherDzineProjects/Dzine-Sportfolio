@@ -292,7 +292,7 @@ export default function SuperAdminDashboard() {
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <Clock className="h-5 w-5 text-yellow-600" />
-                  <span>Pending User Approvals</span>
+                  <span>Pending Approvals</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -304,8 +304,8 @@ export default function SuperAdminDashboard() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>User Details</TableHead>
-                        <TableHead>User Type</TableHead>
+                        <TableHead>Request Details</TableHead>
+                        <TableHead>Type</TableHead>
                         <TableHead>Contact</TableHead>
                         <TableHead>Location</TableHead>
                         <TableHead>Submitted</TableHead>
@@ -317,18 +317,36 @@ export default function SuperAdminDashboard() {
                         <TableRow key={approval.id}>
                           <TableCell>
                             <div>
-                              <div className="font-medium">
-                                {approval.user.firstName} {approval.user.lastName}
-                              </div>
-                              <div className="text-sm text-muted-foreground">
-                                @{approval.user.username}
-                              </div>
+                              {approval.requestType === 'organization_creation' ? (
+                                <>
+                                  <div className="font-medium flex items-center space-x-2">
+                                    <Building2 className="h-4 w-4 text-orange-600" />
+                                    <span>{approval.requestData?.organizationName}</span>
+                                  </div>
+                                  <div className="text-sm text-muted-foreground">
+                                    Organization Creation Request
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="font-medium">
+                                    {approval.user.firstName} {approval.user.lastName}
+                                  </div>
+                                  <div className="text-sm text-muted-foreground">
+                                    @{approval.user.username}
+                                  </div>
+                                </>
+                              )}
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge variant="outline">
-                              {approval.user.userType}
-                            </Badge>
+                            {approval.requestType === 'organization_creation' ? (
+                              <Badge className="bg-orange-100 text-orange-800">Organization</Badge>
+                            ) : (
+                              <Badge variant="outline">
+                                {approval.user.userType}
+                              </Badge>
+                            )}
                           </TableCell>
                           <TableCell>
                             <div className="text-sm">
