@@ -9,10 +9,29 @@ export const keralaLocationData = {
       "Parassala", "Perumkadavila", "Thirupuram", "Uzhamalackal", "Venganoor"
     ],
     wards: {
-      "Thiruvananthapuram Corporation": Array.from({length: 100}, (_, i) => `Ward ${i + 1}`),
-      "Attingal": Array.from({length: 34}, (_, i) => `Ward ${i + 1}`),
-      "Neyyattinkara": Array.from({length: 32}, (_, i) => `Ward ${i + 1}`),
-      "Varkala": Array.from({length: 30}, (_, i) => `Ward ${i + 1}`)
+      "Thiruvananthapuram Corporation": [
+        "Anayara", "Aruvippuram", "Attukal", "Azhimala", "Chalai", "Chenbagaraman",
+        "East Fort", "Edapazhanji", "Enchakkal", "Fort", "Jagathy", "Karamana",
+        "Karumam", "Kazhakoottam", "Kesavadasapuram", "Kowdiar", "Kudappanakunnu",
+        "Kunnukuzhy", "Mannanthala", "Maruthankuzhy", "Medical College", "Museum",
+        "Nanthencode", "Nemom", "Pattom", "Plamoodu", "Poojappura", "Pottakuzhy",
+        "Pulimath", "Sasthamangalam", "Thampanoor", "Thirumala", "Thycaud",
+        "Ulloor", "Vanchiyoor", "Vattappara", "Vattiyoorkavu", "Vikas Bhavan",
+        "Vilappilsala", "West Fort"
+      ],
+      "Attingal": [
+        "Alamcode", "Attingal East", "Attingal West", "Chirayinkeezhu", "Kadakkavoor",
+        "Kanjiramkulam", "Kilimanoor", "Nellanad", "Ottoor", "Perumkadavila"
+      ],
+      "Neyyattinkara": [
+        "Anchuthengu", "Balaramapuram", "Chenkal", "Karode", "Kattakkada",
+        "Kovilkadavu", "Maranalloor", "Nagaroor", "Nellanad", "Neyyattinkara",
+        "Palode", "Pullampara", "Vamanapuram", "Vellanad", "Vilavoorkkal"
+      ],
+      "Varkala": [
+        "Anchuthengu", "Chirayinkeezhu", "Edava", "Kadakkavoor", "Navaikulam",
+        "Ottasekharamangalam", "Varkala", "Vellanad"
+      ]
     }
   },
   "Kollam": {
@@ -87,15 +106,50 @@ export const keralaLocationData = {
       "Karukutty", "Keezhmad", "Kunnathunadu", "Mudakuzha", "Paipra"
     ],
     wards: {
-      "Kochi Corporation": Array.from({length: 74}, (_, i) => `Ward ${i + 1}`),
-      "Aluva": Array.from({length: 32}, (_, i) => `Ward ${i + 1}`),
-      "Angamaly": Array.from({length: 31}, (_, i) => `Ward ${i + 1}`),
-      "Kalamassery": Array.from({length: 32}, (_, i) => `Ward ${i + 1}`),
-      "Kothamangalam": Array.from({length: 30}, (_, i) => `Ward ${i + 1}`),
-      "Muvattupuzha": Array.from({length: 27}, (_, i) => `Ward ${i + 1}`),
-      "North Parur": Array.from({length: 25}, (_, i) => `Ward ${i + 1}`),
-      "Perumbavur": Array.from({length: 29}, (_, i) => `Ward ${i + 1}`),
-      "Thrippunithura": Array.from({length: 31}, (_, i) => `Ward ${i + 1}`)
+      "Kochi Corporation": [
+        "Amaravathy", "Aroor", "Ayyampuzha", "Chellanam", "Cheranalloor", "Chittoor",
+        "Edappally", "Edapally North", "Elamakara", "Eloor", "Ernakulam North",
+        "Ernakulam South", "Fort Kochi", "Girinagar", "Goshree Islands", "Kadamakkudy",
+        "Kakkanad", "Kaloor", "Kamalakadavu", "Kaniampady", "Kaniyampuzha",
+        "Karuvelipady", "Kathrikadavu", "Kumbalanghi", "Kumbalam", "Kuzhuppilly",
+        "Marine Drive", "Mattancherry", "Mulavukad", "Mundamveli", "Nayarambalam",
+        "Nettoor", "Ochanthuruthu", "Pachalam", "Palluruthy", "Panampilly Nagar",
+        "Palarivattom", "Ponnurunni", "Ravipuram", "Thoppumpady", "Thevara",
+        "Tripunithura", "Vaduthala", "Vennala", "Vytilla", "Willingdon Island"
+      ],
+      "Aluva": [
+        "Aluva East", "Aluva West", "Angamaly", "Choornikkara", "Edathala",
+        "Kalady", "Karukutty", "Keerampara", "Keezhmad", "Manjapra",
+        "Mudakkuzha", "Paingottoor", "Sreemoolanagaram"
+      ],
+      "Angamaly": [
+        "Angamaly", "Karukutty", "Kalady", "Malayattoor", "Nedumbassery",
+        "Thuravoor"
+      ],
+      "Kalamassery": [
+        "Cusat", "Eloor", "Kalamassery East", "Kalamassery West", "Kanjoor",
+        "Karukutty", "Keezhmad", "Mulakulam"
+      ],
+      "Kothamangalam": [
+        "Injathotty", "Keerampara", "Kothamangalam", "Kuttampuzha", "Mathikolam",
+        "Nellikuzhi", "Piravom"
+      ],
+      "Muvattupuzha": [
+        "Aikaranad", "Kaliyar", "Muvattupuzha", "Nellimattom", "Piravom",
+        "Vazhakkulam"
+      ],
+      "North Parur": [
+        "Cherai", "Gothuruthu", "Malippuram", "Nayarambalam", "North Parur",
+        "Pallipuram", "Varapuzha"
+      ],
+      "Perumbavur": [
+        "Alangad", "Avoly", "Karumalloor", "Kizhakkambalam", "Kunnathunadu",
+        "Mudakkuzha", "Okkal", "Perumbavur", "Rayamangalam"
+      ],
+      "Thrippunithura": [
+        "Maradu", "Poothrikka", "Puthencruz", "Thrippunithura East",
+        "Thrippunithura West", "Udayamperoor", "Vazhakkala"
+      ]
     }
   },
   "Thrissur": {
