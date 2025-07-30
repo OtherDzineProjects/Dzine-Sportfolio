@@ -32,6 +32,8 @@ import ComprehensiveSportsManagement from "@/pages/comprehensive-sports-manageme
 import ComprehensiveDashboard from "@/pages/comprehensive-dashboard";
 import SubscriptionManagement from "@/pages/subscription-management";
 import WardLevelSearch from "@/pages/ward-level-search";
+import SportsContentHome from "@/pages/sports-content-home";
+import Marketplace from "@/pages/marketplace";
 import Events from "@/pages/events";
 import NotFound from "@/pages/not-found";
 
@@ -68,6 +70,8 @@ function Router() {
       <Route path="/comprehensive-dashboard" component={ComprehensiveDashboard} />
       <Route path="/subscription" component={SubscriptionManagement} />
       <Route path="/ward-search" component={WardLevelSearch} />
+      <Route path="/sports-content" component={SportsContentHome} />
+      <Route path="/marketplace" component={Marketplace} />
       <Route path="/events" component={Events} />
       <Route path="/player-evaluation" component={PlayerEvaluation} />
       <Route component={NotFound} />
