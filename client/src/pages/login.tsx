@@ -104,13 +104,13 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
+          <Link href="/" className="flex justify-center mb-4">
             <img 
               src="/assets/sportfolio-logo.png" 
               alt="Sportfolio Logo" 
-              className="h-16 w-auto object-contain"
+              className="h-16 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
             />
-          </div>
+          </Link>
           <CardTitle className="text-2xl font-bold text-gray-900">
             Welcome Back!
           </CardTitle>

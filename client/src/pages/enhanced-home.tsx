@@ -97,24 +97,17 @@ export default function EnhancedHome() {
       <header className="bg-white shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4">
+            <Link href="/" className="flex items-center">
               <img 
                 src="/assets/sportfolio-logo.png" 
                 alt="Sportfolio Logo" 
-                className="h-12 w-auto object-contain"
+                className="h-12 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity"
                 onError={(e) => {
                   console.error('Logo failed to load');
                   e.currentTarget.style.display = 'none';
                 }}
               />
-              <div className="flex items-center space-x-2">
-                <Trophy className="w-8 h-8 text-blue-600" />
-                <div>
-                  <h2 className="text-xl font-bold text-gray-900">SPORTFOLIO</h2>
-                  <p className="text-xs text-gray-500">let's play</p>
-                </div>
-              </div>
-            </div>
+            </Link>
             
             <nav className="hidden md:flex space-x-6">
               <Link href="/" className="text-gray-700 hover:text-blue-600">Home</Link>
