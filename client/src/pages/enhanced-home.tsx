@@ -93,6 +93,58 @@ export default function EnhancedHome() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      {/* Header Navigation */}
+      <header className="bg-white shadow-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center space-x-4">
+              <Trophy className="w-8 h-8 text-blue-600" />
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">SPORTFOLIO</h2>
+                <p className="text-xs text-gray-500">It's time to play</p>
+              </div>
+            </div>
+            
+            <nav className="hidden md:flex space-x-6">
+              <Link href="/" className="text-gray-700 hover:text-blue-600">Home</Link>
+              <Link href="/sports-content" className="text-gray-700 hover:text-blue-600 font-medium">Sports Guide</Link>
+              <Link href="/marketplace" className="text-gray-700 hover:text-blue-600 font-medium">Marketplace</Link>
+              <Link href="/events" className="text-gray-700 hover:text-blue-600">Events</Link>
+              <Link href="/facilities" className="text-gray-700 hover:text-blue-600">Facilities</Link>
+              <Link href="/teams" className="text-gray-700 hover:text-blue-600">Teams</Link>
+            </nav>
+
+            <div className="flex items-center space-x-3">
+              <Link href="/login">
+                <Button variant="outline" size="sm">
+                  <Users className="w-4 h-4 mr-2" />
+                  LOGIN
+                </Button>
+              </Link>
+              <Link href="/signup">
+                <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                  REGISTER
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Advertisement Banner */}
+      {advertisements && advertisements.length > 0 && (
+        <section className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 py-3">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-center text-white">
+              <div className="text-center animate-pulse">
+                <h3 className="text-lg font-bold">{advertisements[0]?.title || "🏆 Kerala Sports Council Tournament 2025"}</h3>
+                <p className="text-sm opacity-90">{advertisements[0]?.content || "Register now for the biggest sports event in Kerala! Early bird discount available"}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Hero Section with Search */}
       <section className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 text-white py-20">
         <div className="absolute inset-0 bg-black/30"></div>
@@ -161,7 +213,7 @@ export default function EnhancedHome() {
       {/* Action Cards */}
       <section className="py-16 -mt-8 relative z-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 max-w-6xl mx-auto">
             <Link href="/facilities" className="group">
               <Card className="text-center hover:shadow-lg transition-all duration-300 group-hover:scale-105">
                 <CardContent className="p-6">
@@ -248,6 +300,42 @@ export default function EnhancedHome() {
                   <MapPin className="w-8 h-8 mx-auto mb-3 text-pink-600" />
                   <h3 className="font-semibold text-sm mb-1">SEARCH</h3>
                   <p className="text-xs text-gray-600">Ward-Level Search</p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+          
+          {/* Featured New Sections */}
+          <div className="mt-12 text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">🆕 New Features</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">Explore our comprehensive sports guide and marketplace</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <Link href="/sports-content" className="group">
+              <Card className="text-center hover:shadow-2xl transition-all duration-300 group-hover:scale-105 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-blue-600 text-white px-3 py-1 text-xs font-bold rounded-bl-lg">NEW</div>
+                <CardContent className="p-8">
+                  <BookOpen className="w-16 h-16 mx-auto mb-4 text-blue-600" />
+                  <h3 className="text-2xl font-bold mb-3 text-blue-900">COMPLETE SPORTS GUIDE</h3>
+                  <p className="text-sm text-blue-700 mb-4">Comprehensive sports content with rules, regulations, court details, and age-specific benefits for all major sports disciplines including Football, Basketball, Cricket, Tennis, Athletics & Swimming</p>
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                    Explore Sports Guide →
+                  </Button>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link href="/marketplace" className="group">
+              <Card className="text-center hover:shadow-2xl transition-all duration-300 group-hover:scale-105 bg-gradient-to-br from-green-50 to-green-100 border-green-200 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-green-600 text-white px-3 py-1 text-xs font-bold rounded-bl-lg">NEW</div>
+                <CardContent className="p-8">
+                  <CreditCard className="w-16 h-16 mx-auto mb-4 text-green-600" />
+                  <h3 className="text-2xl font-bold mb-3 text-green-900">SPORTFOLIO MARKETPLACE</h3>
+                  <p className="text-sm text-green-700 mb-4">Buy and sell sports merchandise, equipment, and gear. Trade with users, organizations, facilities, and events across Kerala with secure transactions</p>
+                  <Button className="bg-green-600 hover:bg-green-700 text-white">
+                    Visit Marketplace →
+                  </Button>
                 </CardContent>
               </Card>
             </Link>
