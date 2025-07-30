@@ -112,6 +112,45 @@ export default function Login() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Quick Login Helper */}
+          <div className="mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <h4 className="font-medium text-blue-900 text-sm mb-3">🔑 Quick Test Accounts:</h4>
+            <div className="grid grid-cols-1 gap-2 text-xs">
+              <button 
+                type="button"
+                onClick={() => setFormData({ email: "superadmin@sportfolio.com", password: "SportfolioAdmin123" })}
+                className="text-left p-2 bg-white rounded border hover:bg-blue-50 transition-colors"
+              >
+                <div className="font-medium text-blue-700">Super Admin</div>
+                <div className="text-gray-600">superadmin@sportfolio.com</div>
+              </button>
+              <button 
+                type="button"
+                onClick={() => setFormData({ email: "mysportfolioindia@gmail.com", password: "SportfolioIndia" })}
+                className="text-left p-2 bg-white rounded border hover:bg-blue-50 transition-colors"
+              >
+                <div className="font-medium text-green-700">Admin (Ahammed Sukarno)</div>
+                <div className="text-gray-600">mysportfolioindia@gmail.com</div>
+              </button>
+              <button 
+                type="button"
+                onClick={() => setFormData({ email: "emailcslkerala@gmail.com", password: "CSLKerala" })}
+                className="text-left p-2 bg-white rounded border hover:bg-blue-50 transition-colors"
+              >
+                <div className="font-medium text-purple-700">Sports Director</div>
+                <div className="text-gray-600">emailcslkerala@gmail.com</div>
+              </button>
+              <button 
+                type="button"
+                onClick={() => setFormData({ email: "ahammedsukarno@gmail.com", password: "test123" })}
+                className="text-left p-2 bg-white rounded border hover:bg-blue-50 transition-colors"
+              >
+                <div className="font-medium text-orange-700">Approved Athlete</div>
+                <div className="text-gray-600">ahammedsukarno@gmail.com</div>
+              </button>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-4">
               <div className="space-y-2">
