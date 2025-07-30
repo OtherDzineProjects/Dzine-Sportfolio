@@ -145,6 +145,11 @@ export default function ComprehensiveDashboard({ userType = 'user', userId }: Da
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-4">
+              <img 
+                src="@assets/Sportfolio_logo with white back ground_1753906678670.png" 
+                alt="Sportfolio Logo" 
+                className="h-8 w-auto object-contain"
+              />
               <h1 className="text-2xl font-bold text-gray-900">
                 {userType.charAt(0).toUpperCase() + userType.slice(1)} Dashboard
               </h1>

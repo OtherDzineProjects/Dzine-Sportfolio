@@ -98,11 +98,11 @@ export default function EnhancedHome() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
-              <Trophy className="w-8 h-8 text-blue-600" />
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">SPORTFOLIO</h2>
-                <p className="text-xs text-gray-500">It's time to play</p>
-              </div>
+              <img 
+                src="@assets/Sportfolio_logo with white back ground_1753906678670.png" 
+                alt="Sportfolio Logo" 
+                className="h-12 w-auto object-contain"
+              />
             </div>
             
             <nav className="hidden md:flex space-x-6">

@@ -104,8 +104,15 @@ export default function Login() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Welcome Back! 🏆
+          <div className="flex justify-center mb-4">
+            <img 
+              src="@assets/Sportfolio_logo with white back ground_1753906678670.png" 
+              alt="Sportfolio Logo" 
+              className="h-16 w-auto object-contain"
+            />
+          </div>
+          <CardTitle className="text-2xl font-bold text-gray-900">
+            Welcome Back!
           </CardTitle>
           <CardDescription>
             Sign in to your Sportfolio account
