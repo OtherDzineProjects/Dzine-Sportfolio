@@ -75,7 +75,12 @@ const requireAdmin = async (req: any, res: any, next: any) => {
   }
   
   const user = await storage.getUser(req.user.id);
-  console.log('Admin check - User:', user?.email, 'Role ID:', user?.roleId);
+  console.log('Admin check - User:', user?.email, 'User Type:', user?.userType, 'Role ID:', user?.roleId);
+  
+  // Allow access if user type is admin or superadmin, OR if they have admin-level role
+  if (user?.userType === 'admin' || user?.userType === 'superadmin') {
+    return next();
+  }
   
   const role = user?.roleId ? await storage.getRole(user.roleId) : null;
   console.log('Admin check - Role:', role?.name, 'Level:', role?.level);

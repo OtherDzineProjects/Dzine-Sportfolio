@@ -122,6 +122,15 @@ Sportfolio is a comprehensive sports management platform designed for the Indian
 - **API**: RESTful design supports load balancing
 
 ## Recent Changes
+- July 30, 2025: **Enhanced Admin/Super Admin Approval System and Fixed Organization Workflows**
+  - Clarified admin vs super admin rights with comprehensive role-based permissions
+  - Fixed admin approval system to work for both Admin (level 4) and Super Admin (level 5) users
+  - Enhanced organization creation approval workflow with orange highlighting and building icons
+  - Assigned proper roles to 200+ Kerala sports organization admin accounts
+  - Updated admin dashboards to clearly distinguish user registrations vs organization creation requests
+  - Verified all admin approval APIs working correctly (/api/admin/approvals, approve/reject endpoints)
+  - Created comprehensive admin rights documentation with working test credentials
+  - Both admin types can now approve users, organizations, and manage accounts effectively
 - July 30, 2025: **Integrated Official Sportfolio Branding and Fixed Authentication**
   - Added official Sportfolio logos across all major pages (home, login, signup, dashboard)
   - Implemented comprehensive navigation with prominent Sports Guide and Marketplace links
