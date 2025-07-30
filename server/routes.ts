@@ -490,12 +490,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/organizations", authenticateToken, async (req: any, res) => {
     try {
+      // Map frontend fields to backend schema
       const organizationData = {
-        ...req.body,
+        name: req.body.name,
+        description: req.body.description,
         ownerId: req.user.id,
-        createdBy: req.user.id,
-        approvalStatus: 'pending',
-        status: 'active'
+        organizationType: req.body.organizationType || req.body.type || 'sports_club',
+        address: req.body.address,
+        city: req.body.city,
+        state: req.body.state || 'Kerala',
+        pincode: req.body.pincode,
+        phone: req.body.contactPhone || req.body.phone,
+        email: req.body.contactEmail || req.body.email,
+        website: req.body.website,
+        district: req.body.district,
+        lsgd: req.body.lsgd,
+        lsgdType: req.body.lsgdType,
+        sportsInterests: req.body.sportsOffered || req.body.sportsInterests || [],
+        facilityAvailability: req.body.facilityAvailability || [],
+        verificationStatus: 'submitted',
+        isActive: true
       };
       
       const organization = await storage.createUserOrganization(organizationData);
