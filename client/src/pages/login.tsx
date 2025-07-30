@@ -35,6 +35,7 @@ export default function Login() {
     onSuccess: (data) => {
       if (data.token) {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("auth_token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         
         // Check if user needs to complete sports questionnaire
