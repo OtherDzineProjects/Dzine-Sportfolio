@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Search, Calendar, Trophy, Users, Star, Play, BookOpen, Heart, DollarSign } from "lucide-react";
+import { Building, MapPin, Search, Calendar, Trophy, Users, Star, Play, BookOpen, Heart, DollarSign, CreditCard } from "lucide-react";
 
 const ageGroups = [
   { id: "8-11", label: "Kids (8-11 years)", description: "Building foundation and love for sports" },
@@ -218,6 +218,36 @@ export default function EnhancedHome() {
                   <Star className="w-8 h-8 mx-auto mb-3 text-orange-600" />
                   <h3 className="font-semibold text-sm mb-1">STATS</h3>
                   <p className="text-xs text-gray-600">Scores & Rankings</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link href="/comprehensive-dashboard" className="group">
+              <Card className="text-center hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+                <CardContent className="p-6">
+                  <Building className="w-8 h-8 mx-auto mb-3 text-indigo-600" />
+                  <h3 className="font-semibold text-sm mb-1">DASHBOARD</h3>
+                  <p className="text-xs text-gray-600">Complete Management</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link href="/subscription" className="group">
+              <Card className="text-center hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+                <CardContent className="p-6">
+                  <CreditCard className="w-8 h-8 mx-auto mb-3 text-emerald-600" />
+                  <h3 className="font-semibold text-sm mb-1">PREMIUM</h3>
+                  <p className="text-xs text-gray-600">Subscription Plans</p>
+                </CardContent>
+              </Card>
+            </Link>
+            
+            <Link href="/ward-search" className="group">
+              <Card className="text-center hover:shadow-lg transition-all duration-300 group-hover:scale-105">
+                <CardContent className="p-6">
+                  <MapPin className="w-8 h-8 mx-auto mb-3 text-pink-600" />
+                  <h3 className="font-semibold text-sm mb-1">SEARCH</h3>
+                  <p className="text-xs text-gray-600">Ward-Level Search</p>
                 </CardContent>
               </Card>
             </Link>

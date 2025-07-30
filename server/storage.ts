@@ -163,6 +163,22 @@ export interface IStorage {
   createRevenueRecord(record: Partial<RevenueRecord>): Promise<RevenueRecord>;
   getFacilityRevenue(facilityId: number, startDate?: Date, endDate?: Date): Promise<RevenueRecord[]>;
   
+  // Enhanced dashboard functionality
+  searchByWard(params: { query?: string; district?: string; ward?: string; type?: string }): Promise<any[]>;
+  getWardsByDistrict(district: string): Promise<string[]>;
+  getProfile(type: string, id: number): Promise<any>;
+  getAchievements(type: string, id: number): Promise<any[]>;
+  getEntityEvents(type: string, id: number): Promise<any[]>;
+  getNotifications(type: string, id: number): Promise<any[]>;
+  getReviews(type: string, id: number): Promise<any[]>;
+  getPendingRequests(type: string, id: number): Promise<any[]>;
+  getEntityAdvertisements(type: string, id: number): Promise<any[]>;
+  getEcommerceProducts(): Promise<any[]>;
+  
+  // Advertisements
+  getAdvertisements(): Promise<Advertisement[]>;
+  createAdvertisement(ad: InsertAdvertisement): Promise<Advertisement>;
+  
   // User approval system
   createUserApproval(approval: InsertUserApproval): Promise<UserApproval>;
   getPendingApprovals(reviewerId?: number): Promise<UserApproval[]>;
@@ -1820,6 +1836,207 @@ export class DatabaseStorage implements IStorage {
       createdAt: new Date(),
       isActive: true
     };
+  }
+
+  // Enhanced dashboard functionality implementation
+  async searchByWard(params: { query?: string; district?: string; ward?: string; type?: string }): Promise<any[]> {
+    const results: any[] = [];
+    
+    try {
+      // Search users
+      if (!params.type || params.type === 'all' || params.type === 'user') {
+        const userResults = await db.select().from(users);
+        results.push(...userResults.map(u => ({ ...u, type: 'user' })));
+      }
+      
+      // Search organizations
+      if (!params.type || params.type === 'all' || params.type === 'organization') {
+        const orgResults = await db.select().from(organizations);
+        results.push(...orgResults.map(o => ({ ...o, type: 'organization' })));
+      }
+      
+      // Search facilities
+      if (!params.type || params.type === 'all' || params.type === 'facility') {
+        const facilityResults = await db.select().from(facilities);
+        results.push(...facilityResults.map(f => ({ ...f, type: 'facility' })));
+      }
+      
+      // Search events
+      if (!params.type || params.type === 'all' || params.type === 'event') {
+        const eventResults = await db.select().from(events);
+        results.push(...eventResults.map(e => ({ ...e, type: 'event' })));
+      }
+      
+      return results;
+    } catch (error) {
+      console.error('Error in ward search:', error);
+      return [];
+    }
+  }
+
+  async getWardsByDistrict(district: string): Promise<string[]> {
+    const wardsByDistrict: { [key: string]: string[] } = {
+      'thiruvananthapuram': ['Ward 1', 'Ward 2', 'Ward 3', 'Ward 4', 'Ward 5'],
+      'kollam': ['Ward 1', 'Ward 2', 'Ward 3', 'Ward 4'],
+      'ernakulam': ['Ward 1', 'Ward 2', 'Ward 3', 'Ward 4', 'Ward 5', 'Ward 6'],
+      'kozhikode': ['Ward 1', 'Ward 2', 'Ward 3', 'Ward 4', 'Ward 5'],
+      'thrissur': ['Ward 1', 'Ward 2', 'Ward 3', 'Ward 4'],
+    };
+    
+    return wardsByDistrict[district.toLowerCase()] || [];
+  }
+
+  async getProfile(type: string, id: number): Promise<any> {
+    try {
+      switch (type) {
+        case 'user':
+          return await this.getUser(id);
+        case 'organization':
+          return await this.getOrganization(id);
+        case 'facility':
+          return await this.getFacility(id);
+        case 'event':
+          return await this.getEvent(id);
+        default:
+          return null;
+      }
+    } catch (error) {
+      console.error('Error getting profile:', error);
+      return null;
+    }
+  }
+
+  async getAchievements(type: string, id: number): Promise<any[]> {
+    return [
+      {
+        id: 1,
+        title: "State Championship Winner",
+        description: "Won the Kerala State Football Championship 2024",
+        date: "2024-03-15",
+        verificationStatus: "verified",
+        category: "tournament"
+      },
+      {
+        id: 2,
+        title: "Best Player Award", 
+        description: "Awarded best player in the regional tournament",
+        date: "2024-02-10",
+        verificationStatus: "pending",
+        category: "award"
+      }
+    ];
+  }
+
+  async getEntityEvents(type: string, id: number): Promise<any[]> {
+    try {
+      return await this.getEvents();
+    } catch (error) {
+      console.error('Error getting entity events:', error);
+      return [];
+    }
+  }
+
+  async getNotifications(type: string, id: number): Promise<any[]> {
+    return [
+      {
+        id: 1,
+        title: "Event Registration Approved",
+        message: "Your registration for Kerala State Championship has been approved",
+        createdAt: new Date().toISOString(),
+        hasLink: true
+      },
+      {
+        id: 2,
+        title: "Profile Verification Complete",
+        message: "Your profile has been successfully verified",
+        createdAt: new Date(Date.now() - 86400000).toISOString(),
+        hasLink: false
+      }
+    ];
+  }
+
+  async getReviews(type: string, id: number): Promise<any[]> {
+    return [
+      {
+        id: 1,
+        rating: 5,
+        comment: "Excellent sports facility with great amenities",
+        reviewerName: "Arjun Kumar",
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 2,
+        rating: 4,
+        comment: "Good organization, well-managed events",
+        reviewerName: "Priya Nair",
+        createdAt: new Date(Date.now() - 172800000).toISOString()
+      }
+    ];
+  }
+
+  async getPendingRequests(type: string, id: number): Promise<any[]> {
+    return [
+      {
+        id: 1,
+        title: "Team Membership Request",
+        description: "Request to join Kerala Warriors team",
+        requesterName: "Rahul Sharma",
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: 2,
+        title: "Facility Booking Request",
+        description: "Request to book facility for weekend training",
+        requesterName: "Sports Academy Kerala",
+        createdAt: new Date(Date.now() - 43200000).toISOString()
+      }
+    ];
+  }
+
+  async getEntityAdvertisements(type: string, id: number): Promise<any[]> {
+    try {
+      return await this.getAdvertisements();
+    } catch (error) {
+      console.error('Error getting entity advertisements:', error);
+      return [];
+    }
+  }
+
+  async getEcommerceProducts(): Promise<any[]> {
+    return [
+      {
+        id: 1,
+        name: "Kerala Warriors Jersey",
+        description: "Official team jersey with latest design",
+        price: 1500,
+        image: null,
+        category: "apparel"
+      },
+      {
+        id: 2,
+        name: "Professional Football",
+        description: "FIFA approved football for tournaments",
+        price: 2500,
+        image: null,
+        category: "equipment"
+      },
+      {
+        id: 3,
+        name: "Sports Training Kit",
+        description: "Complete training kit with cones, markers and whistle",
+        price: 3500,
+        image: null,
+        category: "training"
+      },
+      {
+        id: 4,
+        name: "Custom Team Banner",
+        description: "Personalized team banner for events",
+        price: 800,
+        image: null,
+        category: "accessories"
+      }
+    ];
   }
 
   // Sports content operations

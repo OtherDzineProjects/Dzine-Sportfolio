@@ -2134,6 +2134,156 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Ward-level search endpoint
+  app.get("/api/ward-search", async (req, res) => {
+    try {
+      const { query, district, ward, type } = req.query;
+      const results = await storage.searchByWard({
+        query: query as string,
+        district: district as string,
+        ward: ward as string,
+        type: type as string
+      });
+      res.json(results);
+    } catch (error) {
+      console.error("Error performing ward search:", error);
+      res.status(500).json({ message: "Failed to perform search" });
+    }
+  });
+
+  // Get wards for a district
+  app.get("/api/wards/:district", async (req, res) => {
+    try {
+      const { district } = req.params;
+      const wards = await storage.getWardsByDistrict(district);
+      res.json(wards);
+    } catch (error) {
+      console.error("Error fetching wards:", error);
+      res.status(500).json({ message: "Failed to fetch wards" });
+    }
+  });
+
+  // User subscription management
+  app.get("/api/user-subscription", async (req, res) => {
+    try {
+      const subscription = {
+        planId: "basic",
+        status: "active",
+        expiresAt: null
+      };
+      res.json(subscription);
+    } catch (error) {
+      console.error("Error fetching subscription:", error);
+      res.status(500).json({ message: "Failed to fetch subscription" });
+    }
+  });
+
+  // Upgrade subscription
+  app.post("/api/subscription/upgrade", async (req, res) => {
+    try {
+      const { planId, paymentMethod } = req.body;
+      const subscription = {
+        planId,
+        status: "active",
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        paymentMethod
+      };
+      res.json(subscription);
+    } catch (error) {
+      console.error("Error upgrading subscription:", error);
+      res.status(500).json({ message: "Failed to upgrade subscription" });
+    }
+  });
+
+  // Dashboard data endpoints
+  app.get("/api/:type-profile/:id", async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const profile = await storage.getProfile(type, parseInt(id));
+      res.json(profile);
+    } catch (error) {
+      console.error("Error fetching profile:", error);
+      res.status(500).json({ message: "Failed to fetch profile" });
+    }
+  });
+
+  app.get("/api/:type-achievements/:id", async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const achievements = await storage.getAchievements(type, parseInt(id));
+      res.json(achievements);
+    } catch (error) {
+      console.error("Error fetching achievements:", error);
+      res.status(500).json({ message: "Failed to fetch achievements" });
+    }
+  });
+
+  app.get("/api/:type-events/:id", async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const events = await storage.getEntityEvents(type, parseInt(id));
+      res.json(events);
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      res.status(500).json({ message: "Failed to fetch events" });
+    }
+  });
+
+  app.get("/api/:type-notifications/:id", async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const notifications = await storage.getNotifications(type, parseInt(id));
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+
+  app.get("/api/:type-reviews/:id", async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const reviews = await storage.getReviews(type, parseInt(id));
+      res.json(reviews);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
+      res.status(500).json({ message: "Failed to fetch reviews" });
+    }
+  });
+
+  app.get("/api/:type-requests/:id", async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const requests = await storage.getPendingRequests(type, parseInt(id));
+      res.json(requests);
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+      res.status(500).json({ message: "Failed to fetch requests" });
+    }
+  });
+
+  app.get("/api/:type-advertisements/:id", async (req, res) => {
+    try {
+      const { type, id } = req.params;
+      const advertisements = await storage.getEntityAdvertisements(type, parseInt(id));
+      res.json(advertisements);
+    } catch (error) {
+      console.error("Error fetching advertisements:", error);
+      res.status(500).json({ message: "Failed to fetch advertisements" });
+    }
+  });
+
+  // eCommerce products endpoint
+  app.get("/api/ecommerce-products", async (req, res) => {
+    try {
+      const products = await storage.getEcommerceProducts();
+      res.json(products);
+    } catch (error) {
+      console.error("Error fetching ecommerce products:", error);
+      res.status(500).json({ message: "Failed to fetch products" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

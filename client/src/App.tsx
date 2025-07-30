@@ -29,6 +29,9 @@ import OrganizationsDiscovery from "@/pages/organizations-discovery";
 import AssociationManagement from "@/pages/association-management";
 import Analytics from "@/pages/analytics";
 import ComprehensiveSportsManagement from "@/pages/comprehensive-sports-management";
+import ComprehensiveDashboard from "@/pages/comprehensive-dashboard";
+import SubscriptionManagement from "@/pages/subscription-management";
+import WardLevelSearch from "@/pages/ward-level-search";
 import Events from "@/pages/events";
 import NotFound from "@/pages/not-found";
 
@@ -62,6 +65,9 @@ function Router() {
       <Route path="/association-management" component={AssociationManagement} />
       <Route path="/analytics" component={Analytics} />
       <Route path="/comprehensive-sports" component={ComprehensiveSportsManagement} />
+      <Route path="/comprehensive-dashboard" component={ComprehensiveDashboard} />
+      <Route path="/subscription" component={SubscriptionManagement} />
+      <Route path="/ward-search" component={WardLevelSearch} />
       <Route path="/events" component={Events} />
       <Route path="/player-evaluation" component={PlayerEvaluation} />
       <Route component={NotFound} />
