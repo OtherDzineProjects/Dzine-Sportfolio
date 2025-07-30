@@ -146,7 +146,7 @@ export default function ComprehensiveDashboard({ userType = 'user', userId }: Da
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-4">
               <img 
-                src="@assets/Sportfolio_logo with white back ground_1753906678670.png" 
+                src="/assets/sportfolio-logo.png" 
                 alt="Sportfolio Logo" 
                 className="h-8 w-auto object-contain"
               />

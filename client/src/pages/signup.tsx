@@ -160,7 +160,7 @@ export default function Signup() {
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
             <img 
-              src="@assets/Sportfolio_logo with white back ground_1753906678670.png" 
+              src="/assets/sportfolio-logo.png" 
               alt="Sportfolio Logo" 
               className="h-16 w-auto object-contain"
             />
