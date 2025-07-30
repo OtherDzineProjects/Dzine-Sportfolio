@@ -2035,6 +2035,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Advertisement routes
+  app.get("/api/advertisements", async (req, res) => {
+    try {
+      const { placement } = req.query;
+      const advertisements = await storage.getAdvertisements(placement as string);
+      res.json(advertisements);
+    } catch (error) {
+      console.error("Error fetching advertisements:", error);
+      res.status(500).json({ error: "Failed to fetch advertisements" });
+    }
+  });
+
+  app.post("/api/advertisements", authenticateToken, async (req, res) => {
+    try {
+      const advertisement = await storage.createAdvertisement(req.body);
+      res.json(advertisement);
+    } catch (error) {
+      console.error("Error creating advertisement:", error);
+      res.status(500).json({ error: "Failed to create advertisement" });
+    }
+  });
+
+  // Sports content routes
+  app.get("/api/sports-content", async (req, res) => {
+    try {
+      const { sportCategoryId, ageGroup, contentType } = req.query;
+      const content = await storage.getSportsContent({
+        sportCategoryId: sportCategoryId ? parseInt(sportCategoryId as string) : undefined,
+        ageGroup: ageGroup as string,
+        contentType: contentType as string
+      });
+      res.json(content);
+    } catch (error) {
+      console.error("Error fetching sports content:", error);
+      res.status(500).json({ error: "Failed to fetch sports content" });
+    }
+  });
+
+  // Player evaluation routes
+  app.get("/api/player-evaluations", authenticateToken, async (req, res) => {
+    try {
+      const evaluations = await storage.getPlayerEvaluations();
+      res.json(evaluations);
+    } catch (error) {
+      console.error("Error fetching player evaluations:", error);
+      res.status(500).json({ error: "Failed to fetch player evaluations" });
+    }
+  });
+
+  app.get("/api/player-evaluations/my-evaluations", authenticateToken, async (req: any, res) => {
+    try {
+      const myEvaluations = await storage.getUserPlayerEvaluations(req.user.id);
+      res.json(myEvaluations);
+    } catch (error) {
+      console.error("Error fetching user evaluations:", error);
+      res.status(500).json({ error: "Failed to fetch user evaluations" });
+    }
+  });
+
+  app.post("/api/player-evaluations", authenticateToken, async (req, res) => {
+    try {
+      const evaluation = await storage.createPlayerEvaluation(req.body);
+      res.json(evaluation);
+    } catch (error) {
+      console.error("Error creating player evaluation:", error);
+      res.status(500).json({ error: "Failed to create player evaluation" });
+    }
+  });
+
+  app.post("/api/player-evaluations/:id/approve", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const evaluation = await storage.approvePlayerEvaluation(parseInt(id));
+      res.json(evaluation);
+    } catch (error) {
+      console.error("Error approving player evaluation:", error);
+      res.status(500).json({ error: "Failed to approve player evaluation" });
+    }
+  });
+
+  // Enhanced search routes
+  app.get("/api/search", async (req, res) => {
+    try {
+      const { q, type, location, sport, district, ward } = req.query;
+      const results = await storage.enhancedSearch({
+        query: q as string,
+        type: type as string, // events, facilities, users, organizations
+        location: location as string,
+        sport: sport as string,
+        district: district as string,
+        ward: ward as string
+      });
+      res.json(results);
+    } catch (error) {
+      console.error("Error performing search:", error);
+      res.status(500).json({ error: "Failed to perform search" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -96,6 +96,10 @@ export const users = pgTable("users", {
   sportCategories: jsonb("sport_categories").$type<{primary: string[], trackAndField?: string[]}>(),
   district: text("district"), // Kerala districts
   lsgd: text("lsgd"), // Local Self Government Division (Ward/Corporation/Municipality)
+  ward: text("ward"), // Ward level details for precise location mapping
+  panchayath: text("panchayath"), // Panchayath/Municipality/Corporation
+  constituency: text("constituency"), // Assembly constituency
+  coordinates: jsonb("coordinates").$type<{lat: number, lng: number}>(), // GPS coordinates for mapping
   skillLevel: text("skill_level"), // beginner, intermediate, professional
   sportsGoal: text("sports_goal"), // fitness, competition, recreation
   preferredVenue: text("preferred_venue"), // backwaters, indoor_stadium, local_ground
@@ -372,6 +376,197 @@ export const revenueRecords = pgTable("revenue_records", {
   bookingId: integer("booking_id").references(() => facilityBookings.id),
   eventId: integer("event_id").references(() => events.id),
   createdAt: timestamp("created_at").defaultNow()
+});
+
+// Advertisement Management
+export const advertisements = pgTable("advertisements", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  imageUrl: text("image_url"),
+  videoUrl: text("video_url"),
+  adType: text("ad_type").notNull(), // banner, video, sponsored_post, popup
+  placement: text("placement").notNull(), // home_page, dashboard, profile, event_page
+  targetAudience: jsonb("target_audience").$type<{
+    userTypes: string[]; // athlete, coach, organization
+    ageGroups: string[]; // 8-11, 12-18, 19-25, 26-35, 36-50, 50+
+    districts: string[];
+    sports: string[];
+  }>(),
+  sponsorId: integer("sponsor_id").references(() => users.id),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  budget: decimal("budget", { precision: 10, scale: 2 }),
+  costPerView: decimal("cost_per_view", { precision: 5, scale: 2 }),
+  totalViews: integer("total_views").default(0),
+  totalClicks: integer("total_clicks").default(0),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  status: text("status").default("pending"), // pending, active, paused, completed, rejected
+  clickUrl: text("click_url"), // URL to redirect when clicked
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// eCommerce System
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  category: text("category").notNull(), // equipment, apparel, accessories, supplements
+  subcategory: text("subcategory"),
+  sellerId: integer("seller_id").references(() => users.id).notNull(),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  discountPrice: decimal("discount_price", { precision: 10, scale: 2 }),
+  stock: integer("stock").default(0),
+  minOrderQuantity: integer("min_order_quantity").default(1),
+  maxOrderQuantity: integer("max_order_quantity"),
+  images: jsonb("images").$type<string[]>(),
+  videos: jsonb("videos").$type<string[]>(),
+  specifications: jsonb("specifications").$type<{[key: string]: string}>(),
+  tags: jsonb("tags").$type<string[]>(),
+  weight: decimal("weight", { precision: 5, scale: 2 }), // in kg
+  dimensions: jsonb("dimensions").$type<{length: number, width: number, height: number}>(),
+  shippingCost: decimal("shipping_cost", { precision: 8, scale: 2 }).default("0"),
+  isActive: boolean("is_active").default(true),
+  isFeatured: boolean("is_featured").default(false),
+  rating: decimal("rating", { precision: 3, scale: 2 }).default("0"),
+  reviewCount: integer("review_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  orderNumber: text("order_number").notNull().unique(),
+  buyerId: integer("buyer_id").references(() => users.id).notNull(),
+  sellerId: integer("seller_id").references(() => users.id).notNull(),
+  status: text("status").default("pending"), // pending, confirmed, shipped, delivered, cancelled, refunded
+  totalAmount: decimal("total_amount", { precision: 10, scale: 2 }).notNull(),
+  shippingAmount: decimal("shipping_amount", { precision: 8, scale: 2 }).default("0"),
+  taxAmount: decimal("tax_amount", { precision: 8, scale: 2 }).default("0"),
+  discountAmount: decimal("discount_amount", { precision: 8, scale: 2 }).default("0"),
+  paymentStatus: text("payment_status").default("pending"), // pending, paid, failed, refunded
+  paymentMethod: text("payment_method"), // card, upi, netbanking, cod
+  shippingAddress: jsonb("shipping_address").$type<{
+    name: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+    landmark?: string;
+  }>(),
+  estimatedDelivery: timestamp("estimated_delivery"),
+  actualDelivery: timestamp("actual_delivery"),
+  trackingNumber: text("tracking_number"),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const orderItems = pgTable("order_items", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").references(() => orders.id).notNull(),
+  productId: integer("product_id").references(() => products.id).notNull(),
+  quantity: integer("quantity").notNull(),
+  unitPrice: decimal("unit_price", { precision: 10, scale: 2 }).notNull(),
+  totalPrice: decimal("total_price", { precision: 10, scale: 2 }).notNull(),
+  productSnapshot: jsonb("product_snapshot"), // Store product details at time of order
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+
+
+// Sports Content Management for Home Page
+export const sportsContent = pgTable("sports_content", {
+  id: serial("id").primaryKey(),
+  sportCategoryId: integer("sport_category_id").references(() => sportsCategories.id).notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  contentType: text("content_type").notNull(), // rules, health_benefits, court_details, equipment
+  ageGroup: text("age_group"), // 8-11, 12-18, 19-25, 26-35, 36-50, 50+
+  benefits: jsonb("benefits").$type<{
+    health: string[];
+    educational: string[];
+    financial: string[];
+  }>(),
+  images: jsonb("images").$type<string[]>(),
+  videos: jsonb("videos").$type<string[]>(),
+  isPublished: boolean("is_published").default(false),
+  authorId: integer("author_id").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+// Profile Privacy & Social Features
+export const profileSettings = pgTable("profile_settings", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull().unique(),
+  isPublicProfile: boolean("is_public_profile").default(false),
+  allowPublicSearch: boolean("allow_public_search").default(true),
+  approvalRequired: boolean("approval_required").default(false), // For viewing non-public profiles
+  allowFollowing: boolean("allow_following").default(true),
+  showAchievements: boolean("show_achievements").default(true),
+  showStats: boolean("show_stats").default(true),
+  showUpcomingEvents: boolean("show_upcoming_events").default(true),
+  showCompletedEvents: boolean("show_completed_events").default(true),
+  contactPrivacy: text("contact_privacy").default("friends"), // public, friends, private
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
+});
+
+export const profileViewRequests = pgTable("profile_view_requests", {
+  id: serial("id").primaryKey(),
+  requesterId: integer("requester_id").references(() => users.id).notNull(),
+  profileOwnerId: integer("profile_owner_id").references(() => users.id).notNull(),
+  status: text("status").default("pending"), // pending, approved, rejected
+  message: text("message"),
+  responseMessage: text("response_message"),
+  respondedAt: timestamp("responded_at"),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const userFollows = pgTable("user_follows", {
+  id: serial("id").primaryKey(),
+  followerId: integer("follower_id").references(() => users.id).notNull(),
+  followingId: integer("following_id").references(() => users.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+// Enhanced Event Dashboard System
+export const eventDashboards = pgTable("event_dashboards", {
+  id: serial("id").primaryKey(),
+  eventId: integer("event_id").references(() => events.id).notNull().unique(),
+  totalParticipants: integer("total_participants").default(0),
+  totalMatches: integer("total_matches").default(0),
+  completedMatches: integer("completed_matches").default(0),
+  results: jsonb("results").$type<{
+    winners: {position: number, participantId: number, name: string}[];
+    statistics: {[key: string]: any};
+    highlights: string[];
+  }>(),
+  downloadableReports: jsonb("downloadable_reports").$type<{
+    excelUrl?: string;
+    pdfUrl?: string;
+    participantsList?: string;
+    resultsSummary?: string;
+  }>(),
+  eventHighlights: jsonb("event_highlights").$type<{
+    images: string[];
+    videos: string[];
+    bestMoments: string[];
+  }>(),
+  financialSummary: jsonb("financial_summary").$type<{
+    totalRevenue: number;
+    expenses: number;
+    profit: number;
+    breakdown: {[category: string]: number};
+  }>(),
+  isArchived: boolean("is_archived").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow()
 });
 
 // Relations
@@ -957,55 +1152,42 @@ export const playerPerformances = pgTable("player_performances", {
   updatedAt: timestamp("updated_at").defaultNow()
 });
 
-// Player evaluation and scouting
+// Player evaluation and scouting - Enhanced version
 export const playerEvaluations = pgTable("player_evaluations", {
   id: serial("id").primaryKey(),
   playerId: integer("player_id").references(() => users.id).notNull(),
   evaluatorId: integer("evaluator_id").references(() => users.id).notNull(),
-  evaluatorRole: text("evaluator_role").notNull(), // "coach", "scout", "selector", "technical_director"
+  eventId: integer("event_id").references(() => events.id),
+  matchId: integer("match_id").references(() => matches.id),
+  sportCategoryId: integer("sport_category_id").references(() => sportsCategories.id).notNull(),
+  evaluatorRole: text("evaluator_role").default("coach"), // "coach", "scout", "selector", "technical_director"
   tournamentId: integer("tournament_id").references(() => tournaments.id),
   fixtureId: integer("fixture_id").references(() => fixtures.id),
   evaluationDate: timestamp("evaluation_date").defaultNow(),
   
-  // Technical Skills (1-10 scale)
-  ballControl: decimal("ball_control", { precision: 3, scale: 1 }),
-  passing: decimal("passing", { precision: 3, scale: 1 }),
-  shooting: decimal("shooting", { precision: 3, scale: 1 }),
-  dribbling: decimal("dribbling", { precision: 3, scale: 1 }),
-  defending: decimal("defending", { precision: 3, scale: 1 }),
-  heading: decimal("heading", { precision: 3, scale: 1 }),
+  // Flexible skill system using JSON
+  technicalSkills: jsonb("technical_skills").$type<{[skill: string]: number}>(), // 1-10 rating
+  physicalAttributes: jsonb("physical_attributes").$type<{[attribute: string]: number}>(),
+  mentalAttributes: jsonb("mental_attributes").$type<{[attribute: string]: number}>(),
   
-  // Physical Attributes
-  speed: decimal("speed", { precision: 3, scale: 1 }),
-  agility: decimal("agility", { precision: 3, scale: 1 }),
-  strength: decimal("strength", { precision: 3, scale: 1 }),
-  endurance: decimal("endurance", { precision: 3, scale: 1 }),
-  jumping: decimal("jumping", { precision: 3, scale: 1 }),
-  balance: decimal("balance", { precision: 3, scale: 1 }),
+  // Core attributes
+  tacticalUnderstanding: integer("tactical_understanding").default(5), // 1-10
+  leadership: integer("leadership").default(5), // 1-10
+  teamwork: integer("teamwork").default(5), // 1-10
   
-  // Mental & Tactical
-  gameAwareness: decimal("game_awareness", { precision: 3, scale: 1 }),
-  decisionMaking: decimal("decision_making", { precision: 3, scale: 1 }),
-  communication: decimal("communication", { precision: 3, scale: 1 }),
-  leadership: decimal("leadership", { precision: 3, scale: 1 }),
-  temperament: decimal("temperament", { precision: 3, scale: 1 }),
-  workEthic: decimal("work_ethic", { precision: 3, scale: 1 }),
+  // Assessment text
+  strengths: text("strengths"),
+  weaknesses: text("weaknesses"),
+  recommendations: text("recommendations"),
   
-  // Overall Ratings
-  currentLevel: text("current_level"), // "district", "state", "national", "international"
-  potential: text("potential"), // "amateur", "semi_professional", "professional", "elite"
-  overallRating: decimal("overall_rating", { precision: 3, scale: 1 }),
+  // Overall assessment
+  currentLevel: text("current_level"), // "district", "state", "national", "international"  
+  potentialLevel: text("potential_level").default("intermediate"), // beginner, intermediate, advanced, professional, elite
+  overallRating: decimal("overall_rating", { precision: 3, scale: 1 }).default("5.0"), // 1.0-10.0
   
-  // Recommendations
-  strengths: jsonb("strengths").$type<string[]>(),
-  weaknesses: jsonb("weaknesses").$type<string[]>(),
-  improvements: jsonb("improvements").$type<string[]>(),
-  nextSteps: text("next_steps"),
-  scoutingNotes: text("scouting_notes"),
-  recommendForSelection: boolean("recommend_for_selection").default(false),
-  selectionLevel: text("selection_level"), // "district_team", "state_team", "training_camp"
-  
-  isConfidential: boolean("is_confidential").default(false),
+  // Approval workflow
+  isApproved: boolean("is_approved").default(false),
+  approvedBy: integer("approved_by").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow()
 });

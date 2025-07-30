@@ -1,0 +1,39 @@
+Requirement :Within the above application created or builded so far, check whether the below points are incorporated and are functional. Create and build if there are new requirements. Keep this note as one of the basic requirement docs along with the docs shared earlier. Find the attached screens for reference or you can replicate the pages as in the screens in the application. Each module should be functional for every organisation, facilities, events, score tools, fixtures, users, player evaluation tool. 
+
+Note that the Organisations mentioned below should be able to operate using the sportfolio application.
+1. Kerala State Sports Council
+2. 14 District Sports Councils under Kerala State Sports Council
+3. 43 Sports Associations like - TAekwondo Association, Football Association, Athletic Association, Cricket Association, Basketball Association, etc.
+4. 14 District Associations of each Sports Associations.
+5. Sports and Arts Clubs
+6. Schools.
+7. Colleges
+
+
+Flow of Sportfolio application and requirements
+
+1. User register with sportfolio
+2. Users can create an organisation, facility or an event after subscribing with the platform for an amount which can be configured.
+3. Users can edit or update his or her profile, update the awards and achievements as per the screens provided in attachments.
+4. Users will get the verified tick for each update when it is verified through the verification panel (module).
+5. Users can access the links provided in the notifications if the user account is subscribed with the Sporfolio platform.
+6. There will be a feature in the User dashboard, whether the profile can be viewed publicly, or to specified users after approval.
+7. User dashboard will have a tab in the menu where the User can view the requests and provision for approval.
+8. User will have a tab in the menu where User can view the notifications.
+9. Organisations also should have their own dashboards where they can create events after subscribing with the platform for an amount which can be configured.
+10. Facilities also should have their own dashboards where they can create events after subscribing with the platform for an amount which can be configured.
+11. Dashboards of Users, Organisations, Facilities and Events should be in such a way that there should be a menu with profile view, edit; list of awards and achievements in chronological order; upcoming events; completed events; notifications in chronological order; reviews and ratings.
+12. Separate modules of scoring and fixtures according to the disciplines as per the events. 
+13. Events when created should have a dashboard created and maintained even after the event, for the future reference, in the dashboard.
+14. Facilities, Organisations, Events and Users registered should be able to be mapped with their address which has to be captured in their profile with ward level details, so that identifying them in search shall be easy.
+15. Search pages for identifying Users, Organisations, Facilities, etc shall be with the ward level and district level.
+16. For every event with championships, once the deadline of the event is over, viewable format should be there in the dashboard for that particular event and downloadable format in excel and pdf should be available.
+17. Team creation by the organisation should be there for participation in the championship events.
+18. Results should be reflected in the profile of the team, organisation and user simultaneously after the event or championship.
+19. Player evaluation tool shall be provided along with the scoring tool for updating the player statistics, where only approved users can use the tool.
+20. Player statistics should be automatically updated with the profiles of the Users as per the events.
+21. Provision for adding advertisements as images and video links in each dashboards of USer, Organisation, Facility, event from the sponsors as well as investors. 
+22. Provision in every Dashboard for Users/ organisations. facilities/events who are sponsors / investors to upload their ads as images and videos links.
+23. Home page for the Sportfolio application with necessary pages with sports contents of all disciplines with their rules and regulations, court details, importance of each sports in each ones life related to health,educational and financial benefits for each sectors of users from Kids (8  to 11 years old); (12 to 18 years old); (19 to 25 years old); (26 to 35 years old); (36 to 50 years old) and 9above 50 years).
+24. There should be provision for advertisements in the home page.
+25. eCommerce facilities should be there in the Sportfolio site where registered users, organisations, facilities or events can buy or sell their merchandise through us. 

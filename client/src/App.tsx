@@ -4,6 +4,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
+import EnhancedHome from "@/pages/enhanced-home";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import DashboardModern from "@/pages/dashboard-modern";
@@ -16,6 +17,7 @@ import FacilityManagement from "@/pages/facility-management";
 import FixturesManagement from "@/pages/fixtures-management";
 import LiveScoring from "@/pages/live-scoring";
 import TeamsManagement from "@/pages/teams-management";
+import PlayerEvaluation from "@/pages/player-evaluation";
 import AthleteProfile from "@/pages/athlete-profile";
 import Facilities from "@/pages/facilities";
 import AdminDashboard from "@/pages/admin";
@@ -33,7 +35,8 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={EnhancedHome} />
+      <Route path="/home" component={Home} />
       <Route path="/landing" component={Landing} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
@@ -60,6 +63,7 @@ function Router() {
       <Route path="/analytics" component={Analytics} />
       <Route path="/comprehensive-sports" component={ComprehensiveSportsManagement} />
       <Route path="/events" component={Events} />
+      <Route path="/player-evaluation" component={PlayerEvaluation} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -306,6 +306,33 @@ export interface IStorage {
   // Match Commentary
   addMatchCommentary(commentary: InsertMatchCommentary): Promise<MatchCommentary>;
   getMatchCommentary(matchId: number): Promise<MatchCommentary[]>;
+  
+  // Analytics operations
+  getAnalytics(): Promise<any>;
+  getSportsAnalytics(): Promise<any>;
+  
+  // Advertisement operations
+  getAdvertisements(placement?: string): Promise<any[]>;
+  createAdvertisement(advertisement: any): Promise<any>;
+  
+  // Sports content operations
+  getSportsContent(filters: { sportCategoryId?: number, ageGroup?: string, contentType?: string }): Promise<any[]>;
+  
+  // Player evaluation operations
+  getPlayerEvaluations(): Promise<any[]>;
+  getUserPlayerEvaluations(userId: number): Promise<any[]>;
+  createPlayerEvaluation(evaluation: any): Promise<any>;
+  approvePlayerEvaluation(evaluationId: number): Promise<any>;
+  
+  // Enhanced search operations
+  enhancedSearch(params: { 
+    query?: string, 
+    type?: string, 
+    location?: string, 
+    sport?: string, 
+    district?: string, 
+    ward?: string 
+  }): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -379,7 +406,7 @@ export class DatabaseStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
-      .values(insertUser)
+      .values([insertUser])
       .returning();
     return user;
   }
@@ -485,7 +512,7 @@ export class DatabaseStorage implements IStorage {
   async createFacility(facility: InsertFacility): Promise<Facility> {
     const [created] = await db
       .insert(facilities)
-      .values(facility)
+      .values([facility])
       .returning();
     return created;
   }
@@ -502,7 +529,7 @@ export class DatabaseStorage implements IStorage {
   async createFacilityBooking(booking: InsertFacilityBooking): Promise<FacilityBooking> {
     const [created] = await db
       .insert(facilityBookings)
-      .values(booking)
+      .values([booking])
       .returning();
     return created;
   }
@@ -564,7 +591,7 @@ export class DatabaseStorage implements IStorage {
   async createEvent(event: InsertEvent): Promise<Event> {
     const [created] = await db
       .insert(events)
-      .values(event)
+      .values([event])
       .returning();
     return created;
   }
@@ -612,7 +639,7 @@ export class DatabaseStorage implements IStorage {
   async createMatch(match: Partial<Match>): Promise<Match> {
     const [created] = await db
       .insert(matches)
-      .values(match)
+      .values([match])
       .returning();
     return created;
   }
@@ -638,7 +665,7 @@ export class DatabaseStorage implements IStorage {
   async createCertificate(cert: InsertCertificate): Promise<Certificate> {
     const [created] = await db
       .insert(certificates)
-      .values(cert)
+      .values([cert])
       .returning();
     return created;
   }
@@ -670,7 +697,7 @@ export class DatabaseStorage implements IStorage {
   async createMaintenanceRecord(record: Partial<MaintenanceRecord>): Promise<MaintenanceRecord> {
     const [created] = await db
       .insert(maintenanceRecords)
-      .values(record)
+      .values([record])
       .returning();
     return created;
   }
@@ -686,7 +713,7 @@ export class DatabaseStorage implements IStorage {
   async createRevenueRecord(record: Partial<RevenueRecord>): Promise<RevenueRecord> {
     const [created] = await db
       .insert(revenueRecords)
-      .values(record)
+      .values([record])
       .returning();
     return created;
   }
@@ -714,7 +741,7 @@ export class DatabaseStorage implements IStorage {
   async createUserApproval(approval: InsertUserApproval): Promise<UserApproval> {
     const [created] = await db
       .insert(userApprovals)
-      .values(approval)
+      .values([approval])
       .returning();
     return created;
   }
@@ -1719,6 +1746,230 @@ export class DatabaseStorage implements IStorage {
 
   async getMatchCommentary(matchId: number): Promise<MatchCommentary[]> {
     return await db.select().from(matchCommentary).where(eq(matchCommentary.matchId, matchId));
+  }
+
+  // Analytics operations
+  async getAnalytics(): Promise<any> {
+    const totalUsers = await db.select().from(users);
+    const totalOrganizations = await db.select().from(userOrganizations);
+    const totalEvents = await db.select().from(events);
+    
+    return {
+      totalUsers: totalUsers.length,
+      totalOrganizations: totalOrganizations.length,
+      totalEvents: totalEvents.length,
+      activeUsers: totalUsers.filter(u => u.isActive).length
+    };
+  }
+
+  async getSportsAnalytics(): Promise<any> {
+    const users = await db.select().from(users);
+    const organizations = await db.select().from(userOrganizations);
+    const events = await db.select().from(events);
+    
+    return {
+      totalUsers: users.length,
+      totalOrganizations: organizations.length,
+      totalEvents: events.length,
+      usersByDistrict: users.reduce((acc: any, user) => {
+        const district = user.district || 'Unknown';
+        acc[district] = (acc[district] || 0) + 1;
+        return acc;
+      }, {}),
+      organizationsByType: organizations.reduce((acc: any, org) => {
+        const type = org.type || 'Unknown';
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {})
+    };
+  }
+
+  // Advertisement operations
+  async getAdvertisements(placement?: string): Promise<any[]> {
+    // Mock advertisement data for demonstration
+    const mockAds = [
+      {
+        id: 1,
+        title: "Kerala Sports Council Training Camp",
+        content: "Join our upcoming training camp for aspiring athletes",
+        imageUrl: "https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Training+Camp",
+        placement: "home_banner",
+        isActive: true
+      },
+      {
+        id: 2,
+        title: "Sports Equipment Sale",
+        content: "Get 30% off on all sports equipment this month",
+        imageUrl: "https://via.placeholder.com/300x200/059669/FFFFFF?text=Equipment+Sale",
+        placement: "sidebar",
+        isActive: true
+      }
+    ];
+    
+    if (placement) {
+      return mockAds.filter(ad => ad.placement === placement);
+    }
+    return mockAds;
+  }
+
+  async createAdvertisement(advertisement: any): Promise<any> {
+    // Mock implementation - would use database in real app
+    return {
+      id: Math.floor(Math.random() * 1000),
+      ...advertisement,
+      createdAt: new Date(),
+      isActive: true
+    };
+  }
+
+  // Sports content operations
+  async getSportsContent(filters: { sportCategoryId?: number, ageGroup?: string, contentType?: string }): Promise<any[]> {
+    // Mock sports content data
+    const mockContent = [
+      {
+        id: 1,
+        title: "Basketball Training Tips",
+        content: "Master the fundamentals of basketball with these essential training tips",
+        imageUrl: "https://via.placeholder.com/400x300/F59E0B/FFFFFF?text=Basketball+Tips",
+        contentType: "training",
+        sportCategoryId: 1,
+        ageGroup: "youth"
+      },
+      {
+        id: 2,
+        title: "Football Fitness Routine",
+        content: "Build endurance and strength with this comprehensive football fitness routine",
+        imageUrl: "https://via.placeholder.com/400x300/EF4444/FFFFFF?text=Football+Fitness",
+        contentType: "fitness",
+        sportCategoryId: 2,
+        ageGroup: "adult"
+      }
+    ];
+    
+    let filteredContent = mockContent;
+    
+    if (filters.sportCategoryId) {
+      filteredContent = filteredContent.filter(c => c.sportCategoryId === filters.sportCategoryId);
+    }
+    if (filters.ageGroup) {
+      filteredContent = filteredContent.filter(c => c.ageGroup === filters.ageGroup);
+    }
+    if (filters.contentType) {
+      filteredContent = filteredContent.filter(c => c.contentType === filters.contentType);
+    }
+    
+    return filteredContent;
+  }
+
+  // Player evaluation operations
+  async getPlayerEvaluations(): Promise<any[]> {
+    // Mock player evaluation data
+    return [
+      {
+        id: 1,
+        playerName: "Arjun Kumar",
+        sport: "Basketball",
+        overallRating: 8.5,
+        evaluatorName: "Coach Sharma",
+        evaluationDate: new Date(),
+        strengths: "Excellent shooting accuracy, good court vision",
+        weaknesses: "Needs improvement in defensive positioning",
+        status: "approved"
+      }
+    ];
+  }
+
+  async getUserPlayerEvaluations(userId: number): Promise<any[]> {
+    // Mock user evaluations
+    return [
+      {
+        id: 1,
+        playerId: userId,
+        sport: "Basketball",
+        overallRating: 7.8,
+        evaluatorName: "Coach Reddy",
+        evaluationDate: new Date(),
+        technicalSkills: { shooting: 8, dribbling: 7, passing: 8 },
+        physicalAttributes: { speed: 7, strength: 6, agility: 8 },
+        recommendations: "Focus on strength training and defensive techniques"
+      }
+    ];
+  }
+
+  async createPlayerEvaluation(evaluation: any): Promise<any> {
+    // Mock implementation
+    return {
+      id: Math.floor(Math.random() * 1000),
+      ...evaluation,
+      createdAt: new Date(),
+      isApproved: false
+    };
+  }
+
+  async approvePlayerEvaluation(evaluationId: number): Promise<any> {
+    // Mock implementation
+    return {
+      id: evaluationId,
+      isApproved: true,
+      approvedAt: new Date()
+    };
+  }
+
+  // Enhanced search operations
+  async enhancedSearch(params: { 
+    query?: string, 
+    type?: string, 
+    location?: string, 
+    sport?: string, 
+    district?: string, 
+    ward?: string 
+  }): Promise<any> {
+    const { query, type, location, sport, district, ward } = params;
+    
+    let results: any = {
+      events: [],
+      facilities: [],
+      users: [],
+      organizations: []
+    };
+
+    // Search events
+    if (!type || type === 'events') {
+      const allEvents = await db.select().from(events);
+      results.events = allEvents.filter((event: any) => {
+        const matchesQuery = !query || event.name?.toLowerCase().includes(query.toLowerCase());
+        const matchesLocation = !location || event.location?.toLowerCase().includes(location.toLowerCase());
+        const matchesSport = !sport || event.sportName?.toLowerCase().includes(sport.toLowerCase());
+        return matchesQuery && matchesLocation && matchesSport;
+      });
+    }
+
+    // Search organizations
+    if (!type || type === 'organizations') {
+      const allOrgs = await db.select().from(userOrganizations);
+      results.organizations = allOrgs.filter((org: any) => {
+        const matchesQuery = !query || org.name?.toLowerCase().includes(query.toLowerCase());
+        const matchesDistrict = !district || org.district?.toLowerCase().includes(district.toLowerCase());
+        return matchesQuery && matchesDistrict;
+      });
+    }
+
+    // Search users
+    if (!type || type === 'users') {
+      const allUsers = await db.select().from(users);
+      results.users = allUsers.filter((user: any) => {
+        const matchesQuery = !query || 
+          user.firstName?.toLowerCase().includes(query.toLowerCase()) ||
+          user.lastName?.toLowerCase().includes(query.toLowerCase());
+        const matchesDistrict = !district || user.district?.toLowerCase().includes(district.toLowerCase());
+        return matchesQuery && matchesDistrict;
+      }).map(user => ({
+        ...user,
+        password: undefined // Remove password from search results
+      }));
+    }
+
+    return results;
   }
 }
 
