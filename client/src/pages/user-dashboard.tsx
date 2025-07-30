@@ -673,6 +673,19 @@ export default function UserDashboard() {
                 className="flex-shrink-0"
               >
                 <Download className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Export</span>
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('auth_token');
+                  window.location.href = '/login';
+                }}
+                className="flex-shrink-0"
+              >
+                <User className="h-4 w-4 md:mr-2" />
                 <span className="hidden md:inline">Export Data</span>
                 <span className="md:hidden">Export</span>
               </Button>

@@ -177,6 +177,17 @@ export default function ComprehensiveDashboard({ userType = 'user', userId }: Da
                   Subscription
                 </Button>
               </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  localStorage.removeItem('token');
+                  window.location.href = '/login';
+                }}
+              >
+                <User className="w-4 h-4 mr-2" />
+                Logout
+              </Button>
             </div>
           </div>
         </div>
@@ -250,6 +261,23 @@ export default function ComprehensiveDashboard({ userType = 'user', userId }: Da
                   <CardDescription>Manage your personal information and settings</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  {/* Login Credentials Section */}
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200 mb-6">
+                    <h4 className="font-medium text-blue-900 text-sm mb-3">🔑 Your Login Credentials:</h4>
+                    <div className="grid grid-cols-1 gap-2 text-sm">
+                      <div className="flex items-center justify-between p-2 bg-white rounded border">
+                        <div>
+                          <div className="font-medium text-blue-700">Username: {profile?.username || profile?.email}</div>
+                          <div className="text-gray-600">Email: {profile?.email}</div>
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          User ID: SP{profile?.id?.toString().padStart(6, '0')}
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-xs text-blue-700 mt-2">💡 Use these credentials to log in to your account</p>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="text-sm font-medium text-gray-700">First Name</label>
