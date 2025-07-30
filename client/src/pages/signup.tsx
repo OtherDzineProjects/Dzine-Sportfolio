@@ -340,16 +340,28 @@ export default function Signup() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="pincode">Pincode *</Label>
-                <Input
-                  id="pincode"
-                  value={formData.pincode}
-                  onChange={(e) => handleInputChange('pincode', e.target.value)}
-                  className={errors.pincode ? "border-red-500" : ""}
-                  placeholder="6-digit pincode"
-                />
-                {errors.pincode && <p className="text-sm text-red-500">{errors.pincode}</p>}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="pincode">Pincode *</Label>
+                  <Input
+                    id="pincode"
+                    value={formData.pincode}
+                    onChange={(e) => handleInputChange('pincode', e.target.value)}
+                    className={errors.pincode ? "border-red-500" : ""}
+                    placeholder="6-digit pincode"
+                  />
+                  {errors.pincode && <p className="text-sm text-red-500">{errors.pincode}</p>}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="ward">Ward Details</Label>
+                  <Input
+                    id="ward"
+                    value={formData.ward || ''}
+                    onChange={(e) => handleInputChange('ward', e.target.value)}
+                    placeholder="Ward number or name"
+                  />
+                </div>
               </div>
             </div>
 

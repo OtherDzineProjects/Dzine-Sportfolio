@@ -56,7 +56,7 @@ export default function LiveScoring() {
   const queryClient = useQueryClient();
 
   // Fetch live matches
-  const { data: liveMatches = [], isLoading: matchesLoading } = useQuery({
+  const { data: liveMatches = [], isLoading: matchesLoading } = useQuery<TeamMatch[]>({
     queryKey: ["/api/matches/live"],
     refetchInterval: 5000, // Refresh every 5 seconds
   });
