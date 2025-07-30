@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { Loader2, User, Mail, Lock, Phone, MapPin, Calendar } from "lucide-react";
 import { formatDateForInput } from "@/utils/date-format";
+import { getAllLocalBodies, getWardsByLocation } from "@shared/kerala-locations";
 
 interface SignupData {
   username: string;
@@ -26,6 +27,9 @@ interface SignupData {
   district: string;
   state: string;
   pincode: string;
+  ward?: string;
+  panchayath?: string;
+  lsgd?: string;
   agreeToTerms: boolean;
 }
 
@@ -53,8 +57,15 @@ export default function Signup() {
     district: "",
     state: "Kerala",
     pincode: "",
+    ward: "",
+    panchayath: "",
+    lsgd: "",
     agreeToTerms: false
   });
+
+  // Dynamic location data based on district selection
+  const availableLocalBodies = formData.district ? getAllLocalBodies(formData.district) : [];
+  const availableWards = formData.panchayath ? getWardsByLocation(formData.district, formData.panchayath) : [];
 
   const [errors, setErrors] = useState<Partial<SignupData>>({});
 
@@ -148,7 +159,25 @@ export default function Signup() {
   };
 
   const handleInputChange = (field: keyof SignupData, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData(prev => {
+      const newData = { ...prev, [field]: value };
+      
+      // Reset dependent fields when district changes
+      if (field === 'district') {
+        newData.panchayath = "";
+        newData.ward = "";
+        newData.lsgd = "";
+      }
+      
+      // Reset ward when panchayath changes
+      if (field === 'panchayath') {
+        newData.ward = "";
+        newData.lsgd = value as string; // Set LSGD to selected panchayath/municipality/corporation
+      }
+      
+      return newData;
+    });
+    
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -340,29 +369,65 @@ export default function Signup() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="pincode">Pincode *</Label>
-                  <Input
-                    id="pincode"
-                    value={formData.pincode}
-                    onChange={(e) => handleInputChange('pincode', e.target.value)}
-                    className={errors.pincode ? "border-red-500" : ""}
-                    placeholder="6-digit pincode"
-                  />
-                  {errors.pincode && <p className="text-sm text-red-500">{errors.pincode}</p>}
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="ward">Ward Details</Label>
-                  <Input
-                    id="ward"
-                    value={formData.ward || ''}
-                    onChange={(e) => handleInputChange('ward', e.target.value)}
-                    placeholder="Ward number or name"
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="pincode">Pincode *</Label>
+                <Input
+                  id="pincode"
+                  value={formData.pincode}
+                  onChange={(e) => handleInputChange('pincode', e.target.value)}
+                  className={errors.pincode ? "border-red-500" : ""}
+                  placeholder="6-digit pincode"
+                />
+                {errors.pincode && <p className="text-sm text-red-500">{errors.pincode}</p>}
               </div>
+
+              {/* Dynamic Location Hierarchy */}
+              {formData.district && (
+                <div className="space-y-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <h4 className="font-medium text-blue-900 flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    {formData.district} Administrative Details
+                  </h4>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="panchayath">Corporation/Municipality/Panchayath *</Label>
+                    <Select value={formData.panchayath || ""} onValueChange={(value) => handleInputChange('panchayath', value)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select local body" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {availableLocalBodies.map((body) => (
+                          <SelectItem key={body.name} value={body.name}>
+                            {body.name} ({body.type})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {formData.panchayath && availableWards.length > 0 && (
+                    <div className="space-y-2">
+                      <Label htmlFor="ward">Ward</Label>
+                      <Select value={formData.ward || ""} onValueChange={(value) => handleInputChange('ward', value)}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select ward" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableWards.map((ward) => (
+                            <SelectItem key={ward} value={ward}>
+                              {ward}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  
+                  <div className="text-sm text-blue-700 bg-blue-100 p-2 rounded">
+                    📍 Selected: {formData.district} → {formData.panchayath} {formData.ward && `→ ${formData.ward}`}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Terms and Conditions */}

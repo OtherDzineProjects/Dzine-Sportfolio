@@ -15,7 +15,13 @@ import {
   MapPin, Phone, Mail, Globe, Calendar, Users, FileText,
   CheckCircle2, AlertCircle, Star, Award
 } from "lucide-react";
-import { getDistrictOptions, getLSGDOptions } from "@shared/kerala-locations";
+import { getAllLocalBodies, getWardsByLocation } from "@shared/kerala-locations";
+
+const KERALA_DISTRICTS = [
+  "Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", 
+  "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", 
+  "Thiruvananthapuram", "Thrissur", "Wayanad"
+];
 
 interface Organization {
   id: number;
@@ -59,8 +65,8 @@ export function OrganizationDetailView({ organization, onUpdate }: OrganizationD
   const [showLogoDialog, setShowLogoDialog] = useState(false);
   const [formData, setFormData] = useState<Partial<Organization>>(organization);
 
-  const districtOptions = getDistrictOptions();
-  const lsgdOptions = formData.district ? getLSGDOptions(formData.district) : [];
+  const districtOptions = KERALA_DISTRICTS;
+  const lsgdOptions = formData.district ? getAllLocalBodies(formData.district) : [];
 
   const updateOrganizationMutation = useMutation({
     mutationFn: async (data: Partial<Organization>) => {

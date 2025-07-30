@@ -8,7 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { MapPin, Clock, Users, DollarSign, Star } from "lucide-react";
-import { KERALA_DISTRICTS, getDistrictOptions, getLSGDOptions } from "@shared/kerala-locations";
+import { getAllLocalBodies, getWardsByLocation } from "@shared/kerala-locations";
+
+const KERALA_DISTRICTS = [
+  "Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", 
+  "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", 
+  "Thiruvananthapuram", "Thrissur", "Wayanad"
+];
 
 interface FacilityAvailability {
   sport: string;
@@ -276,9 +282,9 @@ export default function OrganizationFacilitySelector({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="">Same as organization</SelectItem>
-                            {getDistrictOptions().map((district) => (
-                              <SelectItem key={district.value} value={district.value}>
-                                {district.label}
+                            {KERALA_DISTRICTS.map((district) => (
+                              <SelectItem key={district} value={district}>
+                                {district}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -304,9 +310,9 @@ export default function OrganizationFacilitySelector({
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="">Same as organization</SelectItem>
-                            {facility.location?.district && getLSGDOptions(facility.location.district).map((lsgd) => (
-                              <SelectItem key={lsgd.value} value={lsgd.value}>
-                                {lsgd.label}
+                            {facility.location?.district && getAllLocalBodies(facility.location.district).map((lsgd) => (
+                              <SelectItem key={lsgd.name} value={lsgd.name}>
+                                {lsgd.name} ({lsgd.type})
                               </SelectItem>
                             ))}
                           </SelectContent>

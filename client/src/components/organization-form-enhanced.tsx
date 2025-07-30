@@ -11,7 +11,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ComprehensiveSportsSelector from "./comprehensive-sports-selector";
 import OrganizationFacilitySelector from "./organization-facility-selector";
-import { KERALA_DISTRICTS, getDistrictOptions, getLSGDOptions } from "@shared/kerala-locations";
+import { getAllLocalBodies, getWardsByLocation } from "@shared/kerala-locations";
+
+const KERALA_DISTRICTS = [
+  "Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", 
+  "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", 
+  "Thiruvananthapuram", "Thrissur", "Wayanad"
+];
 
 const organizationSchema = z.object({
   name: z.string().min(2, "Organization name must be at least 2 characters"),
@@ -94,7 +100,7 @@ export default function OrganizationFormEnhanced({
   // Update available LSGDs when district changes
   useEffect(() => {
     if (selectedDistrict) {
-      const lsgds = getLSGDOptions(selectedDistrict);
+      const lsgds = getAllLocalBodies(selectedDistrict);
       setAvailableLSGDs(lsgds);
       // Clear LSGD selection when district changes
       form.setValue("lsgd", "");
@@ -108,7 +114,7 @@ export default function OrganizationFormEnhanced({
   useEffect(() => {
     if (initialData?.district) {
       setSelectedDistrict(initialData.district);
-      const lsgds = getLSGDOptions(initialData.district);
+      const lsgds = getAllLocalBodies(initialData.district);
       setAvailableLSGDs(lsgds);
     }
   }, [initialData?.district]);
@@ -278,9 +284,9 @@ export default function OrganizationFormEnhanced({
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                  {getDistrictOptions().map((district) => (
-                                    <SelectItem key={district.value} value={district.value}>
-                                      {district.label}
+                                  {KERALA_DISTRICTS.map((district) => (
+                                    <SelectItem key={district} value={district}>
+                                      {district}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
