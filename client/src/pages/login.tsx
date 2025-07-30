@@ -238,16 +238,58 @@ export default function Login() {
                   <div className="font-medium text-blue-800">Super Admin</div>
                   <div>Email: superadmin@sportfolio.com</div>
                   <div>Password: SportfolioAdmin123</div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-2 text-blue-700 border-blue-300 hover:bg-blue-100"
+                    onClick={() => {
+                      setFormData({
+                        email: 'superadmin@sportfolio.com',
+                        password: 'SportfolioAdmin123'
+                      });
+                    }}
+                  >
+                    Use Super Admin
+                  </Button>
                 </div>
                 <div className="p-3 bg-green-50 rounded-lg">
                   <div className="font-medium text-green-800">Admin</div>
                   <div>Email: mysportfolioindia@gmail.com</div>
                   <div>Password: SportfolioIndia</div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-2 text-green-700 border-green-300 hover:bg-green-100"
+                    onClick={() => {
+                      setFormData({
+                        email: 'mysportfolioindia@gmail.com',
+                        password: 'SportfolioIndia'
+                      });
+                    }}
+                  >
+                    Use Admin
+                  </Button>
                 </div>
                 <div className="p-3 bg-purple-50 rounded-lg">
                   <div className="font-medium text-purple-800">Sports Director</div>
                   <div>Email: emailcslkerala@gmail.com</div>
                   <div>Password: CSLKerala</div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="mt-2 text-purple-700 border-purple-300 hover:bg-purple-100"
+                    onClick={() => {
+                      setFormData({
+                        email: 'emailcslkerala@gmail.com',
+                        password: 'CSLKerala'
+                      });
+                    }}
+                  >
+                    Use Sports Director
+                  </Button>
                 </div>
               </div>
             </div>
