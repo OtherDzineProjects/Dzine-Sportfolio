@@ -2315,3 +2315,64 @@ export type InsertTeamSeasonStats = z.infer<typeof insertTeamSeasonStatsSchema>;
 export type MatchCommentary = typeof matchCommentary.$inferSelect;
 export type InsertMatchCommentary = z.infer<typeof insertMatchCommentarySchema>;
 
+// Athlete membership system
+export const athleteMemberships = pgTable("athlete_memberships", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  membershipType: varchar("membership_type", { length: 50 }).default("basic"),
+  subscriptionStatus: varchar("subscription_status", { length: 20 }).default("active"),
+  startDate: timestamp("start_date").defaultNow(),
+  endDate: timestamp("end_date"),
+  paymentAmount: decimal("payment_amount", { precision: 10, scale: 2 }),
+  paymentStatus: varchar("payment_status", { length: 20 }).default("pending"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Organization memberships/tagging
+export const organizationMemberships = pgTable("organization_memberships", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  status: varchar("status", { length: 20 }).default("pending"),
+  membershipFee: decimal("membership_fee", { precision: 10, scale: 2 }),
+  paymentStatus: varchar("payment_status", { length: 20 }).default("pending"),
+  requestedAt: timestamp("requested_at").defaultNow(),
+  approvedAt: timestamp("approved_at"),
+  approvedBy: integer("approved_by").references(() => users.id),
+});
+
+// Event registrations
+export const eventRegistrations = pgTable("event_registrations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  eventId: integer("event_id").references(() => events.id),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  registrationFee: decimal("registration_fee", { precision: 10, scale: 2 }),
+  paymentStatus: varchar("payment_status", { length: 20 }).default("pending"),
+  registrationStatus: varchar("registration_status", { length: 20 }).default("pending"),
+  registeredAt: timestamp("registered_at").defaultNow(),
+});
+
+// Athlete notification system
+export const athleteNotifications = pgTable("athlete_notifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id).notNull(),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  eventId: integer("event_id").references(() => events.id),
+  type: varchar("type", { length: 50 }).notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Additional types
+export type AthleteMembership = typeof athleteMemberships.$inferSelect;
+export type InsertAthleteMembership = typeof athleteMemberships.$inferInsert;
+export type OrganizationMembership = typeof organizationMemberships.$inferSelect;
+export type InsertOrganizationMembership = typeof organizationMemberships.$inferInsert;
+export type EventRegistration = typeof eventRegistrations.$inferSelect;
+export type InsertEventRegistration = typeof eventRegistrations.$inferInsert;
+export type AthleteNotification = typeof athleteNotifications.$inferSelect;
+export type InsertAthleteNotification = typeof athleteNotifications.$inferInsert;
+

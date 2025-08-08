@@ -1,8 +1,19 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { db } from "./db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { eq, and, desc, inArray } from "drizzle-orm";
+import { 
+  users, 
+  organizations, 
+  events, 
+  athleteMemberships, 
+  organizationMemberships, 
+  athleteNotifications, 
+  eventRegistrations 
+} from "@shared/schema";
 import { 
   insertUserSchema, 
   insertAthleteProfileSchema, 
@@ -2300,6 +2311,426 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching ecommerce products:", error);
       res.status(500).json({ message: "Failed to fetch products" });
+    }
+  });
+
+  // Athlete Membership & Organization Tagging Routes
+  
+  // Subscribe to Sportfolio membership
+  app.post("/api/athlete/subscribe", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { membershipType = "annual", paymentAmount = 268.80 } = req.body;
+      
+      // Create membership record
+      const membership = await db.insert(athleteMemberships).values({
+        userId,
+        membershipType,
+        subscriptionStatus: "active",
+        paymentAmount: paymentAmount.toString(),
+        paymentStatus: "paid",
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year
+      }).returning();
+      
+      res.json({ success: true, membership: membership[0] });
+    } catch (error) {
+      console.error("Subscription error:", error);
+      res.status(500).json({ message: "Failed to create subscription" });
+    }
+  });
+  
+  // Get athlete membership status
+  app.get("/api/athlete/membership", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const membership = await db.select()
+        .from(athleteMemberships)
+        .where(eq(athleteMemberships.userId, userId))
+        .orderBy(desc(athleteMemberships.createdAt))
+        .limit(1);
+        
+      res.json(membership[0] || null);
+    } catch (error) {
+      console.error("Membership fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch membership" });
+    }
+  });
+  
+  // Tag organization (request membership)
+  app.post("/api/athlete/tag-organization", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { organizationId } = req.body;
+      
+      // Check if already requested
+      const existing = await db.select()
+        .from(organizationMemberships)
+        .where(and(
+          eq(organizationMemberships.userId, userId),
+          eq(organizationMemberships.organizationId, organizationId)
+        ));
+        
+      if (existing.length > 0) {
+        return res.status(400).json({ message: "Already requested or member of this organization" });
+      }
+      
+      // Get organization info for membership fee
+      const org = await db.select()
+        .from(organizations)
+        .where(eq(organizations.id, organizationId))
+        .limit(1);
+        
+      if (org.length === 0) {
+        return res.status(404).json({ message: "Organization not found" });
+      }
+      
+      // Create membership request
+      const membershipRequest = await db.insert(organizationMemberships).values({
+        userId,
+        organizationId,
+        status: "pending",
+        membershipFee: org[0].membershipFee || "0",
+        paymentStatus: "pending"
+      }).returning();
+      
+      res.json({ success: true, request: membershipRequest[0] });
+    } catch (error) {
+      console.error("Organization tagging error:", error);
+      res.status(500).json({ message: "Failed to tag organization" });
+    }
+  });
+  
+  // Get athlete's organization memberships
+  app.get("/api/athlete/organization-memberships", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const memberships = await db.select({
+        id: organizationMemberships.id,
+        organizationId: organizationMemberships.organizationId,
+        status: organizationMemberships.status,
+        membershipFee: organizationMemberships.membershipFee,
+        paymentStatus: organizationMemberships.paymentStatus,
+        requestedAt: organizationMemberships.requestedAt,
+        organization: {
+          id: organizations.id,
+          name: organizations.name,
+          type: organizations.type,
+          district: organizations.district,
+          sportsInterests: organizations.sportsInterests
+        }
+      })
+      .from(organizationMemberships)
+      .leftJoin(organizations, eq(organizationMemberships.organizationId, organizations.id))
+      .where(eq(organizationMemberships.userId, userId));
+      
+      res.json(memberships);
+    } catch (error) {
+      console.error("Memberships fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch memberships" });
+    }
+  });
+  
+  // Get athlete notifications
+  app.get("/api/athlete/notifications", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const notificationsList = await db.select()
+        .from(athleteNotifications)
+        .where(eq(athleteNotifications.userId, userId))
+        .orderBy(desc(athleteNotifications.createdAt))
+        .limit(50);
+        
+      res.json(notificationsList);
+    } catch (error) {
+      console.error("Notifications fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch notifications" });
+    }
+  });
+  
+  // Get available events for athlete
+  app.get("/api/athlete/events", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      
+      // Get approved organization memberships
+      const approvedMemberships = await db.select()
+        .from(organizationMemberships)
+        .where(and(
+          eq(organizationMemberships.userId, userId),
+          eq(organizationMemberships.status, "approved")
+        ));
+        
+      if (approvedMemberships.length === 0) {
+        return res.json([]);
+      }
+      
+      const orgIds = approvedMemberships.map(m => m.organizationId);
+      
+      // Get events from those organizations
+      const availableEvents = await db.select({
+        id: events.id,
+        name: events.name,
+        description: events.description,
+        organizationId: events.organizationId,
+        organizationName: organizations.name,
+        registrationFee: events.registrationFee,
+        startDate: events.startDate,
+        endDate: events.endDate,
+        location: events.location,
+        maxParticipants: events.maxParticipants
+      })
+      .from(events)
+      .leftJoin(organizations, eq(events.organizationId, organizations.id))
+      .where(inArray(events.organizationId, orgIds))
+      .orderBy(desc(events.startDate));
+      
+      res.json(availableEvents);
+    } catch (error) {
+      console.error("Events fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch events" });
+    }
+  });
+  
+  // Register for event
+  app.post("/api/athlete/register-event", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { eventId, registrationFee } = req.body;
+      
+      // Check if already registered
+      const existing = await db.select()
+        .from(eventRegistrations)
+        .where(and(
+          eq(eventRegistrations.userId, userId),
+          eq(eventRegistrations.eventId, eventId)
+        ));
+        
+      if (existing.length > 0) {
+        return res.status(400).json({ message: "Already registered for this event" });
+      }
+      
+      // Get event info
+      const event = await db.select()
+        .from(events)
+        .where(eq(events.id, eventId))
+        .limit(1);
+        
+      if (event.length === 0) {
+        return res.status(404).json({ message: "Event not found" });
+      }
+      
+      // Create registration
+      const registration = await db.insert(eventRegistrations).values({
+        userId,
+        eventId,
+        organizationId: event[0].organizationId,
+        registrationFee: registrationFee?.toString() || "0",
+        paymentStatus: registrationFee ? "pending" : "free",
+        registrationStatus: "registered"
+      }).returning();
+      
+      res.json({ success: true, registration: registration[0] });
+    } catch (error) {
+      console.error("Event registration error:", error);
+      res.status(500).json({ message: "Failed to register for event" });
+    }
+  });
+  
+  // Organization Admin Routes
+  
+  // Get organization info for admin
+  app.get("/api/admin/organization-info", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const org = await db.select()
+        .from(organizations)
+        .where(eq(organizations.adminUserId, userId))
+        .limit(1);
+        
+      if (org.length === 0) {
+        return res.status(404).json({ message: "No organization found for this admin" });
+      }
+      
+      res.json(org[0]);
+    } catch (error) {
+      console.error("Organization info error:", error);
+      res.status(500).json({ message: "Failed to fetch organization info" });
+    }
+  });
+  
+  // Get membership requests for organization
+  app.get("/api/admin/membership-requests", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      
+      // Get organization
+      const org = await db.select()
+        .from(organizations)
+        .where(eq(organizations.adminUserId, userId))
+        .limit(1);
+        
+      if (org.length === 0) {
+        return res.status(404).json({ message: "No organization found" });
+      }
+      
+      // Get membership requests
+      const requests = await db.select({
+        id: organizationMemberships.id,
+        userId: organizationMemberships.userId,
+        organizationId: organizationMemberships.organizationId,
+        status: organizationMemberships.status,
+        membershipFee: organizationMemberships.membershipFee,
+        requestedAt: organizationMemberships.requestedAt,
+        user: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          email: users.email,
+          phone: users.phone,
+          userType: users.userType
+        }
+      })
+      .from(organizationMemberships)
+      .leftJoin(users, eq(organizationMemberships.userId, users.id))
+      .where(eq(organizationMemberships.organizationId, org[0].id))
+      .orderBy(desc(organizationMemberships.requestedAt));
+      
+      res.json(requests);
+    } catch (error) {
+      console.error("Membership requests error:", error);
+      res.status(500).json({ message: "Failed to fetch membership requests" });
+    }
+  });
+  
+  // Approve/reject membership request
+  app.put("/api/admin/membership-requests/:id", authenticateToken, async (req, res) => {
+    try {
+      const requestId = parseInt(req.params.id);
+      const { action, membershipFee } = req.body;
+      
+      const updateData: any = {
+        status: action === 'approve' ? 'approved' : 'rejected',
+        approvedAt: action === 'approve' ? new Date() : null,
+        approvedBy: req.user.id
+      };
+      
+      if (action === 'approve' && membershipFee) {
+        updateData.membershipFee = membershipFee.toString();
+      }
+      
+      const updated = await db.update(organizationMemberships)
+        .set(updateData)
+        .where(eq(organizationMemberships.id, requestId))
+        .returning();
+        
+      // Send notification to athlete if approved
+      if (action === 'approve' && updated.length > 0) {
+        const membership = updated[0];
+        await db.insert(athleteNotifications).values({
+          userId: membership.userId,
+          organizationId: membership.organizationId,
+          type: "membership_approved",
+          title: "Membership Approved! 🎉",
+          content: "Your membership request has been approved. You'll now receive updates from this organization.",
+          isRead: false
+        });
+      }
+      
+      res.json({ success: true, membership: updated[0] });
+    } catch (error) {
+      console.error("Membership action error:", error);
+      res.status(500).json({ message: "Failed to update membership request" });
+    }
+  });
+  
+  // Get approved members
+  app.get("/api/admin/members", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      
+      // Get organization
+      const org = await db.select()
+        .from(organizations)
+        .where(eq(organizations.adminUserId, userId))
+        .limit(1);
+        
+      if (org.length === 0) {
+        return res.status(404).json({ message: "No organization found" });
+      }
+      
+      // Get approved members
+      const members = await db.select({
+        id: organizationMemberships.id,
+        userId: organizationMemberships.userId,
+        status: organizationMemberships.status,
+        approvedAt: organizationMemberships.approvedAt,
+        user: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          email: users.email,
+          phone: users.phone,
+          userType: users.userType
+        }
+      })
+      .from(organizationMemberships)
+      .leftJoin(users, eq(organizationMemberships.userId, users.id))
+      .where(and(
+        eq(organizationMemberships.organizationId, org[0].id),
+        eq(organizationMemberships.status, "approved")
+      ))
+      .orderBy(desc(organizationMemberships.approvedAt));
+      
+      res.json(members);
+    } catch (error) {
+      console.error("Members fetch error:", error);
+      res.status(500).json({ message: "Failed to fetch members" });
+    }
+  });
+  
+  // Send notification to members
+  app.post("/api/admin/send-notification", authenticateToken, async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { title, content, type = "announcement" } = req.body;
+      
+      // Get organization
+      const org = await db.select()
+        .from(organizations)
+        .where(eq(organizations.adminUserId, userId))
+        .limit(1);
+        
+      if (org.length === 0) {
+        return res.status(404).json({ message: "No organization found" });
+      }
+      
+      // Get approved members
+      const approvedMembers = await db.select()
+        .from(organizationMemberships)
+        .where(and(
+          eq(organizationMemberships.organizationId, org[0].id),
+          eq(organizationMemberships.status, "approved")
+        ));
+      
+      // Send notifications to all approved members
+      const notificationPromises = approvedMembers.map(member => 
+        db.insert(athleteNotifications).values({
+          userId: member.userId,
+          organizationId: org[0].id,
+          type,
+          title,
+          content,
+          isRead: false
+        })
+      );
+      
+      await Promise.all(notificationPromises);
+      
+      res.json({ success: true, sentTo: approvedMembers.length });
+    } catch (error) {
+      console.error("Send notification error:", error);
+      res.status(500).json({ message: "Failed to send notifications" });
     }
   });
 
