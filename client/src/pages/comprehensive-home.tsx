@@ -143,19 +143,53 @@ export default function ComprehensiveHome() {
             
             <div className="flex items-center space-x-3">
               {isAuthenticated ? (
-                <>
-                  <span className="text-sm text-gray-600">Welcome, {user?.firstName}</span>
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-semibold">
+                        {user?.firstName?.charAt(0)?.toUpperCase() || user?.username?.charAt(0)?.toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="hidden sm:block">
+                      <div className="text-sm font-medium text-gray-900">Welcome, {user?.firstName || user?.username}</div>
+                      <div className="text-xs text-gray-500 capitalize">{user?.userType || 'User'}</div>
+                    </div>
+                  </div>
                   {user?.userType === 'athlete' && (
                     <Link href="/athlete-dashboard">
-                      <Button size="sm">Dashboard</Button>
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                        <Target className="h-3 w-3 mr-1" />
+                        Dashboard
+                      </Button>
                     </Link>
                   )}
                   {user?.userType === 'organization' && (
                     <Link href="/organization-admin-dashboard">
-                      <Button size="sm">Dashboard</Button>
+                      <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                        <Building className="h-3 w-3 mr-1" />
+                        Dashboard
+                      </Button>
                     </Link>
                   )}
-                </>
+                  {(user?.userType === 'admin' || user?.role?.name === 'Super Admin' || user?.role?.name === 'Admin') && (
+                    <Link href="/super-admin-dashboard">
+                      <Button size="sm" className="bg-purple-600 hover:bg-purple-700">
+                        <Star className="h-3 w-3 mr-1" />
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => {
+                      localStorage.removeItem('token');
+                      window.location.href = '/login';
+                    }}
+                  >
+                    Logout
+                  </Button>
+                </div>
               ) : (
                 <div className="flex items-center space-x-2">
                   <Link href="/login">
@@ -194,18 +228,55 @@ export default function ComprehensiveHome() {
           access facilities, and build your sports career with blockchain-verified achievements.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/signup">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-              <Users className="h-5 w-5 mr-2" />
-              Join as Athlete
-            </Button>
-          </Link>
-          <Link href="/create-organization">
-            <Button size="lg" variant="outline" className="border-green-600 text-green-600 hover:bg-green-50">
-              <Building className="h-5 w-5 mr-2" />
-              Register Organization
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              {user?.userType === 'athlete' && (
+                <Link href="/athlete-dashboard">
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                    <Target className="h-5 w-5 mr-2" />
+                    My Athlete Dashboard
+                  </Button>
+                </Link>
+              )}
+              {user?.userType === 'organization' && (
+                <Link href="/organization-admin-dashboard">
+                  <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                    <Building className="h-5 w-5 mr-2" />
+                    My Organization Dashboard
+                  </Button>
+                </Link>
+              )}
+              {(user?.userType === 'admin' || user?.role?.name === 'Super Admin' || user?.role?.name === 'Admin') && (
+                <Link href="/super-admin-dashboard">
+                  <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                    <Star className="h-5 w-5 mr-2" />
+                    Admin Dashboard
+                  </Button>
+                </Link>
+              )}
+              <Link href="/live-scoring">
+                <Button size="lg" variant="outline" className="border-red-600 text-red-600 hover:bg-red-50">
+                  <Play className="h-5 w-5 mr-2" />
+                  Watch Live Matches
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/signup">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                  <Users className="h-5 w-5 mr-2" />
+                  Join as Athlete
+                </Button>
+              </Link>
+              <Link href="/create-organization">
+                <Button size="lg" variant="outline" className="border-green-600 text-green-600 hover:bg-green-50">
+                  <Building className="h-5 w-5 mr-2" />
+                  Register Organization
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </section>
 
@@ -356,7 +427,7 @@ export default function ComprehensiveHome() {
                   </div>
                   <Button size="sm" className="w-full">
                     <Users className="h-3 w-3 mr-2" />
-                    Join Organization
+                    {isAuthenticated && user?.userType === 'athlete' ? 'Join Organization' : 'View Details'}
                   </Button>
                 </div>
               </CardContent>
@@ -433,7 +504,7 @@ export default function ComprehensiveHome() {
                 </div>
                 <Button size="sm" className="w-full mt-4 bg-white text-blue-600 hover:bg-gray-100">
                   <Trophy className="h-3 w-3 mr-2" />
-                  Register Now
+                  {isAuthenticated ? 'Register Now' : 'View Event Details'}
                 </Button>
               </CardContent>
             </Card>
@@ -478,18 +549,55 @@ export default function ComprehensiveHome() {
           Get verified achievements, access premium facilities, and compete at the highest level.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Link href="/signup">
-            <Button size="lg">
-              <Trophy className="h-5 w-5 mr-2" />
-              Start Free Today
-            </Button>
-          </Link>
-          <Link href="/live-scoring">
-            <Button size="lg" variant="outline">
-              <Activity className="h-5 w-5 mr-2" />
-              Watch Live Matches
-            </Button>
-          </Link>
+          {isAuthenticated ? (
+            <>
+              {user?.userType === 'athlete' && (
+                <Link href="/athlete-dashboard">
+                  <Button size="lg">
+                    <Trophy className="h-5 w-5 mr-2" />
+                    Access My Dashboard
+                  </Button>
+                </Link>
+              )}
+              {user?.userType === 'organization' && (
+                <Link href="/organization-admin-dashboard">
+                  <Button size="lg">
+                    <Building className="h-5 w-5 mr-2" />
+                    Manage Organization
+                  </Button>
+                </Link>
+              )}
+              {!user?.userType && (
+                <Link href="/signup">
+                  <Button size="lg">
+                    <Trophy className="h-5 w-5 mr-2" />
+                    Complete Profile Setup
+                  </Button>
+                </Link>
+              )}
+              <Link href="/live-scoring">
+                <Button size="lg" variant="outline">
+                  <Activity className="h-5 w-5 mr-2" />
+                  Watch Live Matches
+                </Button>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link href="/signup">
+                <Button size="lg">
+                  <Trophy className="h-5 w-5 mr-2" />
+                  Start Free Today
+                </Button>
+              </Link>
+              <Link href="/live-scoring">
+                <Button size="lg" variant="outline">
+                  <Activity className="h-5 w-5 mr-2" />
+                  Watch Live Matches
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </section>
 
