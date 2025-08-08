@@ -21,8 +21,10 @@ import {
   Send,
   UserCheck,
   CreditCard,
-  Settings
+  Settings,
+  Home
 } from "lucide-react";
+import { Link } from "wouter";
 
 interface MembershipRequest {
   id: number;
@@ -160,7 +162,7 @@ export default function OrganizationAdminDashboard() {
     },
   });
 
-  const pendingRequests = membershipRequests.filter((r: MembershipRequest) => r.status === 'pending');
+  const pendingRequests = Array.isArray(membershipRequests) ? membershipRequests.filter((r: MembershipRequest) => r.status === 'pending') : [];
 
   return (
     <div className="container mx-auto p-6">
@@ -173,6 +175,12 @@ export default function OrganizationAdminDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Link href="/">
+            <Button variant="outline" size="sm">
+              <Home className="h-4 w-4 mr-2" />
+              Home
+            </Button>
+          </Link>
           <Dialog open={notificationDialogOpen} onOpenChange={setNotificationDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">

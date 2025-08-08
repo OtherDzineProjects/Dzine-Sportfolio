@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
 import EnhancedHome from "@/pages/enhanced-home";
 import Landing from "@/pages/landing";
+import ComprehensiveHome from "@/pages/comprehensive-home";
 import Dashboard from "@/pages/dashboard";
 import DashboardModern from "@/pages/dashboard-modern";
 import UserDashboard from "@/pages/user-dashboard-clean";
@@ -26,7 +27,7 @@ import EventOrganizerDashboard from "@/pages/event-organizer-dashboard";
 import CreateOrganization from "@/pages/create-organization";
 import OrganizationDashboard from "@/pages/organization-dashboard";
 import OrganizationAdminDashboard from "@/pages/organization-admin-dashboard";
-import AthleteDashboard from "@/pages/athlete-dashboard";
+import AthleteDashboardFixed from "@/pages/athlete-dashboard-fixed";
 import OrganizationsDiscovery from "@/pages/organizations-discovery";
 import AssociationManagement from "@/pages/association-management";
 import Analytics from "@/pages/analytics";
@@ -42,7 +43,7 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={EnhancedHome} />
+      <Route path="/" component={ComprehensiveHome} />
       <Route path="/home" component={Home} />
       <Route path="/landing" component={Landing} />
       <Route path="/login" component={Login} />
@@ -66,7 +67,7 @@ function Router() {
       <Route path="/organization/:id" component={OrganizationDashboard} />
       <Route path="/organization" component={OrganizationDashboard} />
       <Route path="/organization-admin-dashboard" component={OrganizationAdminDashboard} />
-      <Route path="/athlete-dashboard" component={AthleteDashboard} />
+      <Route path="/athlete-dashboard" component={AthleteDashboardFixed} />
       <Route path="/organizations" component={OrganizationsDiscovery} />
       <Route path="/association-management" component={AssociationManagement} />
       <Route path="/analytics" component={Analytics} />

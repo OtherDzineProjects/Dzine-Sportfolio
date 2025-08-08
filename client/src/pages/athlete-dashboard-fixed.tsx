@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "wouter";
 import { 
   CreditCard, 
   Bell, 
@@ -21,7 +22,6 @@ import {
   Target,
   Home
 } from "lucide-react";
-import { Link } from "wouter";
 
 interface Organization {
   id: number;
@@ -57,15 +57,13 @@ interface Event {
   id: number;
   name: string;
   description?: string;
-  organizationId: number;
-  organizationName?: string;
+  organizationName: string;
   registrationFee?: number;
   startDate: string;
   endDate: string;
   location?: string;
   maxParticipants?: number;
   currentParticipants?: number;
-  registrationDeadline?: string;
 }
 
 export default function AthleteDashboard() {
@@ -74,42 +72,38 @@ export default function AthleteDashboard() {
   const queryClient = useQueryClient();
   const [selectedTab, setSelectedTab] = useState("overview");
 
-  // Fetch athlete membership status
+  // Data queries
   const { data: membershipData } = useQuery({
     queryKey: ["/api/athlete/membership"],
     retry: false,
   });
 
-  // Fetch organization memberships
   const { data: organizationMemberships = [] } = useQuery({
     queryKey: ["/api/athlete/organization-memberships"],
     retry: false,
   });
 
-  // Fetch available organizations
-  const { data: availableOrganizations = [] } = useQuery({
-    queryKey: ["/api/organizations"],
-    retry: false,
-  });
-
-  // Fetch notifications
-  const { data: notifications = [] } = useQuery({
-    queryKey: ["/api/athlete/notifications"],
-    retry: false,
-  });
-
-  // Fetch available events
   const { data: availableEvents = [] } = useQuery({
     queryKey: ["/api/athlete/events"],
     retry: false,
   });
 
-  // Subscribe to Sportfolio membership
+  const { data: notifications = [] } = useQuery({
+    queryKey: ["/api/athlete/notifications"],
+    retry: false,
+  });
+
+  const { data: availableOrganizations = [] } = useQuery({
+    queryKey: ["/api/organizations"],
+    retry: false,
+  });
+
+  // Subscribe to membership
   const subscribeMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest("POST", "/api/athlete/subscribe", {
         membershipType: "annual",
-        paymentAmount: 268.80 // 240 + GST
+        paymentAmount: 268.80
       });
       return response.json();
     },
@@ -137,10 +131,10 @@ export default function AthleteDashboard() {
       });
       return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       toast({
         title: "Organization Tagged! ✨",
-        description: `Your request has been sent for approval. You'll be notified once approved.`,
+        description: "Your request has been sent for approval. You'll be notified once approved.",
       });
       queryClient.invalidateQueries({ queryKey: ["/api/athlete/organization-memberships"] });
     },
@@ -180,6 +174,17 @@ export default function AthleteDashboard() {
 
   const hasActiveMembership = (membershipData as any)?.subscriptionStatus === 'active';
   const unreadNotifications = Array.isArray(notifications) ? notifications.filter((n: Notification) => !n.isRead).length : 0;
+  const membershipsList = Array.isArray(organizationMemberships) ? organizationMemberships : [];
+  const eventsList = Array.isArray(availableEvents) ? availableEvents : [];
+  const notificationsList = Array.isArray(notifications) ? notifications : [];
+  const organizationsList = Array.isArray(availableOrganizations) ? availableOrganizations : [];
+
+  const tabs = [
+    { key: "overview", label: "Overview", icon: Target },
+    { key: "organizations", label: "Organizations", icon: Users },
+    { key: "events", label: "Events", icon: Calendar },
+    { key: "notifications", label: "Notifications", icon: Bell },
+  ];
 
   return (
     <div className="container mx-auto p-6">
@@ -213,36 +218,22 @@ export default function AthleteDashboard() {
         </div>
       </div>
 
-      {/* Membership Status Card */}
+      {/* Membership Status Alert */}
       {!hasActiveMembership && (
-        <Card className="mb-6 border-orange-200 bg-orange-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-orange-800">
-              <CreditCard className="h-5 w-5" />
-              Sportfolio Membership Required
-            </CardTitle>
-            <CardDescription className="text-orange-700">
-              Subscribe to Sportfolio to tag organizations, receive notifications, and register for events.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        <Card className="mb-6 border-blue-200 bg-blue-50">
+          <CardContent className="pt-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-semibold text-lg">₹240 + GST per year</p>
-                <p className="text-sm text-muted-foreground">Total: ₹268.80 annually</p>
-                <ul className="mt-2 text-sm space-y-1">
-                  <li>✓ Tag and join sports organizations</li>
-                  <li>✓ Receive event notifications</li>
-                  <li>✓ Register for championships & seminars</li>
-                  <li>✓ Access premium sports content</li>
-                </ul>
+                <h3 className="font-semibold text-blue-800">Get Started with Sportfolio</h3>
+                <p className="text-blue-700">Subscribe now to access organization tagging and premium features</p>
+                <p className="text-sm text-blue-600 mt-1">₹240 + GST per year</p>
               </div>
               <Button 
-                size="lg" 
                 onClick={() => subscribeMutation.mutate()}
                 disabled={subscribeMutation.isPending}
-                className="bg-orange-600 hover:bg-orange-700"
+                className="bg-blue-600 hover:bg-blue-700"
               >
+                <CreditCard className="h-4 w-4 mr-2" />
                 {subscribeMutation.isPending ? "Processing..." : "Subscribe Now"}
               </Button>
             </div>
@@ -252,12 +243,7 @@ export default function AthleteDashboard() {
 
       {/* Tab Navigation */}
       <div className="flex space-x-1 mb-6 bg-muted p-1 rounded-lg">
-        {[
-          { key: "overview", label: "Overview", icon: Target },
-          { key: "organizations", label: "Organizations", icon: Users },
-          { key: "events", label: "Events", icon: Calendar },
-          { key: "notifications", label: "Notifications", icon: Bell }
-        ].map((tab) => (
+        {tabs.map((tab) => (
           <Button
             key={tab.key}
             variant={selectedTab === tab.key ? "default" : "ghost"}
@@ -298,9 +284,9 @@ export default function AthleteDashboard() {
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{Array.isArray(organizationMemberships) ? organizationMemberships.length : 0}</div>
+              <div className="text-2xl font-bold">{membershipsList.length}</div>
               <p className="text-xs text-muted-foreground">
-                {Array.isArray(organizationMemberships) ? organizationMemberships.filter((m: Membership) => m.status === 'approved').length : 0} approved
+                {membershipsList.filter((m: Membership) => m.status === 'approved').length} approved
               </p>
             </CardContent>
           </Card>
@@ -311,7 +297,7 @@ export default function AthleteDashboard() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{Array.isArray(availableEvents) ? availableEvents.length : 0}</div>
+              <div className="text-2xl font-bold">{eventsList.length}</div>
               <p className="text-xs text-muted-foreground">
                 From your organizations
               </p>
@@ -326,7 +312,7 @@ export default function AthleteDashboard() {
           <div>
             <h3 className="text-lg font-semibold mb-4">My Organization Memberships</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Array.isArray(organizationMemberships) ? organizationMemberships.map((membership: Membership) => (
+              {membershipsList.map((membership: Membership) => (
                 <Card key={membership.id}>
                   <CardHeader>
                     <div className="flex justify-between items-start">
@@ -378,9 +364,9 @@ export default function AthleteDashboard() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Available Organizations</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(Array.isArray(availableOrganizations) ? availableOrganizations : [])
+                {organizationsList
                   .filter((org: Organization) => 
-                    !(Array.isArray(organizationMemberships) ? organizationMemberships : []).find((m: Membership) => m.organizationId === org.id)
+                    !membershipsList.find((m: Membership) => m.organizationId === org.id)
                   )
                   .slice(0, 6)
                   .map((org: Organization) => (
@@ -440,7 +426,7 @@ export default function AthleteDashboard() {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(Array.isArray(availableEvents) ? availableEvents : []).map((event: Event) => (
+              {eventsList.map((event: Event) => (
                 <Card key={event.id}>
                   <CardHeader>
                     <CardTitle className="text-base">{event.name}</CardTitle>
@@ -496,30 +482,38 @@ export default function AthleteDashboard() {
 
       {selectedTab === "notifications" && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Notifications</h3>
-          {notifications.length === 0 ? (
-            <Card>
+          <h3 className="text-lg font-semibold">Notifications & Updates</h3>
+          {!hasActiveMembership ? (
+            <Card className="border-orange-200 bg-orange-50">
               <CardContent className="pt-6">
-                <p className="text-center text-muted-foreground">No notifications yet</p>
+                <p className="text-center text-orange-700">
+                  Subscribe to Sportfolio to receive notifications from your organizations
+                </p>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-3">
-              {(Array.isArray(notifications) ? notifications : []).map((notification: Notification) => (
+              {notificationsList.map((notification: Notification) => (
                 <Card key={notification.id} className={`${!notification.isRead ? 'border-blue-200 bg-blue-50' : ''}`}>
                   <CardHeader className="pb-3">
                     <div className="flex justify-between items-start">
                       <CardTitle className="text-base">{notification.title}</CardTitle>
-                      {!notification.isRead && (
-                        <Badge className="bg-blue-600">New</Badge>
-                      )}
+                      <Badge variant={notification.isRead ? "secondary" : "default"} className="text-xs">
+                        {notification.type.replace('_', ' ')}
+                      </Badge>
                     </div>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm text-muted-foreground mb-2">{notification.content}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(notification.createdAt).toLocaleDateString()}
-                    </p>
+                    <div className="flex justify-between items-center text-xs text-muted-foreground">
+                      <span>{new Date(notification.createdAt).toLocaleDateString()}</span>
+                      {!notification.isRead && (
+                        <Badge variant="outline" className="text-xs">
+                          <Bell className="h-2 w-2 mr-1" />
+                          New
+                        </Badge>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               ))}
